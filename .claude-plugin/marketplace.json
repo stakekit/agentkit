@@ -1,0 +1,20 @@
+{
+  "name": "yield-agent-skills",
+  "owner": {
+    "name": "Yield.xyz Agent",
+    "email": ""
+  },
+  "metadata": {
+    "description": "Open source Claude Code skills for Yield.xyz & Web3 developers",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "yields-skills",
+      "description": "Skills for building with yield agent's APIs",
+      "source": "./",
+      "strict": false,
+      "skills": ["skills/yield-xyz-agent"]
+    }
+  ]
+}

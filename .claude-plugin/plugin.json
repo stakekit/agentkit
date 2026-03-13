@@ -1,0 +1,8 @@
+{
+  "name": "yield_xyz_agent",
+  "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API.",
+  "version": "1.0.0",
+  "components": {
+    "skills": ["skills/yield-xyz-agent"]
+  }
+}
