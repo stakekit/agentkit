@@ -1,0 +1,26 @@
+{
+  "name": "yield-agent-skills",
+  "owner": {
+    "name": "Yield.xyz Agent",
+    "email": ""
+  },
+  "metadata": {
+    "description": "Open source Claude Code skills for Yield.xyz & Web3 developers",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "yield_xyz_agent",
+      "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API.",
+      "version": "1.0.0",
+      "source": "./yield-xyz-plugin",
+      "author": {
+        "name": "Yield.xyz",
+        "url": "https://yield.xyz"
+      },
+      "homepage": "https://docs.yield.xyz",
+      "repository": "https://github.com/stakekit/yield.xyz-agent-claude-plugin",
+      "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"]
+    }
+  ]
+}

@@ -23,7 +23,7 @@ Non-custodial. Schema-driven. Agent-native.
 
 **Step 2 — Install the plugin:**
 ```bash
-/plugin install yields-skills@yield.xyz-agent-claude-plugin
+/plugin install yield_xyz_agent@stakekit
 ```
 
 Restart Claude Code. That's it — just talk to it:
@@ -64,22 +64,6 @@ The plugin connects to the Yield.xyz MCP server at `https://mcp.yield.xyz/mcp` a
 
 ---
 
-## Project Structure
-
-```
-yield.xyz-agent-claude-plugin/
-├── .claude-plugin/
-│   ├── marketplace.json     # Marketplace catalog
-│   └── plugin.json          # Plugin metadata and component paths
-├── skills/
-│   └── yield-xyz-agent/
-│       └── SKILL.md         # Agent instructions, formatting rules, workflows
-├── .mcp.json                # MCP server registration (auto-wires yield-xyz tools)
-├── package.json
-└── README.md
-```
-
----
 
 ## How It Works
 

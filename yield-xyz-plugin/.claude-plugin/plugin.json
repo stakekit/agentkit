@@ -7,6 +7,7 @@
     "url": "https://yield.xyz"
   },
   "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/yield.xyz-agent-claude-plugin",
   "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
   "components": {
     "skills": ["skills/yield-xyz-agent"]
