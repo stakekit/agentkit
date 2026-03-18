@@ -6,7 +6,7 @@ The official Claude tooling for Yield.xyz — a Claude Code plugin, standalone s
 
 ## What's in this repo
 
-### [`claude-plugin/`](./claude-plugin/)
+### [`yield-xyz-plugin/`](./yield-xyz-plugin/)
 
 A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MCP server in one command.
 
@@ -15,14 +15,14 @@ A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MC
 /plugin install yield_xyz_agent@stakekit
 ```
 
-### [`claude-skills/`](./claude-skills/)
+### [`yield-xyz-skills/`](./yield-xyz-skills/)
 
 Standalone Claude Code skills — install individually without the plugin.
 
 | Skill | Description |
 |---|---|
-| [`yield-xyz`](./claude-skills/yield-xyz/) | Yield discovery and transaction building via the Yield.xyz MCP |
-| [`yield-xyz-moonpay`](./claude-skills/yield-xyz-moonpay/) | End-to-end yield flow — Yield.xyz builds transactions, MoonPay signs and broadcasts |
+| [`yield-xyz`](./yield-xyz-skills/yield-xyz/) | Yield discovery and transaction building via the Yield.xyz MCP |
+| [`yield-xyz-moonpay`](./yield-xyz-skills/yield-xyz-moonpay/) | End-to-end yield flow — Yield.xyz builds transactions, MoonPay signs and broadcasts |
 
 ---
 
@@ -59,5 +59,5 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 
 ## Resources
 
-- [Yield.xyz API Docs](https://docs.yield.xyz)
+- [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview)
 - [MCP Tool Reference](https://docs.yield.xyz/docs/tool-reference)
