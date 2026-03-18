@@ -26,11 +26,6 @@ Non-custodial. Schema-driven. Agent-native.
 /plugin install yields-skills@yield.xyz-agent-claude-plugin
 ```
 
-**Step 3 — Set your API key** (get one at [dashboard.yield.xyz](https://dashboard.yield.xyz)):
-```bash
-export YIELDS_API_KEY=your_api_key_here
-```
-
 Restart Claude Code. That's it — just talk to it:
 
 ```
@@ -112,8 +107,7 @@ When you install the plugin, both are wired automatically in one step.
 ## Requirements
 
 - Claude Code v2.0+
-- A `YIELDS_API_KEY` from [dashboard.yield.xyz](https://dashboard.yield.xyz)
-- A wallet for signing transactions (Crossmint, Portal, Turnkey, Privy, or compatible)
+- A wallet for signing transactions (MoonPay, BankrBot, Privy, or compatible)
 
 ---
 
@@ -127,7 +121,6 @@ Yield.xyz is **SOC 2 compliant** ([trust.yield.xyz](https://trust.yield.xyz)). T
 
 - [Yield.xyz](https://yield.xyz)
 - [MCP Server Docs](https://docs.yield.xyz)
-- [Get API Key](https://dashboard.yield.xyz)
 - [GitHub](https://github.com/yield-xyz/yield.xyz-agent-claude-plugin)
 
 ---

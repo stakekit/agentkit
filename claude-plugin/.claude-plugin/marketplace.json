@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "yields-skills",
+      "name": "yield_xyz_agent",
       "description": "Skills for building with yield agent's APIs",
       "source": "./",
       "strict": false,
