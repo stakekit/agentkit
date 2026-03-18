@@ -1,7 +1,7 @@
 # Yield.xyz Agent — Claude Code Plugin
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/yield.xyz-agent-claude-plugin)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
 
 **The yield layer for the agent era.**
@@ -18,7 +18,7 @@ Non-custodial. Schema-driven. Agent-native.
 
 **Step 1 — Add the marketplace:**
 ```bash
-/plugin marketplace add stakekit/yield.xyz-agent-claude-plugin
+/plugin marketplace add stakekit/agentkit
 ```
 
 **Step 2 — Install the plugin:**
@@ -105,7 +105,7 @@ Yield.xyz is **SOC 2 compliant** ([trust.yield.xyz](https://trust.yield.xyz)). T
 
 - [Yield.xyz](https://yield.xyz)
 - [MCP Server Docs](https://docs.yield.xyz)
-- [GitHub](https://github.com/yield-xyz/yield.xyz-agent-claude-plugin)
+- [GitHub](https://github.com/yield-xyz/agentkit)
 
 ---
 

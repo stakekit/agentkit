@@ -11,7 +11,7 @@ The official Claude tooling for Yield.xyz — a Claude Code plugin, standalone s
 A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MCP server in one command.
 
 ```bash
-/plugin marketplace add stakekit/yield.xyz-agent-claude-plugin
+/plugin marketplace add stakekit/agentkit
 /plugin install yield_xyz_agent@stakekit
 ```
 
