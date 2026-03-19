@@ -1,10 +1,6 @@
 ---
 name: yield-xyz-moonpay
-displayName: Yield.xyz × MoonPay
 description: Discover on-chain yield opportunities and execute them end-to-end using Yield.xyz for yield discovery and transaction building, and MoonPay for wallet authentication, signing, and broadcasting. Use when the user wants to stake, lend, deposit into vaults, or earn yield — and sign transactions via their MoonPay wallet. Triggers on: "stake with moonpay", "earn yield", "find yields and sign", "deposit into", "staking via moonpay", "yield agent with moonpay" or any yield-related prompt when MoonPay MCP is connected.
-version: 0.1.0
-author: yield-xyz
-homepage: https://yield.xyz
 ---
 
 # Yield.xyz × MoonPay
@@ -38,6 +34,14 @@ If either MCP is missing, stop and tell the user. See
 
 ---
 
+## Output Formatting
+
+For all Yield.xyz tool display rules, number formatting, badges, tables, and action summaries — see **[`references/output-formats.md`](./references/output-formats.md)**.
+
+Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
+
+---
+
 ## Full Flow
 
 ### Step 1 — Check MoonPay auth and wallet
@@ -56,6 +60,7 @@ Call `yields_get_all` with the user's preferred network and token.
 - Sort results: preferred validators/yields first, then by APY descending
 - Show a table: Protocol, Type, APY, Network, Token
 - Default to `limit: 10` unless user asks for more
+- Valid `type` values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool` — never pass display names like `liquid-staking`
 
 ### Step 3 — Inspect the yield
 
