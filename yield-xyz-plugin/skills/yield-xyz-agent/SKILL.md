@@ -75,6 +75,16 @@ List validators for a yield that requires validator selection.
 
 **Use when:** `mechanics.requiresValidatorSelection === true`, or user asks to pick a validator.
 
+**Display & selection rules:**
+- Always call this before entering a staking position — never hardcode or guess a validator address.
+- Default to `limit: 10` unless the user asks to see more.
+- Display as a table sorted by: **preferred validators first, then APR descending within each group.**
+- Columns to show: Validator, Commission, APR, TVL, Voting Power.
+- Flag validators with `preferred: true` with a ✓ or "Curated" label.
+- Warn if a validator has 0% commission — note it may be a temporary rate.
+- If the user doesn't specify a validator, recommend the top preferred validator by APR and explain why.
+- Never pick a validator autonomously without confirming with the user first.
+
 ---
 
 ### 4. `yields_get_balances`

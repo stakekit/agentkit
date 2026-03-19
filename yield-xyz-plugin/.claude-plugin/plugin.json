@@ -1,0 +1,15 @@
+{
+  "name": "yield_xyz_agent",
+  "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Yield.xyz",
+    "url": "https://yield.xyz"
+  },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
+  "components": {
+    "skills": ["skills/yield-xyz-agent"]
+  }
+}

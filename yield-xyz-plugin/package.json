@@ -34,6 +34,6 @@
   "homepage": "https://yield.xyz",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stakekit/yield.xyz-agent-claude-plugin"
+    "url": "https://github.com/stakekit/agentkit"
   }
 }

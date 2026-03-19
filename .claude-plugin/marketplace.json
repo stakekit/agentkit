@@ -10,11 +10,17 @@
   },
   "plugins": [
     {
-      "name": "yields-skills",
-      "description": "Skills for building with yield agent's APIs",
-      "source": "./",
-      "strict": false,
-      "skills": ["skills/yield-xyz-agent"]
+      "name": "yield_xyz_agent",
+      "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API.",
+      "version": "1.0.0",
+      "source": "./yield-xyz-plugin",
+      "author": {
+        "name": "Yield.xyz",
+        "url": "https://yield.xyz"
+      },
+      "homepage": "https://docs.yield.xyz",
+      "repository": "https://github.com/stakekit/agentkit",
+      "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"]
     }
   ]
 }
