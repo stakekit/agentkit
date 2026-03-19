@@ -23,7 +23,7 @@ Non-custodial. Schema-driven. Agent-native.
 
 **Step 2 — Install the plugin:**
 ```bash
-/plugin install yield_agentkit_agent@stakekit
+/plugin install yield_agentkit_agent@yield-agent-skills
 ```
 
 Restart Claude Code. That's it — just talk to it:
