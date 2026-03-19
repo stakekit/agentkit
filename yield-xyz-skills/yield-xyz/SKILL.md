@@ -54,7 +54,7 @@ List and filter yield opportunities across networks and tokens.
 - `network` — e.g. `"base"`, `"ethereum"`, `"arbitrum"`
 - `token` — e.g. `"USDC"`, `"ETH"`, `"WBTC"`
 - `type` — must be one of: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool` ⚠️ do not use display names like `liquid-staking` — use the exact enum values listed here
-- `limit` / `offset` — pagination (default limit: 50)
+- `limit` / `offset` — pagination (default limit: 20, max: 100)
 - `status` — filter by `enter`/`exit` availability
 
 **Returns:** `{ total, offset, limit, items: YieldDto[] }`
@@ -100,8 +100,9 @@ List validators for a yield that requires validator selection.
 Fetch the user's balances across one or more yield positions.
 
 **Key parameters:**
-- `addresses` — array of wallet addresses
-- `yieldIds` — array of yield IDs to check
+- `address` — single wallet address (string)
+- `network` — required, e.g. `"base"`, `"ethereum"`
+- `yieldIds` — optional array of yield IDs to filter
 
 **Returns:** `{ items: YieldBalancesDto[], errors: [{ yieldId, error }] }`
 
@@ -131,7 +132,8 @@ Initiate exiting (withdrawing from) a yield position.
 
 **Key parameters:**
 - `yieldId`, `address`, `amount`
-- `args` — optional
+- `passthrough` — from `pendingActions[].passthrough` if available
+- `validatorAddress` — optional
 
 **Returns:** `ActionDto`
 
@@ -139,13 +141,11 @@ Initiate exiting (withdrawing from) a yield position.
 
 ---
 
-### 7. `actions_manage`
-Perform a management action on an existing position (claim rewards, restake, change validator).
-
 **Key parameters:**
-- `actionId` — from an existing `ActionDto`
-- `passthrough` — from `PendingActionDto` in balances response
-- `args` — optional
+- `yieldId`
+- `address` — user's wallet address
+- `action` — required, action type from `pendingActions[].type` (e.g. `"CLAIM_REWARDS"`)
+- `passthrough` — required, from `pendingActions[].passthrough` in balances response
 
 **Returns:** `ActionDto`
 
@@ -204,7 +204,7 @@ Perform a management action on an existing position (claim rewards, restake, cha
 4. `actions_exit` → return structured transaction summary
 
 ### Compare yields
-1. `yields_get_all` with token filter, `limit: 50`
+1. `yields_get_all` with token filter, `limit: 20`
 2. Sort APY descending, top 10 ranked table
 3. Note any high-APY entries that appear incentivised (check `rewardRate.components`)
 4. Offer to drill into any specific one

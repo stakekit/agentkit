@@ -113,10 +113,10 @@ Claude will automatically load the skill, call the MCP tools, and walk through t
 ## Update
 
 ```bash
-cd yield-xyz-agent-claude-plugin
+cd agentkit
 git pull
-cd claude-skills/yield-xyz
-./install.sh   # re-run to overwrite with latest files
+cd yield-xyz-skills/yield-xyz
+chmod +x install.sh && ./install.sh   # re-run to overwrite with latest files
 ```
 
 ---
@@ -140,7 +140,8 @@ yield-xyz-skills/yield-xyz/
 ├── SKILL.md              # Main skill instructions (auto-loaded by Claude)
 ├── install.sh            # Install script
 ├── references/
-│   └── key_rules.md      # Core rules: tool mapping, amounts, tx ordering, validator selection
+│   └── key_rules.md       # Core rules: tool mapping, amounts, tx ordering, validator selection
+    └── output-formats.md    
 └── README.md             # This file
 ```
 

@@ -17,7 +17,7 @@ Claude becomes an expert on the Yield.xyz API — finding yields, inspecting sch
 Requires: Yield.xyz MCP + API key
 
 ```bash
-cd yield-xyz && ./install.sh
+cd yield-xyz && chmod +x install.sh && ./install.sh
 ```
 
 ---
@@ -31,7 +31,7 @@ Claude orchestrates both MCP servers: Yield.xyz builds the unsigned transactions
 Requires: Yield.xyz MCP + MoonPay MCP (guided setup included)
 
 ```bash
-cd yield-xyz-moonpay && ./install.sh
+cd yield-xyz-moonpay && chmod +x install.sh && ./install.sh
 ```
 
 ---
@@ -61,6 +61,7 @@ claude-skills/
         ├── setup.md
         ├── key-rules.md
         └── moonpay-tools.md
+        └── output-formats.md
 ```
 
 ---
@@ -85,8 +86,8 @@ Use `yield-xyz-moonpay` if you want the complete end-to-end flow with MoonPay ha
 ## Install both
 
 ```bash
-cd yield-xyz && ./install.sh --project && cd ..
-cd yield-xyz-moonpay && ./install.sh --project && cd ..
+cd yield-xyz && chmod +x install.sh && ./install.sh --project && cd ..
+cd yield-xyz-moonpay && chmod +x install.sh && ./install.sh --project && cd ..
 ```
 
 Then open Claude Code from the repo root:
@@ -101,7 +102,7 @@ Run `/context` to confirm both skills are loaded.
 
 ## Related
 
-- [Claude Code Plugin](../claude-plugin/) — installs skills + MCP in one command via the plugin marketplace
+- [Yield.xyz Claude Plugin](../yield-xyz-plugin/) — installs skills + MCP in one command via the plugin marketplace
 - [Yield.xyz API Docs](https://docs.yield.xyz)
 - [Yield.xyz Dashboard](https://dashboard.yield.xyz) — get your API key
 - [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools)

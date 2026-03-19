@@ -61,3 +61,4 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 
 - [Yield.xyz API Docs](https://docs.yield.xyz)
 - [MCP Tool Reference](https://docs.yield.xyz/docs/tool-reference)
+- [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview)

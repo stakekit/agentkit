@@ -103,9 +103,8 @@ Yield.xyz is **SOC 2 compliant** ([trust.yield.xyz](https://trust.yield.xyz)). T
 
 ## Links
 
-- [Yield.xyz](https://yield.xyz)
-- [MCP Server Docs](https://docs.yield.xyz)
-- [GitHub](https://github.com/yield-xyz/agentkit)
+- [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview)
+- [GitHub](https://github.com/stakekit/agentkit)
 
 ---
 

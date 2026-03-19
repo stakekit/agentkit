@@ -146,7 +146,7 @@ where most yield opportunities exist.
 
 ```bash
 cd yield-xyz-skills/yield-xyz-moonpay
-./install.sh --project
+chmod +x install.sh && ./install.sh --project
 ```
 
 Confirm files are in place:
@@ -254,6 +254,7 @@ yield-xyz-skills/yield-xyz-moonpay/
     ├── setup.md                # Full setup guide for both MCPs
     ├── moonpay-tools.md        # MoonPay MCP tool reference
     └── key-rules.md            # Combined rules: arguments, amounts, tx order, validators
+    └── output-formats.md       # Format in which the agent will display the results to user    
 ```
 
 ---
@@ -263,4 +264,4 @@ yield-xyz-skills/yield-xyz-moonpay/
 - [Yield.xyz MCP](https://mcp.yield.xyz/mcp) — yield tools
 - [MoonPay CLI docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools) — wallet + MCP setup
 - [Yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
-- [yield-xyz skill](../yield-xyz/) — Yield.xyz only, bring your own signer
+- [Yield-xyz Claude Skill](../yield-xyz/) — Yield.xyz skill

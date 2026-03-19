@@ -107,7 +107,7 @@ For each transaction in order:
 ### Step 7 — Confirm
 
 After all transactions are confirmed:
-- Call `yields_get_balances` with the yieldId and address
+- Call `yields_get_balances` with the network and address
 - Show the user their new position: balance, pending rewards, APY
 
 ---
