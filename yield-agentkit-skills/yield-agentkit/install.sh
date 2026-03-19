@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILL_NAME="yield-xyz-agent"
+SKILL_NAME="yield-agentkit"
 SKILL_DIR="$(cd "$(dirname "$0")" && pwd)"
-MCP_NAME="yield-xyz-agent"
+MCP_NAME="yield-agentkit"
 MCP_URL="https://mcp.yield.xyz/mcp"
 
 TARGET_BASE="$HOME/.claude/skills"
@@ -22,8 +22,8 @@ usage() {
   echo "  --help        Show this help message"
   echo ""
   echo "Examples:"
-  echo "  ./install.sh              # Install to ~/.claude/skills/yield-xyz-agent/"
-  echo "  ./install.sh --project    # Install to ./.claude/skills/yield-xyz-agent/"
+  echo "  ./install.sh              # Install to ~/.claude/skills/yield-agentkit/"
+  echo "  ./install.sh --project    # Install to ./.claude/skills/yield-agentkit/"
 }
 
 while [[ $# -gt 0 ]]; do

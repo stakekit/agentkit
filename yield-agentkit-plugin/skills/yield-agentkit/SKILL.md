@@ -1,27 +1,29 @@
 ---
-name: yield-xyz
-description: Interact with the Yield.xyz Agent to discover, evaluate, and act on DeFi yield opportunities. Use this skill whenever the user wants to find yield/staking opportunities, check APY/APR rates, view their yield balances, enter or exit a yield position, manage pending actions, or explore validators for a given network and token. Trigger this skill even for casual phrasing like "where can I stake my USDC?", "what's the best yield on Base?", "show me my staking positions", or "I want to exit my ETH yield". Also trigger for any question about DeFi protocols, reward rates, TVL, lockup periods, or transaction steps for entering/exiting positions.
+name: yield-agentkit
+description: Discover and act on 2,988 DeFi yield opportunities via Yield.xyz AgentKit Plugin, find yields, check APY enter/exit positions, and manage rewards across 80+ networks.
+metadata:
+  author: Yield.xyz
+  version: "1.0.0"
+  mcp-server: yield-agentkit
 ---
 
 # Yield.xyz Agent
 
 A skill for discovering and acting on DeFi yield opportunities via the Yield.xyz MCP server.
 
----
-
 ## ⚠️ How to Call Tools — Read This First
 
 **Always call tools via the connected MCP server (`https://mcp.yield.xyz/mcp`). Never fall back to curl, bash, or raw HTTP requests.**
 
 The MCP server exposes these tools directly — call them like any other tool:
+- `yields_get_all` — list/filter yields
+- `yields_get` — get one yield by ID
+- `yields_get_validators` — list validators for a yield
+- `yields_get_balances` — check wallet balances
+- `actions_enter` — enter a position
+- `actions_exit` — exit a position
+- `actions_manage` — claim rewards / manage position
 
-- **yields_get_all** — list/filter yields
-- **yields_get** — get one yield by ID
-- **yields_get_validators** — list validators for a yield
-- **yields_get_balances** — check wallet balances
-- **actions_enter** — enter a position
-- **actions_exit** — exit a position
-- **actions_manage** — claim rewards / manage position
 
 ---
 
@@ -37,14 +39,6 @@ Modifying `unsignedTransaction` **will result in permanent loss of funds.**
 
 ---
 
-## Output Formatting
-
-For all display rules, number formatting, badges, tables, and action summaries — see **[`references/output-formats.md`](./references/output-formats.md)**.
-
-Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
-
----
-
 ## Available Tools
 
 ### 1. `yields_get_all`
@@ -54,7 +48,7 @@ List and filter yield opportunities across networks and tokens.
 - `network` — e.g. `"base"`, `"ethereum"`, `"arbitrum"`
 - `token` — e.g. `"USDC"`, `"ETH"`, `"WBTC"`
 - `type` — must be one of: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool` ⚠️ do not use display names like `liquid-staking` — use the exact enum values listed here
-- `limit` / `offset` — pagination (default limit: 20, max: 100)
+- `limit` / `offset` — pagination (default limit: 20, max: 50)
 - `status` — filter by `enter`/`exit` availability
 
 **Returns:** `{ total, offset, limit, items: YieldDto[] }`
@@ -86,9 +80,11 @@ List validators for a yield that requires validator selection.
 
 **Use when:** `mechanics.requiresValidatorSelection === true`, or user asks to pick a validator.
 
-**Selection rules:**
+**Display & selection rules:**
 - Always call this before entering a staking position — never hardcode or guess a validator address.
 - Default to `limit: 10` unless the user asks to see more.
+- Display as a table sorted by: **preferred validators first, then APR descending within each group.**
+- Columns to show: Validator, Commission, APR, TVL, Voting Power.
 - Flag validators with `preferred: true` with a ✓ or "Curated" label.
 - Warn if a validator has 0% commission — note it may be a temporary rate.
 - If the user doesn't specify a validator, recommend the top preferred validator by APR and explain why.
@@ -141,6 +137,9 @@ Initiate exiting (withdrawing from) a yield position.
 
 ---
 
+### 7. `actions_manage`
+Perform a management action on an existing position (claim rewards, restake, change validator).
+
 **Key parameters:**
 - `yieldId`
 - `address` — user's wallet address
@@ -156,7 +155,6 @@ Initiate exiting (withdrawing from) a yield position.
 ## Key Data Shapes
 
 ### `YieldDto` — a yield opportunity
-
 | Field | Description |
 |---|---|
 | `id` | Unique yield ID — required for all other calls |
@@ -170,7 +168,6 @@ Initiate exiting (withdrawing from) a yield position.
 | `metadata` | Name, logo, description, documentation URL |
 
 ### `TransactionDto` — a transaction to execute
-
 | Field | Description |
 |---|---|
 | `unsignedTransaction` | Raw tx data — never modify |
@@ -180,11 +177,17 @@ Initiate exiting (withdrawing from) a yield position.
 
 ---
 
+## Output Formatting
+
+→ See `references/output-formats.md` for all display rules, table formats, number formatting, badges, safety checklist, and action summary structure.
+
+---
+
 ## Recommended Workflows
 
 ### Find and enter a yield
 1. `yields_get_all` — `network` + `token`, `limit: 50`
-2. Sort by APY, present top 10 in formatted table
+2. Sort by APY, present top 10 in formatted list
 3. User picks one → `yields_get` on that ID — show reward breakdown + mechanics
 4. If `requiresValidatorSelection`, call `yields_get_validators`, present top 10
 5. Run safety checklist, get user confirmation
@@ -204,7 +207,7 @@ Initiate exiting (withdrawing from) a yield position.
 4. `actions_exit` → return structured transaction summary
 
 ### Compare yields
-1. `yields_get_all` with token filter, `limit: 20`
+1. `yields_get_all` with token filter, `limit: 50`
 2. Sort APY descending, top 10 ranked table
 3. Note any high-APY entries that appear incentivised (check `rewardRate.components`)
 4. Offer to drill into any specific one

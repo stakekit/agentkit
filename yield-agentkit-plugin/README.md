@@ -1,4 +1,4 @@
-# Yield.xyz Agent — Claude Code Plugin
+# Yield.xyz AgentKit — Claude Code Plugin
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
@@ -6,7 +6,7 @@
 
 **The yield layer for the agent era.**
 
-2,988 yield opportunities. 75+ chains. One unified interface. Staking, lending, vaults, restaking, and liquidity pools — all via the Yield.xyz MCP server. Secure, controlled access to on-chain yield for AI agents.
+2,988 yield opportunities. 80+ networks. One unified interface. Staking, lending, vaults, restaking, and liquidity pools — all via the Yield.xyz MCP server. Secure, controlled access to on-chain yield for AI agents.
 
 Non-custodial. Schema-driven. Agent-native.
 
@@ -23,7 +23,7 @@ Non-custodial. Schema-driven. Agent-native.
 
 **Step 2 — Install the plugin:**
 ```bash
-/plugin install yield_xyz_agent@stakekit
+/plugin install yield_agentkit_agent@stakekit
 ```
 
 Restart Claude Code. That's it — just talk to it:
@@ -69,7 +69,7 @@ The plugin connects to the Yield.xyz MCP server at `https://mcp.yield.xyz/mcp` a
 
 This plugin bundles two things together:
 
-**1. Skill (`skills/yield-xyz-agent/SKILL.md`)** — Instructs Claude on how to behave: output formatting, pre-action safety checklists, workflow patterns, and display rules.
+**1. Skill (`skills/yield-agentkit/SKILL.md`)** — Instructs Claude on how to behave: output formatting, pre-action safety checklists, workflow patterns, and display rules.
 
 **2. MCP server (`.mcp.json`)** — Registers `https://mcp.yield.xyz/mcp` as a native tool server so Claude calls `yields_get_all`, `actions_enter`, etc. directly — no curl, no bash.
 

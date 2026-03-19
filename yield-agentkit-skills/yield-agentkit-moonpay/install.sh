@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILL_NAME="yield-xyz-moonpay"
+SKILL_NAME="yield-agentkit-moonpay"
 SKILL_DIR="$(cd "$(dirname "$0")" && pwd)"
-YIELD_MCP_NAME="yield-xyz"
+YIELD_MCP_NAME="yield-agentkit"
 YIELD_MCP_URL="https://mcp.yield.xyz/mcp"
 
 TARGET_BASE="$HOME/.claude/skills"

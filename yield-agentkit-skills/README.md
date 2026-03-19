@@ -1,4 +1,4 @@
-# Yield.xyz Claude Skills
+# Yield.xyz AgentKit Claude Skills
 
 Standalone Claude Code skills that turn Claude into a domain expert on on-chain yield.
 
@@ -8,21 +8,21 @@ Each skill is a self-contained directory with a `SKILL.md` and reference files �
 
 ## Skills
 
-### [`yield-xyz`](./yield-xyz/)
+### [`yield-agentkit`](./yield-agentkit/)
 
 **Yield discovery and transaction building via the Yield.xyz MCP.**
 
 Claude becomes an expert on the Yield.xyz API — finding yields, inspecting schemas, building enter/exit/manage transactions, checking balances, and guiding through the full position lifecycle across 80+ networks.
 
-Requires: Yield.xyz MCP + API key
+Requires: Yield.xyz MCP 
 
 ```bash
-cd yield-xyz && chmod +x install.sh && ./install.sh
+cd yield-agentkit && chmod +x install.sh && ./install.sh
 ```
 
 ---
 
-### [`yield-xyz-moonpay`](./yield-xyz-moonpay/)
+### [`yield-agentkit-moonpay`](./yield-agentkit-moonpay/)
 
 **Yield discovery via Yield.xyz + signing and broadcasting via MoonPay — end-to-end in Claude.**
 
@@ -31,7 +31,7 @@ Claude orchestrates both MCP servers: Yield.xyz builds the unsigned transactions
 Requires: Yield.xyz MCP + MoonPay MCP (guided setup included)
 
 ```bash
-cd yield-xyz-moonpay && chmod +x install.sh && ./install.sh
+cd yield-agentkit-moonpay && chmod +x install.sh && ./install.sh
 ```
 
 ---
@@ -45,15 +45,15 @@ This means you can have multiple skills installed without burning through your c
 ## Folder structure
 
 ```
-claude-skills/
+yield-agentkit-skills/
 ├── README.md                     ← this file
-├── yield-xyz/
+├── yield-agentkit/
 │   ├── SKILL.md                  ← yield discovery + transaction building
 │   ├── install.sh                ← installs skill + registers Yield.xyz MCP
 │   ├── README.md
 │   └── references/
 │       └── key-rules.md
-└── yield-xyz-moonpay/
+└── yield-agentkit-moonpay/
     ├── SKILL.md                  ← yield discovery + MoonPay signing
     ├── install.sh                ← guided setup wizard for both MCPs
     ├── README.md
@@ -68,7 +68,7 @@ claude-skills/
 
 ## Which skill should I use?
 
-| | `yield-xyz` | `yield-xyz-moonpay` |
+| | `yield-agentkit` | `yield-agentkit-moonpay` |
 |---|---|---|
 | Find yields | ✅ | ✅ |
 | Build transactions | ✅ | ✅ |
@@ -77,17 +77,17 @@ claude-skills/
 | MoonPay account needed | No | Yes |
 | Setup complexity | Simple | Guided wizard |
 
-Use `yield-xyz` if you already have a wallet/signer and just want Claude to handle yield discovery and transaction building.
+Use `yield-agentkit` if you already have a wallet/signer and just want Claude to handle yield discovery and transaction building.
 
-Use `yield-xyz-moonpay` if you want the complete end-to-end flow with MoonPay handling authentication and signing.
+Use `yield-agentkit-moonpay` if you want the complete end-to-end flow with MoonPay handling authentication and signing.
 
 ---
 
 ## Install both
 
 ```bash
-cd yield-xyz && chmod +x install.sh && ./install.sh --project && cd ..
-cd yield-xyz-moonpay && chmod +x install.sh && ./install.sh --project && cd ..
+cd yield-agentkit && chmod +x install.sh && ./install.sh --project && cd ..
+cd yield-agentkit-moonpay && chmod +x install.sh && ./install.sh --project && cd ..
 ```
 
 Then open Claude Code from the repo root:
@@ -102,7 +102,6 @@ Run `/context` to confirm both skills are loaded.
 
 ## Related
 
-- [Yield.xyz Claude Plugin](../yield-xyz-plugin/) — installs skills + MCP in one command via the plugin marketplace
-- [Yield.xyz API Docs](https://docs.yield.xyz)
-- [Yield.xyz Dashboard](https://dashboard.yield.xyz) — get your API key
+- [Yield.xyz Claude Plugin](../yield-agentkit-plugin/) — installs skills + MCP in one command via the plugin marketplace
+- [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — reference docs
 - [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools)

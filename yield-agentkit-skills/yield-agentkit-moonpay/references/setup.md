@@ -9,7 +9,7 @@ This skill requires two MCP servers: Yield.xyz and MoonPay.
 HTTP-based, no installation needed.
 
 ```bash
-claude mcp add yield-xyz --transport http https://mcp.yield.xyz/mcp
+claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
 ```
 
 ---
@@ -74,7 +74,7 @@ In Claude Code:
 /context
 ```
 
-You should see both `yield-xyz` and `moonpay` listed under connected MCP servers.
+You should see both `yield-agentkit` and `moonpay` listed under connected MCP servers.
 
 Test:
 ```

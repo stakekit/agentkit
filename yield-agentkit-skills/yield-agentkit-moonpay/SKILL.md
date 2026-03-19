@@ -1,9 +1,13 @@
 ---
-name: yield-xyz-moonpay
-description: Discover on-chain yield opportunities and execute them end-to-end using Yield.xyz for yield discovery and transaction building, and MoonPay for wallet authentication, signing, and broadcasting. Use when the user wants to stake, lend, deposit into vaults, or earn yield — and sign transactions via their MoonPay wallet. Triggers on: "stake with moonpay", "earn yield", "find yields and sign", "deposit into", "staking via moonpay", "yield agent with moonpay" or any yield-related prompt when MoonPay MCP is connected.
+name: yield-agentkit-moonpay
+description: Enter DeFi yield positions end-to-end, Yield.xyz AgentKit discovers 2,988 yield opportunities across 80+ networks, MoonPay handles wallet auth and transaction signing.
+metadata:
+  author: Yield.xyz
+  version: "1.0.0"
+  mcp-server: yield-agentkit
 ---
 
-# Yield.xyz × MoonPay
+# Yield.xyz AgentKit × MoonPay
 
 Discover and enter on-chain yield positions end-to-end — Yield.xyz builds the
 transactions, MoonPay signs and broadcasts them.

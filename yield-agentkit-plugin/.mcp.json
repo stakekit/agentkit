@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "yield.xyz_agent": {
+    "yield_agentkit_agent": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp.yield.xyz/mcp"]
     }

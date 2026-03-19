@@ -43,7 +43,7 @@ yields_get_balances    confirm position
 
 ```bash
 git clone https://github.com/stakekit/agentkit.git
-cd yield-xyz-skills/yield-xyz-moonpay
+cd yield-agentkit-skills/yield-agentkit-moonpay
 
 # Personal install (works across all projects)
 chmod +x install.sh
@@ -65,7 +65,7 @@ Open Claude Code in any project and run:
 /context
 ```
 
-You should see both `yield-xyz` and `moonpay` listed under connected MCP servers.
+You should see both `yield-agentkit` and `moonpay` listed under connected MCP servers.
 
 Then confirm both work:
 
@@ -145,14 +145,14 @@ where most yield opportunities exist.
 ### Step 1 — Install the skill to your project
 
 ```bash
-cd yield-xyz-skills/yield-xyz-moonpay
+cd yield-agentkit-skills/yield-agentkit-moonpay
 chmod +x install.sh && ./install.sh --project
 ```
 
 Confirm files are in place:
 
 ```bash
-ls .claude/skills/yield-xyz-moonpay/
+ls .claude/skills/yield-agentkit-moonpay/
 # → SKILL.md  references/
 ```
 
@@ -160,12 +160,12 @@ ls .claude/skills/yield-xyz-moonpay/
 
 ```bash
 claude mcp list
-# Should show: yield-xyz, moonpay
+# Should show: yield-agentkit, moonpay
 ```
 
-If `yield-xyz` is missing:
+If `yield-agentkit` is missing:
 ```bash
-claude mcp add yield-xyz --transport http https://mcp.yield.xyz/mcp
+claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
 ```
 
 If `moonpay` is missing:
@@ -185,7 +185,7 @@ Then:
 /context
 ```
 
-Look for `yield-xyz-moonpay` in the skills list. If it's not there, check
+Look for `yield-agentkit-moonpay` in the skills list. If it's not there, check
 the install path and re-run `./install.sh --project`.
 
 ### Step 4 — Test MoonPay auth independently
@@ -234,7 +234,7 @@ Watch Claude:
 
 | Symptom | Fix |
 |---|---|
-| Skill not triggering | Run `/yield-xyz-moonpay find ETH yields` to force-invoke |
+| Skill not triggering | Run `/yield-agentkit-moonpay find ETH yields` to force-invoke |
 | MoonPay auth error | Run `mp login` in terminal, re-verify with `mp wallet list` |
 | `wallet_send_transaction` fails | Check wallet has enough balance: `mp wallet list` |
 | Hash not submitted | Check Claude called `PUT /v1/transactions/{id}/submit-hash` in tool calls |
@@ -246,7 +246,7 @@ Watch Claude:
 ## Folder structure
 
 ```
-yield-xyz-skills/yield-xyz-moonpay/
+yield-agentkit-skills/yield-agentkit-moonpay/
 ├── SKILL.md                    # Main skill — orchestrates both MCPs
 ├── install.sh                  # Installs skill + registers Yield.xyz MCP
 ├── README.md                   # This file
@@ -264,4 +264,4 @@ yield-xyz-skills/yield-xyz-moonpay/
 - [Yield.xyz MCP](https://mcp.yield.xyz/mcp) — yield tools
 - [MoonPay CLI docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools) — wallet + MCP setup
 - [Yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
-- [Yield-xyz Claude Skill](../yield-xyz/) — Yield.xyz skill
+- [Yield AgentKit Skill](../yield-agentkit/) — Yield.xyz skill

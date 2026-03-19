@@ -1,5 +1,7 @@
-# Yield.xyz Claude Skill
-
+# Yield.xyz AgentKit Claude Skill
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
 > **The brain for on-chain yield agents.** This skill teaches Claude how to discover yields, build transactions, manage positions, and navigate the Yield.xyz API across 80+ networks — without hallucinating endpoints or guessing arguments.
 
 The skill works alongside the [Yield.xyz MCP server](https://mcp.yield.xyz/mcp), which provides the live tools. The skill provides the expertise: routing logic, rules, validator selection, transaction ordering, and safety checks.
@@ -33,9 +35,9 @@ No slash command needed — Claude loads the skill from context automatically.
 
 ```bash
 git clone https://github.com/stakekit/agentkit.git
-cd yield-xyz-skills/yield-xyz
+cd yield-agentkit-skills/yield-agentkit
 
-# Install skill + auto-register MCP 
+# Install skill + auto-register MCP
 chmod +x install.sh && ./install.sh
 
 # Or install scoped to current project only
@@ -43,7 +45,7 @@ chmod +x install.sh && ./install.sh --project
 ```
 
 The install script:
-- Copies `SKILL.md` and reference files to `~/.claude/skills/yield-xyz/`
+- Copies `SKILL.md` and reference files to `~/.claude/skills/yield-agentkit/`
 - Automatically registers the Yield.xyz MCP server via `claude mcp add`
 - Skips MCP registration if already present (safe to re-run)
 
@@ -51,12 +53,12 @@ The install script:
 
 ```bash
 # 1. Copy skill files
-mkdir -p ~/.claude/skills/yield-xyz
-cp SKILL.md ~/.claude/skills/yield-xyz/
-cp -r references ~/.claude/skills/yield-xyz/
+mkdir -p ~/.claude/skills/yield-agentkit
+cp SKILL.md ~/.claude/skills/yield-agentkit/
+cp -r references ~/.claude/skills/yield-agentkit/
 
 # 2. Register the MCP server
-claude mcp add yield-xyz --transport http https://mcp.yield.xyz/mcp
+claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
 ```
 
 ### Option 3 — Via plugin marketplace (installs skill + MCP automatically)
@@ -64,7 +66,7 @@ claude mcp add yield-xyz --transport http https://mcp.yield.xyz/mcp
 ```bash
 # In Claude Code
 /plugin marketplace stakekit/agentkit
-/plugin install yield_xyz_agent@stakekit
+/plugin install yield_agentkit_agent@stakekit
 ```
 
 ---
@@ -73,7 +75,7 @@ claude mcp add yield-xyz --transport http https://mcp.yield.xyz/mcp
 
 ```bash
 # Confirm skill is installed
-ls ~/.claude/skills/yield-xyz/
+ls ~/.claude/skills/yield-agentkit/
 
 # Confirm MCP is registered
 claude mcp list
@@ -85,7 +87,7 @@ Then open Claude Code in any project and run:
 /context
 ```
 
-You should see `yield-xyz` listed under available skills.
+You should see `yield-agentkit` listed under available skills.
 
 ---
 
@@ -115,7 +117,7 @@ Claude will automatically load the skill, call the MCP tools, and walk through t
 ```bash
 cd agentkit
 git pull
-cd yield-xyz-skills/yield-xyz
+cd yield-agentkit-skills/yield-agentkit
 chmod +x install.sh && ./install.sh   # re-run to overwrite with latest files
 ```
 
@@ -125,10 +127,10 @@ chmod +x install.sh && ./install.sh   # re-run to overwrite with latest files
 
 ```bash
 # Remove skill
-rm -rf ~/.claude/skills/yield-xyz
+rm -rf ~/.claude/skills/yield-agentkit
 
 # Remove MCP server
-claude mcp remove yield-xyz
+claude mcp remove yield-agentkit
 ```
 
 ---
@@ -136,7 +138,7 @@ claude mcp remove yield-xyz
 ## Folder structure
 
 ```
-yield-xyz-skills/yield-xyz/
+yield-agentkit-skills/yield-agentkit/
 ├── SKILL.md              # Main skill instructions (auto-loaded by Claude)
 ├── install.sh            # Install script
 ├── references/

@@ -1,4 +1,4 @@
-# Yield.xyz Agent — Claude Plugin & Skills
+# Yield.xyz AgentKit — Claude Plugin & Skills
 
 The official Claude tooling for Yield.xyz — a Claude Code plugin, standalone skills, and connection guides for the Yield.xyz MCP Server.
 
@@ -6,23 +6,23 @@ The official Claude tooling for Yield.xyz — a Claude Code plugin, standalone s
 
 ## What's in this repo
 
-### [`claude-plugin/`](./claude-plugin/)
+## Yield.xyz AgentKit Claude Plugin
 
 A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MCP server in one command.
 
 ```bash
 /plugin marketplace add stakekit/agentkit
-/plugin install yield_xyz_agent@stakekit
+/plugin install yield_agentkit_agent@stakekit
 ```
 
-### [`claude-skills/`](./claude-skills/)
+## Yield.xyz AgentKit Claude Skills
 
 Standalone Claude Code skills — install individually without the plugin.
 
 | Skill | Description |
 |---|---|
-| [`yield-xyz`](./claude-skills/yield-xyz/) | Yield discovery and transaction building via the Yield.xyz MCP |
-| [`yield-xyz-moonpay`](./claude-skills/yield-xyz-moonpay/) | End-to-end yield flow — Yield.xyz builds transactions, MoonPay signs and broadcasts |
+| [`yield-agentkit`](./yield-agentkit-skills/yield-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
+| [`yield-agentkit-moonpay`](./yield-agentkit-skills/yield-agentkit-moonpay/) | End-to-end yield flow — Yield.xyz builds transactions, MoonPay signs and broadcasts |
 
 ---
 
@@ -35,7 +35,7 @@ The Yield.xyz MCP Server exposes 7 tools that give Claude live access to on-chai
 ### Connect via Claude Code
 
 ```bash
-claude mcp add --transport http yield-xyz https://mcp.yield.xyz/mcp
+claude mcp add --transport http yield-agentkit https://mcp.yield.xyz/mcp
 ```
 
 ### Connect via Claude Desktop
@@ -45,7 +45,7 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 ```json
 {
   "mcpServers": {
-    "yield-xyz": {
+    "yield-agentkit": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp.yield.xyz/mcp"]
     }
@@ -59,6 +59,6 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 
 ## Resources
 
-- [Yield.xyz API Docs](https://docs.yield.xyz)
+- [Yield.xyz Docs](https://docs.yield.xyz)
 - [MCP Tool Reference](https://docs.yield.xyz/docs/tool-reference)
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview)
