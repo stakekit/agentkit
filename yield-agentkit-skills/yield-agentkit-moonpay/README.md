@@ -43,7 +43,7 @@ yields_get_balances    confirm position
 
 ```bash
 git clone https://github.com/stakekit/agentkit.git
-cd yield-agentkit-skills/yield-agentkit-moonpay
+cd agentkit/yield-agentkit-skills/yield-agentkit-moonpay
 
 # Personal install (works across all projects)
 chmod +x install.sh

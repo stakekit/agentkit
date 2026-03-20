@@ -187,7 +187,7 @@ Initiate exiting (withdrawing from) a yield position.
 ## Recommended Workflows
 
 ### Find and enter a yield
-1. `yields_get_all` — `network` + `token`, `limit: 50`
+1. `yields_get_all` — `network` + `token`, `limit: 20`
 2. Sort by APY, present top 10 in formatted table
 3. User picks one → `yields_get` on that ID — show reward breakdown + mechanics
 4. If `requiresValidatorSelection`, call `yields_get_validators`, present top 10

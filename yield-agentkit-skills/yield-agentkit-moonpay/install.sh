@@ -108,8 +108,9 @@ case "$moonpay_choice" in
     bold "── Step 1: Install MoonPay CLI ──"
     echo ""
 
+    # Change 1: Check if mp is already installed before attempting install
     if command -v mp &>/dev/null; then
-      green "✅ MoonPay CLI already installed"
+      green "✅ MoonPay CLI already installed — skipping."
     else
       echo "Installing @moonpay/cli..."
       npm install -g @moonpay/cli
@@ -120,48 +121,110 @@ case "$moonpay_choice" in
     echo ""
     bold "── Step 2: Log in to MoonPay ──"
     echo ""
-    read -rp "Enter your MoonPay email: " mp_email
 
-    echo ""
-    echo "Sending login request..."
-    mp login --email "$mp_email"
+    # Change 2: Check if already logged in
+    mp_logged_in=false
+    mp_has_wallet=false
 
-    echo ""
-    yellow "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    yellow "  ACTION REQUIRED"
-    yellow "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-    echo "MoonPay has printed a URL above."
-    echo ""
-    echo "  1. Open that URL in your browser"
-    echo "  2. Complete the CAPTCHA"
-    echo "  3. Click 'Request Code' — MoonPay will email you a code"
-    echo ""
-    yellow "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-    read -rp "Once you have your code, paste it here: " mp_code
+    if mp user retrieve &>/dev/null 2>&1; then
+      mp_logged_in=true
+      mp_email=$(mp user retrieve 2>/dev/null | grep "^email:" | awk '{print $2}')
+      echo ""
+      green "✅ Already logged in to MoonPay as: $mp_email"
+      echo ""
+      read -rp "Continue with this account? [Y/n]: " use_existing_account
+      if [[ "$use_existing_account" =~ ^[Nn]$ ]]; then
+        mp_logged_in=false
+        yellow "Starting fresh login..."
+      else
+        green "Continuing with $mp_email"
+      fi
+    fi
 
-    echo ""
-    echo "Verifying..."
-    mp verify --email "$mp_email" --code "$mp_code"
-    green "✅ MoonPay authentication successful"
+    # Change 2: Check if already has a wallet
+    if [ "$mp_logged_in" = true ]; then
+      existing_wallets=$(mp wallet list 2>/dev/null || true)
+      if echo "$existing_wallets" | grep -q "name:"; then
+        mp_has_wallet=true
+      fi
+    fi
 
-    # ── Wallet ──
-    echo ""
-    bold "── Step 3: Create your wallet ──"
-    echo ""
-    read -rp "Enter a name for your wallet (e.g. MyWallet): " wallet_name
+    # If both logged in and has wallet — skip to Step 5
+    if [ "$mp_logged_in" = true ] && [ "$mp_has_wallet" = true ]; then
+      echo ""
+      green "✅ Already logged in and wallet exists — skipping to MCP registration."
 
-    mp wallet create --name "$wallet_name"
+    else
+      # Not logged in — do the full login flow
+      if [ "$mp_logged_in" = false ]; then
+        read -rp "Enter your MoonPay email: " mp_email
 
-    echo ""
-    bold "── Step 4: Your wallet addresses ──"
-    echo ""
-    mp wallet list
-    echo ""
-    green "✅ Wallet created — addresses shown above"
-    echo ""
-    echo "Use the EVM address (0x...) as your wallet address in Yield.xyz."
+        echo ""
+        echo "Sending login request..."
+        mp login --email "$mp_email"
+
+        echo ""
+        yellow "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        yellow "  ACTION REQUIRED"
+        yellow "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "MoonPay has printed a URL above."
+        echo ""
+        echo "  1. Open that URL in your browser"
+        echo "  2. Complete the CAPTCHA"
+        echo "  3. Click 'Request Code' — MoonPay will email you a code"
+        echo ""
+        yellow "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        read -rp "Once you have your code, paste it here: " mp_code
+
+        echo ""
+        echo "Verifying..."
+        mp verify --email "$mp_email" --code "$mp_code"
+        green "✅ MoonPay authentication successful"
+      fi
+
+      # ── Wallet ──
+      echo ""
+      bold "── Step 3: Create your wallet ──"
+      echo ""
+
+      # Change 3: Show existing wallets first, offer to create new one or skip
+      echo "Fetching your existing wallets..."
+      existing_wallets=$(mp wallet list 2>/dev/null || true)
+
+      if echo "$existing_wallets" | grep -q "0x"; then
+        echo ""
+        echo "$existing_wallets"
+        echo ""
+        yellow "You already have the wallet(s) above."
+        echo "Use the EVM address (0x...) as your wallet address in Yield.xyz."
+        echo ""
+        read -rp "Enter a name to create an additional wallet, or press Enter to skip: " wallet_name
+        if [ -n "$wallet_name" ]; then
+          mp wallet create --name "$wallet_name"
+          echo ""
+          bold "── Your wallet addresses ──"
+          echo ""
+          mp wallet list
+          echo ""
+          green "✅ New wallet created — addresses shown above"
+        else
+          green "✅ Using existing wallet — skipping wallet creation."
+        fi
+      else
+        read -rp "Enter a name for your wallet (e.g. MyWallet): " wallet_name
+        mp wallet create --name "$wallet_name"
+        echo ""
+        bold "── Step 4: Your wallet addresses ──"
+        echo ""
+        mp wallet list
+        echo ""
+        green "✅ Wallet created — addresses shown above"
+        echo ""
+        echo "Use the EVM address (0x...) as your wallet address in Yield.xyz."
+      fi
+    fi
 
     # ── Register MoonPay MCP ──
     echo ""

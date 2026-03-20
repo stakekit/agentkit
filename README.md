@@ -12,7 +12,7 @@ A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MC
 
 ```bash
 /plugin marketplace add stakekit/agentkit
-/plugin install yield_agentkit_agent@stakekit
+/plugin install yield_agentkit_agent@agentkit
 ```
 
 ## Yield.xyz AgentKit Claude Skills

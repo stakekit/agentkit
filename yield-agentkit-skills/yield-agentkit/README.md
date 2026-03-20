@@ -35,7 +35,7 @@ No slash command needed — Claude loads the skill from context automatically.
 
 ```bash
 git clone https://github.com/stakekit/agentkit.git
-cd yield-agentkit-skills/yield-agentkit
+cd agentkit/yield-agentkit-skills/yield-agentkit
 
 # Install skill + auto-register MCP
 chmod +x install.sh && ./install.sh
@@ -66,7 +66,7 @@ claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
 ```bash
 # In Claude Code
 /plugin marketplace stakekit/agentkit
-/plugin install yield_agentkit_agent@stakekit
+/plugin install yield_agentkit_agent@agentkit
 ```
 
 ---
