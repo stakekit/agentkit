@@ -1,4 +1,4 @@
-# Yield.xyz × MoonPay Skill
+# Yield.xyz AgentKit Skill × MoonPay Skill
 
 > **End-to-end on-chain yield, fully in Claude.** This skill combines Yield.xyz's yield discovery and transaction building with MoonPay's wallet authentication, signing, and broadcasting — so you can go from "find me ETH staking yields" to a confirmed on-chain position without leaving your AI assistant.
 
@@ -12,16 +12,16 @@ Two MCP servers, one seamless flow:
 User prompt
     │
     ▼
-Yield.xyz MCP          MoonPay MCP
-─────────────          ───────────
-yields_get_all    →    wallet_list (get address)
-yields_get        →    check balance
-actions_enter     →    wallet_send_transaction (sign + broadcast)
-submit-hash       ←    txHash returned
-yields_get_balances    confirm position
+Yield.xyz AgentKit MCP          MoonPay MCP
+─────────────                   ───────────
+yields_get_all          →    wallet_list (get address)
+yields_get              →    check balance
+actions_enter           →    wallet_send_transaction (sign + broadcast)
+submit-hash             ←    txHash returned
+yields_get_balances          confirm position
 ```
 
-**Yield.xyz** handles: yield discovery, schema validation, transaction building  
+**Yield.xyz AgentKit** handles: yield discovery, schema validation, transaction building  
 **MoonPay** handles: user auth (email + code), wallet management, signing, broadcasting
 
 ---
@@ -52,7 +52,7 @@ chmod +x install.sh
 chmod +x install.sh && ./install.sh --project
 ```
 
-The script automatically registers the Yield.xyz MCP and prints setup
+The script automatically registers the Yield.xyz AgentKit MCP and prints setup
 instructions for MoonPay.
 
 ---
@@ -254,7 +254,8 @@ yield-agentkit-skills/yield-agentkit-moonpay/
     ├── setup.md                # Full setup guide for both MCPs
     ├── moonpay-tools.md        # MoonPay MCP tool reference
     └── key-rules.md            # Combined rules: arguments, amounts, tx order, validators
-    └── output-formats.md       # Format in which the agent will display the results to user    
+    └── output-formats.md       # Format in which the agent will display the results to user 
+    └── policies.md             # API Usage and Policies for the agent to follow
 ```
 
 ---

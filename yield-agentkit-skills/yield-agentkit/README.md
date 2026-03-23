@@ -4,7 +4,7 @@
 
 > **The brain for on-chain yield agents.** This skill teaches Claude how to discover yields, build transactions, manage positions, and navigate the Yield.xyz API across 80+ networks — without hallucinating endpoints or guessing arguments.
 
-The skill works alongside the [Yield.xyz MCP server](https://mcp.yield.xyz/mcp), which provides the live tools. The skill provides the expertise: routing logic, rules, validator selection, transaction ordering, and safety checks.
+The skill works alongside the [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp), which provides the live tools. The skill provides the expertise: routing logic, rules, validator selection, transaction ordering, and safety checks.
 
 ---
 
@@ -46,7 +46,7 @@ chmod +x install.sh && ./install.sh --project
 
 The install script:
 - Copies `SKILL.md` and reference files to `~/.claude/skills/yield-agentkit/`
-- Automatically registers the Yield.xyz MCP server via `claude mcp add`
+- Automatically registers the Yield.xyz AgentKit MCP server via `claude mcp add`
 - Skips MCP registration if already present (safe to re-run)
 
 ### Option 2 — Manual install
@@ -144,6 +144,7 @@ yield-agentkit-skills/yield-agentkit/
 ├── references/
 │   └── key_rules.md       # Core rules: tool mapping, amounts, tx ordering, validator selection
     └── output-formats.md    
+    └── policies.md
 └── README.md             # This file
 ```
 

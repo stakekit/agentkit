@@ -24,11 +24,11 @@ cd yield-agentkit && chmod +x install.sh && ./install.sh
 
 ### [`yield-agentkit-moonpay`](./yield-agentkit-moonpay/)
 
-**Yield discovery via Yield.xyz + signing and broadcasting via MoonPay — end-to-end in Claude.**
+**Yield discovery via Yield.xyz AgentKit + signing and broadcasting via MoonPay, end-to-end in Claude.**
 
-Claude orchestrates both MCP servers: Yield.xyz builds the unsigned transactions, MoonPay authenticates the user, signs, and broadcasts. The full flow from "find me ETH staking yields" to a confirmed on-chain position without leaving Claude Code.
+Claude orchestrates both MCP servers: Yield.xyz AgentKit builds the unsigned transactions, MoonPay authenticates the user, signs, and broadcasts. The full flow from "find me ETH staking yields" to a confirmed on-chain position without leaving Claude Code.
 
-Requires: Yield.xyz MCP + MoonPay MCP (guided setup included)
+Requires: Yield.xyz AgentKit MCP + MoonPay MCP (guided setup included)
 
 ```bash
 cd yield-agentkit-moonpay && chmod +x install.sh && ./install.sh
@@ -53,6 +53,8 @@ yield-agentkit-skills/
 │   ├── README.md
 │   └── references/
 │       └── key-rules.md
+│       └── output-formats.md
+│       └── policies.md
 └── yield-agentkit-moonpay/
     ├── SKILL.md                  ← yield discovery + MoonPay signing
     ├── install.sh                ← guided setup wizard for both MCPs
@@ -62,6 +64,7 @@ yield-agentkit-skills/
         ├── key-rules.md
         └── moonpay-tools.md
         └── output-formats.md
+        └── policies.md
 ```
 
 ---

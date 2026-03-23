@@ -5,7 +5,7 @@
 
 **The yield layer for the agent era.**
 
-2,988 yield opportunities. 80+ networks. One unified interface. Staking, lending, vaults, restaking, and liquidity pools — all via the Yield.xyz MCP server. Secure, controlled access to on-chain yield for AI agents.
+2,988 yield opportunities. 80+ networks. One unified interface. Staking, lending, vaults, restaking, and liquidity pools, all via the Yield.xyz AgentKit MCP server. Secure, controlled access to on-chain yield for AI agents.
 
 Non-custodial. Schema-driven. Agent-native.
 
@@ -49,7 +49,7 @@ Restart Claude Code. That's it — just talk to it:
 
 ## Available MCP Tools
 
-The plugin connects to the Yield.xyz MCP server at `https://mcp.yield.xyz/mcp` and exposes these tools natively in Claude Code:
+The plugin connects to the Yield.xyz AgentKit MCP server at `https://mcp.yield.xyz/mcp` and exposes these tools natively in Claude Code:
 
 | Tool | Description |
 |---|---|

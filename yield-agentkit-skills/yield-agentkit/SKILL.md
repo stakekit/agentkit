@@ -7,7 +7,7 @@ metadata:
   mcp-server: yield-agentkit
 ---
 
-# Yield.xyz Agent
+# Yield.xyz AgentKit
 
 A skill for discovering and acting on DeFi yield opportunities via the Yield.xyz MCP server.
 

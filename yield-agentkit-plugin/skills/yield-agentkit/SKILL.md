@@ -7,7 +7,7 @@ metadata:
   mcp-server: yield-agentkit
 ---
 
-# Yield.xyz Agent
+# Yield.xyz AgentKit
 
 A skill for discovering and acting on DeFi yield opportunities via the Yield.xyz MCP server.
 
@@ -82,7 +82,7 @@ List validators for a yield that requires validator selection.
 
 **Display & selection rules:**
 - Always call this before entering a staking position — never hardcode or guess a validator address.
-- Default to `limit: 10` unless the user asks to see more.
+- Default to `limit: 20` unless the user asks to see more.
 - Display as a table sorted by: **preferred validators first, then APR descending within each group.**
 - Columns to show: Validator, Commission, APR, TVL, Voting Power.
 - Flag validators with `preferred: true` with a ✓ or "Curated" label.

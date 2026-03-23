@@ -1,9 +1,11 @@
+![Yield.xyz AgentKit Banner](./assets/yield-agentkit-banner.png)
+
 # Yield.xyz AgentKit — Claude Plugin & Skills
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
 
-The official Claude tooling for Yield.xyz — a Claude Code plugin, standalone skills, and connection guides for the Yield.xyz MCP Server.
+The official Claude tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone skills, and connection guides for the Yield.xyz AgentKit MCP Server.
 
 ---
 
@@ -31,7 +33,7 @@ Standalone Claude Code skills — install individually without the plugin.
 
 ## MCP Server
 
-The Yield.xyz MCP Server exposes 7 tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
+The Yield.xyz AgentKit MCP Server exposes 7 tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
 
 **Endpoint:** `https://mcp.yield.xyz/mcp`
 
