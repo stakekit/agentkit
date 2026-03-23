@@ -31,63 +31,38 @@ No slash command needed — Claude loads the skill from context automatically.
 
 ## Install
 
-### Option 1 — Clone and run install script (recommended)
+Open Claude Code and say:
 
-```bash
-git clone https://github.com/stakekit/agentkit.git
-cd agentkit/yield-agentkit-skills/yield-agentkit
-
-# Install skill + auto-register MCP
-chmod +x install.sh && ./install.sh
-
-# Or install scoped to current project only
-chmod +x install.sh && ./install.sh --project
+```
+Set up the yield-agentkit skill
 ```
 
-The install script:
-- Copies `SKILL.md` and reference files to `~/.claude/skills/yield-agentkit/`
-- Automatically registers the Yield.xyz AgentKit MCP server via `claude mcp add`
-- Skips MCP registration if already present (safe to re-run)
+Claude will read `references/setup.md` and automatically:
+- Copy skill files to the Claude skills directory
+- Check if the Yield.xyz AgentKit MCP is already registered, and register it if not
 
-### Option 2 — Manual install
-
-```bash
-# 1. Copy skill files
-mkdir -p ~/.claude/skills/yield-agentkit
-cp SKILL.md ~/.claude/skills/yield-agentkit/
-cp -r references ~/.claude/skills/yield-agentkit/
-
-# 2. Register the MCP server
-claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
-```
-
-### Option 3 — Via plugin marketplace (installs skill + MCP automatically)
-
-```bash
-# In Claude Code
-/plugin marketplace stakekit/agentkit
-/plugin install yield_agentkit_agent@agentkit
-```
+No terminal steps needed — Claude handles everything.
 
 ---
 
 ## Verify installation
 
 ```bash
-# Confirm skill is installed
-ls ~/.claude/skills/yield-agentkit/
-
-# Confirm MCP is registered
 claude mcp list
+# Should show: yield-agentkit
 ```
 
-Then open Claude Code in any project and run:
+Then open Claude Code and confirm the skill is loaded:
 
 ```
 /context
 ```
 
-You should see `yield-agentkit` listed under available skills.
+Look for `yield-agentkit` under available skills. Or ask directly:
+
+```
+What skills and MCPs do you have connected?
+```
 
 ---
 
@@ -117,9 +92,15 @@ Claude will automatically load the skill, call the MCP tools, and walk through t
 ```bash
 cd agentkit
 git pull
-cd yield-agentkit-skills/yield-agentkit
-chmod +x install.sh && ./install.sh   # re-run to overwrite with latest files
 ```
+
+Then in Claude Code:
+
+```
+Re-run setup for the yield-agentkit skill
+```
+
+Claude will overwrite the skill files with the latest version.
 
 ---
 
@@ -139,13 +120,13 @@ claude mcp remove yield-agentkit
 
 ```
 yield-agentkit-skills/yield-agentkit/
-├── SKILL.md              # Main skill instructions (auto-loaded by Claude)
-├── install.sh            # Install script
-├── references/
-│   └── key_rules.md       # Core rules: tool mapping, amounts, tx ordering, validator selection
-    └── output-formats.md    
-    └── policies.md
-└── README.md             # This file
+├── SKILL.md                 # Main skill instructions (auto-loaded by Claude)
+├── README.md                # This file
+└── references/
+    ├── setup.md             # Agent-executed setup guide
+    ├── key_rules.md         # Core rules: tool mapping, amounts, tx ordering, validator selection
+    ├── output-formats.md    # Display rules for yields, tables, and summaries
+    └── policies.md          # API usage and efficiency guidelines
 ```
 
 ---
@@ -178,4 +159,4 @@ The 7 MCP tools this skill orchestrates:
 
 - [Yield.xyz AgentKit MCP Server](https://mcp.yield.xyz/mcp) — the live tools
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
-- [Yield.xyz AgentKit Claude Plugin](../README.md) — installs skill + MCP in one command
+- [Yield.xyz AgentKit × MoonPay Skill](../yield-agentkit-moonpay/README.md) — full end-to-end skill with wallet signing

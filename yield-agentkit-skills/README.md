@@ -8,7 +8,7 @@ Each skill is a self-contained directory with a `SKILL.md` and reference files �
 
 ## Skills
 
-### [`yield-agentkit`](./yield-agentkit/)
+### [`yield-agentkit`](./skills/yield-agentkit/)
 
 **Yield discovery and transaction building via the Yield.xyz MCP.**
 
@@ -22,7 +22,7 @@ cd yield-agentkit && chmod +x install.sh && ./install.sh
 
 ---
 
-### [`yield-agentkit-moonpay`](./yield-agentkit-moonpay/)
+### [`yield-agentkit-moonpay`](./skills/yield-agentkit-moonpay/)
 
 **Yield discovery via Yield.xyz AgentKit + signing and broadcasting via MoonPay, end-to-end in Claude.**
 
@@ -106,5 +106,5 @@ Run `/context` to confirm both skills are loaded.
 ## Related
 
 - [Yield.xyz AgentKit Claude Plugin](../yield-agentkit-plugin/) — installs skills + MCP in one command via the plugin marketplace
-- [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — reference docs
-- [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools)
+- [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — yield.xyz reference docs
+- [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools) — moonpay reference docs 

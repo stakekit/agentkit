@@ -5,13 +5,13 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
 
-The official Claude tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone skills, and connection guides for the Yield.xyz AgentKit MCP Server.
+The official tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone skills, and connection guides for the Yield.xyz AgentKit MCP Server.
 
 ---
 
 ## What's in this repo
 
-## Yield.xyz AgentKit Claude Plugin
+### Yield.xyz AgentKit Claude Plugin
 
 A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MCP server in one command.
 
@@ -20,14 +20,14 @@ A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MC
 /plugin install yield_agentkit_agent@agentkit
 ```
 
-## Yield.xyz AgentKit Claude Skills
+### Yield.xyz AgentKit Claude Skills
 
 Standalone Claude Code skills — install individually without the plugin.
 
 | Skill | Description |
 |---|---|
-| [`yield-agentkit`](./yield-agentkit-skills/yield-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
-| [`yield-agentkit-moonpay`](./yield-agentkit-skills/yield-agentkit-moonpay/) | End-to-end yield flow — Yield.xyz builds transactions, MoonPay signs and broadcasts |
+| [`yield-agentkit`](./yield-agentkit-skills/skills/yield-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
+| [`yield-agentkit-moonpay`](./yield-agentkit-skills/skills/yield-agentkit-moonpay/) | End-to-end yield flow — Yield.xyz builds transactions, MoonPay signs and broadcasts |
 
 ---
 
