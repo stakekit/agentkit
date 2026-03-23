@@ -261,7 +261,7 @@ yield-agentkit-skills/yield-agentkit-moonpay/
 
 ## Related
 
-- [Yield.xyz MCP](https://mcp.yield.xyz/mcp) — yield tools
+- [Yield.xyz AgentKit MCP](https://mcp.yield.xyz/mcp) — yield tools
 - [MoonPay CLI docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools) — wallet + MCP setup
 - [Yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
 - [Yield AgentKit Skill](../yield-agentkit/) — Yield.xyz skill

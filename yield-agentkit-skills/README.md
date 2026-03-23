@@ -102,6 +102,6 @@ Run `/context` to confirm both skills are loaded.
 
 ## Related
 
-- [Yield.xyz Claude Plugin](../yield-agentkit-plugin/) — installs skills + MCP in one command via the plugin marketplace
+- [Yield.xyz AgentKit Claude Plugin](../yield-agentkit-plugin/) — installs skills + MCP in one command via the plugin marketplace
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — reference docs
 - [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools)

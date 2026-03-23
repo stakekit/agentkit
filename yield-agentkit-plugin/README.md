@@ -2,7 +2,6 @@
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
 
 **The yield layer for the agent era.**
 
@@ -116,8 +115,3 @@ All actions are initiated at your sole discretion. Digital assets and DeFi invol
 
 By using this plugin, you acknowledge and accept these risks.
 
----
-
-## License
-
-Apache 2.0

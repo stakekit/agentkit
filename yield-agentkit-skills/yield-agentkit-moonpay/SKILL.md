@@ -9,14 +9,14 @@ metadata:
 
 # Yield.xyz AgentKit × MoonPay
 
-Discover and enter on-chain yield positions end-to-end — Yield.xyz builds the
+Discover and enter on-chain yield positions end-to-end, Yield.xyz AgentKit MCP builds the
 transactions, MoonPay signs and broadcasts them.
 
 ---
 
 ## ⚠️ Critical: Never Modify Transactions
 
-> **DO NOT modify `unsignedTransaction` returned by Yield.xyz under any
+> **DO NOT modify `unsignedTransaction` returned by Yield.xyz AgentKit MCP under any
 > circumstances.** Pass it to MoonPay exactly as received — no changes to
 > addresses, amounts, data, gas, or encoding.
 >
@@ -30,8 +30,8 @@ This skill requires both MCP servers to be connected:
 
 | MCP | Role | Tools used |
 |---|---|---|
-| **Yield.xyz** | Yield discovery + transaction building | `yields_get_all`, `yields_get`, `yields_get_validators`, `yields_get_balances`, `actions_enter`, `actions_exit`, `actions_manage` |
-| **MoonPay** | Auth + wallet + sign + broadcast | `wallet_list`, `wallet_send_transaction`, `wallet_balance` |
+| **Yield.xyz AgentKit** | Yield discovery + transaction building | `yields_get_all`, `yields_get`, `yields_get_validators`, `yields_get_balances`, `actions_enter`, `actions_exit`, `actions_manage` |
+| **MoonPay** | Auth + wallet + sign + broadcast | `wallet_list`, `wallet_send_transaction`, `wallet_balance` and more |
 
 If either MCP is missing, stop and tell the user. See
 `{baseDir}/references/setup.md` for connection instructions.
@@ -40,9 +40,15 @@ If either MCP is missing, stop and tell the user. See
 
 ## Output Formatting
 
-For all Yield.xyz tool display rules, number formatting, badges, tables, and action summaries — see **[`references/output-formats.md`](./references/output-formats.md)**.
+For all Yield.xyz tool display rules, number formatting, badges, tables, and action summaries, see **[`references/output-formats.md`](./references/output-formats.md)**.
 
 Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
+
+---
+
+## ⚠️ API Usage Policy
+
+You must follow the guidelines defined in `policies.md` for Yield AgentKit MCP API usage, data fetching, and efficiency.
 
 ---
 
@@ -55,7 +61,7 @@ Before anything else:
 2. If no wallet or not authenticated, guide the user through login:
    - They will receive a code by email
    - Once verified they can proceed
-3. Note the wallet address — this is the `address` used in all Yield.xyz calls
+3. Note the wallet address, this is the `address` used in all AgentKit MCP calls
 
 ### Step 2 — Discover yields
 
@@ -63,9 +69,8 @@ Call `yields_get_all` with the user's preferred network and token.
 
 - Sort results: preferred validators/yields first, then by APY descending
 - Show a table: Protocol, Type, APY, Network, Token
-- Default to `limit: 10` unless user asks for more
-- Valid `type` values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool` — never pass display names like `liquid-staking`
-
+- Default to `limit: 20` unless user asks for more
+- Valid `type` values: `staking`, `restaking`, `lending`, `vault`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`
 ### Step 3 — Inspect the yield
 
 Call `yields_get` with the chosen `yieldId`. Read:
@@ -142,6 +147,8 @@ For claiming rewards, restaking, or exiting:
 
 Read these on demand when you need specifics:
 
-- `{baseDir}/references/setup.md` — installing both MCPs, auth flow, prerequisites
-- `{baseDir}/references/key-rules.md` — argument rules, amount formatting, tx ordering
-- `{baseDir}/references/moonpay-tools.md` — MoonPay MCP tool reference
+- **[`references/setup.md`](./references/setup.md)** — installing both MCPs, auth flow, prerequisites
+- **[`references/key-rules.md`](./references/key-rules.md)** — argument rules, amount formatting, tx ordering
+- **[`references/moonpay-tools.md`](./references/moonpay-tools.md)** — MoonPay MCP tool reference
+- **[`references/policies.md`](./references/policies.md)** — API usage and policies
+- **[`references/output-formats.md`](./references/output-formats.md)** — output formats for agent to follow to display the outpuets to user

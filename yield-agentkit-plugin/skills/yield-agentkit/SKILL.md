@@ -179,7 +179,15 @@ Perform a management action on an existing position (claim rewards, restake, cha
 
 ## Output Formatting
 
-→ See `references/output-formats.md` for all display rules, table formats, number formatting, badges, safety checklist, and action summary structure.
+For all display rules, number formatting, badges, tables, and action summaries, see **[`references/output-formats.md`](./references/output-formats.md)**.
+
+Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
+
+---
+
+## ⚠️ API Usage Policy
+
+You must follow the guidelines defined in `policies.md` for API usage, data fetching, and efficiency.
 
 ---
 

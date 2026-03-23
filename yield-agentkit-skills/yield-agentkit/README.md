@@ -1,7 +1,7 @@
 # Yield.xyz AgentKit Claude Skill
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
+
 > **The brain for on-chain yield agents.** This skill teaches Claude how to discover yields, build transactions, manage positions, and navigate the Yield.xyz API across 80+ networks — without hallucinating endpoints or guessing arguments.
 
 The skill works alongside the [Yield.xyz MCP server](https://mcp.yield.xyz/mcp), which provides the live tools. The skill provides the expertise: routing logic, rules, validator selection, transaction ordering, and safety checks.
@@ -175,6 +175,6 @@ The 7 MCP tools this skill orchestrates:
 
 ## Related
 
-- [Yield.xyz MCP Server](https://mcp.yield.xyz/mcp) — the live tools
+- [Yield.xyz AgentKit MCP Server](https://mcp.yield.xyz/mcp) — the live tools
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
-- [Yield.xyz Claude Plugin](../README.md) — installs skill + MCP in one command
+- [Yield.xyz AgentKit Claude Plugin](../README.md) — installs skill + MCP in one command

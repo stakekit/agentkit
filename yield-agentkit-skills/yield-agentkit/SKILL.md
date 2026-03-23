@@ -43,9 +43,15 @@ Modifying `unsignedTransaction` **will result in permanent loss of funds.**
 
 ## Output Formatting
 
-For all display rules, number formatting, badges, tables, and action summaries — see **[`references/output-formats.md`](./references/output-formats.md)**.
+For all display rules, number formatting, badges, tables, and action summaries, see **[`references/output-formats.md`](./references/output-formats.md)**.
 
 Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
+
+---
+
+## ⚠️ API Usage Policy
+
+You must follow the guidelines defined in **[`references/policies.md`](./references/policies.md)**` for API usage, data fetching, and efficiency.
 
 ---
 
@@ -58,7 +64,7 @@ List and filter yield opportunities across networks and tokens.
 - `network` — e.g. `"base"`, `"ethereum"`, `"arbitrum"`
 - `token` — e.g. `"USDC"`, `"ETH"`, `"WBTC"`
 - `type` — must be one of: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool` ⚠️ do not use display names like `liquid-staking` — use the exact enum values listed here
-- `limit` / `offset` — pagination (default limit: 20, max: 100)
+- `limit` / `offset` — pagination (default limit: 20, max: 50)
 - `status` — filter by `enter`/`exit` availability
 
 **Returns:** `{ total, offset, limit, items: YieldDto[] }`

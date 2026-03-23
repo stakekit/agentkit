@@ -1,4 +1,7 @@
 # Yield.xyz AgentKit — Claude Plugin & Skills
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
 
 The official Claude tooling for Yield.xyz — a Claude Code plugin, standalone skills, and connection guides for the Yield.xyz MCP Server.
 
@@ -59,6 +62,5 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 
 ## Resources
 
-- [Yield.xyz Docs](https://docs.yield.xyz)
-- [MCP Tool Reference](https://docs.yield.xyz/docs/tool-reference)
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview)
+- [MCP Tool Reference](https://docs.yield.xyz/docs/tool-reference)
