@@ -119,7 +119,7 @@ claude mcp remove yield-agentkit
 ## Folder structure
 
 ```
-yield-agentkit-skills/yield-agentkit/
+yield-agentkit-skills/skills/yield-agentkit/
 ├── SKILL.md                 # Main skill instructions (auto-loaded by Claude)
 ├── README.md                # This file
 └── references/

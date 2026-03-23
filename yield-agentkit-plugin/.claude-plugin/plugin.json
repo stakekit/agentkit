@@ -10,6 +10,6 @@
   "repository": "https://github.com/stakekit/agentkit",
   "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
   "components": {
-    "skills": ["/yield-agentkit"]
+    "skills": ["./yield-agentkit"]
   }
 }

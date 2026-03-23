@@ -237,7 +237,7 @@ Watch Claude:
 ## Folder structure
 
 ```
-skills/yield-agentkit-skills/yield-agentkit-moonpay/
+yield-agentkit-skills/skills/yield-agentkit-moonpay/
 ├── SKILL.md                    # Main skill — orchestrates both MCPs
 ├── README.md                   # This file
 └── references/
