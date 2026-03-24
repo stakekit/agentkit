@@ -11,7 +11,7 @@ List all local wallets and their addresses.
 - Call first — the returned address is used as `address` in all Yield.xyz calls
 - If empty, guide user to run `mp wallet create MyWallet`
 
-### `wallet_balance`
+### `token_balance_list`
 Get token balances for a wallet.
 - Use to verify the user has enough funds before calling `actions_enter`
 - Use to confirm a position was entered after hash submission
@@ -20,13 +20,13 @@ Get token balances for a wallet.
 
 ## Transaction signing
 
-### `wallet_send_transaction`
+### `transaction_sign` and `transaction_send`
 Sign and broadcast a transaction.
 
 **Critical rules:**
 - Pass `unsignedTransaction` from Yield.xyz exactly as received — no modifications
 - This is the ONLY way to sign — never attempt to sign outside MoonPay
-- Returns a `txHash` — capture this immediately for hash submission to Yield.xyz
+- Returns a `txHash`
 
 **Input:** the raw `unsignedTransaction` object from Yield.xyz `actions_enter` /
 `actions_exit` / `actions_manage` response
@@ -41,12 +41,20 @@ These are available but secondary for yield workflows:
 
 | Tool | Use |
 |---|---|
-| `swap` | Not needed for yield flows — Yield.xyz handles routing |
-| `bridge` | Only if user needs to move funds cross-chain before depositing |
-| `price` | Useful for showing USD value of a yield position |
-| `wallet_balance` | Confirm balance before and after entering a position |
+| `token_swap` | Swap tokens on the same chain. Builds, signs locally, broadcasts, and registers. |
+| `token_bridge` | Only if user needs to move funds cross-chain before depositing |
+| `token_retrieve` | Get token price and market data by token address |
+| `token_balance_list` | Confirm balance before and after entering a position |
 
 ---
+
+## Troubleshooting
+
+If stuck at any step, run `mp help` for a full list of available MoonPay CLI commands and their usage:
+
+```bash
+mp help
+```
 
 ## Auth flow (what to do if user is not logged in)
 

@@ -1,6 +1,6 @@
 # Setup Guide
 
-This skill requires two MCP servers: **Yield.xyz** and **MoonPay**. Follow the steps below in order. Each step includes a condition check — skip the step if the condition is already met.
+This skill requires two MCP servers: **Yield.xyz** and **MoonPay**. Follow the steps below in order. Each step includes a condition check, pause and ask the user when indicated.
 
 ---
 
@@ -42,12 +42,17 @@ npm install -g @moonpay/cli
 mp user retrieve
 ```
 
-- **If this succeeds** — the user is already logged in. Note the email from the output and skip to Step 3.
-- **If this fails** — proceed with the login flow below.
+- **If this fails** — the user is not logged in. Proceed with the [login flow](#login-flow) below.
+- **If this succeeds** — the user is already logged in. Show the user their email from the output, then **ask:**
+
+  > "You're already logged in as **\<email\>**. Do you want to continue with this account, or log in with a different email?"
+
+  - **If they want to continue** — skip to Step 3.
+  - **If they want to use a different account** — proceed with the [login flow](#login-flow) below.
 
 #### Login flow
 
-Run the login command with the user's email:
+Ask the user for their email, then run:
 
 ```bash
 mp login --email <user-email>
@@ -74,11 +79,13 @@ mp verify --email <user-email> --code <code-from-user>
 mp wallet list
 ```
 
-- **If wallets are listed** — show the output to the user. Note the EVM address (`0x...`) as it will be used as the wallet address in Yield.xyz.
-  - Ask the user if they want to use an existing wallet or create a new one.
-  - **If they want to use an existing wallet** — skip to Step 4.
-  - **If they want to create a new one** — proceed with wallet creation below.
-- **If no wallets exist** — proceed with wallet creation below.
+- **If no wallets exist** — proceed with [wallet creation](#wallet-creation) below.
+- **If wallets are listed** — show the wallet names and EVM addresses (`0x...`) to the user, then **ask:**
+
+  > "You already have the wallet(s) above. Do you want to use one of these, or create a new wallet?"
+
+  - **If they want to use an existing wallet** — confirm which wallet they'll use and note its EVM address for Yield.xyz. Skip to Step 4.
+  - **If they want to create a new one** — proceed with [wallet creation](#wallet-creation) below.
 
 #### Wallet creation
 
@@ -88,9 +95,7 @@ Ask the user for a wallet name, then run:
 mp wallet create --name <wallet-name>
 ```
 
-Confirm creation by running `mp wallet list` again and showing the output to the user. The EVM address (`0x...`) is the wallet address to use with Yield.xyz.
-
-> **Shortcut:** If the user was already logged in (Step 2 succeeded) **and** wallets already exist, skip directly to Step 4 — no login or wallet creation needed.
+Run `mp wallet list` again and show the output to the user. The EVM address (`0x...`) is the wallet address to use with Yield.xyz.
 
 ---
 
@@ -103,19 +108,6 @@ Run `claude mcp list` and check if `moonpay` is already registered.
 
 ```bash
 claude mcp add moonpay "mp" mcp
-```
-
-Alternatively, add it manually to `.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "moonpay": {
-      "command": "mp",
-      "args": ["mcp"]
-    }
-  }
-}
 ```
 
 ---
@@ -138,6 +130,16 @@ Both should return valid results.
 ## Supported chains (MoonPay)
 
 Ethereum, Base, Polygon, Arbitrum, Optimism, BNB, Avalanche, TRON, Solana, Bitcoin
+
+---
+
+## Troubleshooting
+
+If stuck at any step, run `mp help` for a full list of available MoonPay CLI commands and their usage:
+
+```bash
+mp help
+```
 
 ---
 

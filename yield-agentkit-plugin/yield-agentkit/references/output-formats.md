@@ -47,6 +47,22 @@ Showing top 10 of 76 — ask for more or filter by network/token.
 
 Badges go in the Protocol cell when applicable, e.g. `Morpho ⭐`.
 
+**Minimum TVL filter (apply before sorting):**
+
+Before sorting or displaying results, filter out yields below these TVL thresholds:
+
+| Token type | Min TVL |
+|---|---|
+| Stablecoins (USDC, USDT, DAI, USDE, etc.) | $500K |
+| ETH / LSTs (wETH, stETH, rETH, etc.) | $1M |
+| BTC / wrapped BTC (wBTC, cbBTC, etc.) | $500K |
+| Governance / altcoins (AAVE, CRV, etc.) | $100K |
+| Unknown / unlisted tokens | $100K |
+
+- If `statistics.tvlUsd` is `null`, `0`, or missing — **exclude by default**. 
+- If applying the filter leaves fewer than 3 results, lower the threshold by 50% and retry once, then note: `(TVL filter relaxed to $250K — limited results available)`.
+- Never silently include low-TVL yields — if a user explicitly asks for them, show with a ⚠️ Low TVL badge.
+
 **Sorting priority:**
 1. `rewardRate.total` descending — default, always
 2. `statistics.tvlUsd` descending — if user asks "safest" or "highest TVL"
@@ -140,12 +156,11 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 - Status: {status}
 
 **Transactions to sign** (in order):
-1. {step_description} — est. gas: {amount}
-2. {step_description} — est. gas: {amount}
+1. {step_description} — Complete Transaction hash
+2. {step_description} — Complete Transaction hash
 
 Sign and broadcast in the order above. Track at: {explorerUrl}
 
 - `synchronous` → sign all in order shown
 - `asynchronous` → *"A follow-up step may be needed. Return here to manage it."*
 - `batch` → *"These can be batched. Confirm your wallet supports batch transactions."*
-- If `isMessage === true` on any tx: *"Step N is a message signature, not an on-chain transaction."*

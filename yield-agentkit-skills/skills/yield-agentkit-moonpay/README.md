@@ -177,8 +177,6 @@ Look for `yield-agentkit-moonpay` in the skills list.
 What skills and MCPs do you have connected?
 ```
 
-If the skill is not listed, check the install path and re-run `./install.sh --project`.
-
 ### Step 3 — Test MoonPay auth independently
 
 Before testing the full flow, confirm MoonPay auth works:
@@ -196,7 +194,7 @@ If you get an auth error → ask Claude to re-authenticate: `Re-authenticate my 
 Find USDC yields on Base, limit 5
 ```
 
-If yields appear in a table → Yield.xyz MCP is working.
+If yields appear in a table → Yield.xyz AgentKit MCP is working.
 
 ### Step 5 — Test the combined flow (start small)
 
@@ -216,9 +214,9 @@ Watch Claude:
 1. Call `wallet_list` → get your address
 2. Call `yields_get` → inspect the schema
 3. Call `actions_enter` → build the transaction
-4. Call `wallet_send_transaction` → sign via MoonPay
-5. Submit the hash back to Yield.xyz
-6. Poll until `CONFIRMED`
+4. Call `transaction_sign` → sign via MoonPay
+5. Call `transaction_send` → broadcast the transaction via MoonPay
+6. Wait for the transaction hashes.
 7. Call `yields_get_balances` → show your position
 
 ### Step 6 — Debugging
@@ -227,7 +225,7 @@ Watch Claude:
 |---|---|
 | Skill not triggering | Run `/yield-agentkit-moonpay find ETH yields` to force-invoke |
 | MoonPay auth error | Ask Claude: `Re-authenticate my MoonPay wallet` |
-| `wallet_send_transaction` fails | Check wallet has enough balance: `mp wallet list` |
+| `transaction_sign` fails | Check wallet has enough balance: `mp wallet list` |
 | Hash not submitted | Check Claude called `PUT /v1/transactions/{id}/submit-hash` in tool calls |
 | Balances not updating | Hash submission was skipped — re-enter position or submit manually |
 | Skill missing from `/context` | Wrong install path — check `ls .claude/skills/` |

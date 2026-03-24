@@ -22,28 +22,34 @@ A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MC
 
 ### Yield.xyz AgentKit Claude Skills
 
-Standalone Claude Code skills — install individually without the plugin.
+Standalone skills, can be installed independently.
+
+
+```bash
+npx skills add https://github.com/stakekit/agentkit
+```
 
 | Skill | Description |
 |---|---|
 | [`yield-agentkit`](./yield-agentkit-skills/skills/yield-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
-| [`yield-agentkit-moonpay`](./yield-agentkit-skills/skills/yield-agentkit-moonpay/) | End-to-end yield flow — Yield.xyz builds transactions, MoonPay signs and broadcasts |
+| [`yield-agentkit-moonpay`](./yield-agentkit-skills/skills/yield-agentkit-moonpay/) | End-to-end yield flow — Yield.xyz discover yields and builds transactions, MoonPay signs and broadcasts |
+
 
 ---
 
-## MCP Server
+### Yield.xyz AgentKit MCP Server
 
 The Yield.xyz AgentKit MCP Server exposes 7 tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
 
 **Endpoint:** `https://mcp.yield.xyz/mcp`
 
-### Connect via Claude Code
+### Option 1: Connect via Claude Code
 
 ```bash
 claude mcp add --transport http yield-agentkit https://mcp.yield.xyz/mcp
 ```
 
-### Connect via Claude Desktop
+### Option 2: Connect via Claude Desktop
 
 Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**):
 
@@ -61,6 +67,14 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 → [Full connection guide and all methods](https://docs.yield.xyz/docs/mcp-server)
 
 ---
+
+## Risk Disclosure
+
+Yield.xyz AgentKit is a software tool for discovering yield opportunities and constructing transactions via the Yield.xyz infrastructure. It is not a financial advisor. Nothing in this repository constitutes investment advice or a recommendation to transact in any digital asset.
+
+All actions are initiated at your sole discretion. Digital assets and DeFi involve substantial risk, including potential total loss of funds. Only use funds you can afford to lose.
+
+By using these tools, you acknowledge and accept these risks.
 
 ## Resources
 

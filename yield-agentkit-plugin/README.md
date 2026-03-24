@@ -107,11 +107,3 @@ Yield.xyz is **SOC 2 compliant** ([trust.yield.xyz](https://trust.yield.xyz)). T
 
 ---
 
-## Risk Disclosure
-
-YieldAgent is a software tool for discovering yield opportunities and constructing transactions via the Yield.xyz infrastructure. It is not a financial advisor. Nothing in this repository constitutes investment advice or a recommendation to transact in any digital asset.
-
-All actions are initiated at your sole discretion. Digital assets and DeFi involve substantial risk, including potential total loss of funds. Only use funds you can afford to lose.
-
-By using this plugin, you acknowledge and accept these risks.
-

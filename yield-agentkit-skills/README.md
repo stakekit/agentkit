@@ -14,7 +14,7 @@ Each skill is a self-contained directory with a `SKILL.md` and reference files â
 
 Claude becomes an expert on the Yield.xyz API â€” finding yields, inspecting schemas, building enter/exit/manage transactions, checking balances, and guiding through the full position lifecycle across 80+ networks.
 
-Requires: Yield.xyz MCP
+Requires: Yield.xyz AgentKit MCP
 
 ---
 
