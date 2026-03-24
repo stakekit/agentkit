@@ -47,11 +47,13 @@ For all display rules, number formatting, badges, tables, and action summaries, 
 
 Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
 
+**MANDATORY: Before displaying any results, read `references/output-formats.md` using the Read tool. Do not skip this step.**  
+
 ---
 
 ## ⚠️ API Usage Policy
 
-You must follow the guidelines defined in **[`references/policies.md`](./references/policies.md)**` for API usage, data fetching, and efficiency.
+**You must follow** the guidelines defined in **[`references/policies.md`](./references/policies.md)**` for API usage, data fetching, and efficiency.
 
 ---
 

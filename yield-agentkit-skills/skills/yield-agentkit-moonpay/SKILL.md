@@ -17,7 +17,7 @@ transactions, MoonPay signs and broadcasts them.
 ## ⚠️ Never Call Yield.xyz API Directly
 
 **Never call the Yield.xyz API directly** (e.g. via curl or HTTP requests). Direct API calls require an API key and will return `401 Unauthorized`. All Yield.xyz data and transactions must go through the connected MCP server, no API key is needed when using MCP.
-```
+
 
 ## ⚠️ Critical: Never Modify Transactions
 
@@ -52,11 +52,13 @@ For all Yield.xyz tool display rules, number formatting, badges, tables, and act
 
 Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
 
+**MANDATORY: Before querying anything from Yield.xyz AgentKit MCP read `references/input-format.md` and before displaying any results, read `references/output-formats.md` using the Read tool. Do not skip this step.**  
+
 ---
 
 ## ⚠️ API Usage Policy
 
-You must follow the guidelines defined in `policies.md` for Yield AgentKit MCP API usage, data fetching, and efficiency.
+**You must follow** the guidelines defined in `policies.md` for Yield AgentKit MCP API usage, data fetching, and efficiency.
 
 ---
 

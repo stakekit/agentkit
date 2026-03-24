@@ -1,6 +1,6 @@
 # Output Formats
 
-All display rules for Yield.xyz Agent tool outputs. Always follow these formats — never dump raw JSON or plain comma-separated data.
+All display rules for Yield.xyz Agentkit tool outputs. Always follow these formats — never dump raw JSON or plain comma-separated data.
 
 ---
 
