@@ -49,6 +49,9 @@ Badges go in the Protocol cell when applicable, e.g. `Morpho ⭐`.
 
 **Minimum TVL filter (apply before sorting):**
 
+
+- If more than 50% of results in a table have no TVL data (`null`, `0`, or missing), omit the TVL column entirely rather than showing a column of dashes.
+
 Before sorting or displaying results, filter out yields below these TVL thresholds:
 
 | Token type | Min TVL |

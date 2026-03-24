@@ -23,7 +23,7 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 |---|---|---|---|
 | `network` | `string` | No | Lowercase. e.g. `"base"`, `"ethereum"`, `"arbitrum"` |
 | `token` | `string` | No | Uppercase. e.g. `"USDC"`, `"ETH"`, `"WBTC"` |
-| `type` | `string` (enum) | No | Must be one of: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool` |
+| `type` | `string` (enum) | No | Must be one of: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. These are the **only valid types** — no others exist. If the user asks for a type not in this list, map it to the nearest match (e.g. "liquid staking" → `staking`, "earn" → `vault`, "LP" → `liquidity_pool`) or confirm with the user before calling the tool. |
 | `limit` | `number` | No | ✅ Integer. Default: `20`, max: `50`. **Never pass as string.** |
 | `offset` | `number` | No | ✅ Integer. Default: `0`. **Never pass as string.** |
 | `status` | `string` | No | `"enter"` or `"exit"` |

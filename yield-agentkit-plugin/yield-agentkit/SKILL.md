@@ -47,7 +47,7 @@ List and filter yield opportunities across networks and tokens.
 **Key parameters:**
 - `network` — e.g. `"base"`, `"ethereum"`, `"arbitrum"`
 - `token` — e.g. `"USDC"`, `"ETH"`, `"WBTC"`
-- `type` — must be one of: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool` ⚠️ do not use display names like `liquid-staking` — use the exact enum values listed here
+- `type` — must be one of: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. These are the **only valid types** — no others exist. If the user asks for a type not in this list, map it to the nearest match (e.g. "liquid staking" → `staking`, "earn" → `vault`, "LP" → `liquidity_pool`) or confirm with the user before calling the tool.
 - `limit` / `offset` — pagination (default limit: 20, max: 50)
 - `status` — filter by `enter`/`exit` availability
 
