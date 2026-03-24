@@ -32,7 +32,7 @@ npx skills add https://github.com/stakekit/agentkit
 | Skill | Description |
 |---|---|
 | [`yield-agentkit`](./yield-agentkit-skills/skills/yield-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
-
+| [`yield-agentkit-moonpay`](./yield-agentkit-skills/skills/yield-agentkit-moonpay/) | End-to-end yield flow — Yield.xyz discover yields and builds transactions, MoonPay signs and broadcasts |
 
 
 ---
