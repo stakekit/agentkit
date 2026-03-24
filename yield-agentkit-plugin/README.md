@@ -80,10 +80,9 @@ When you install the plugin, both are wired automatically in one step.
 
 1. **Always fetch the yield schema before acting** — the API is self-documenting
 2. **Amounts are human-readable** — `"100"` = 100 USDC, `"1"` = 1 ETH
-3. **Always submit the tx hash after broadcasting** — `PUT /v1/transactions/{txId}/submit-hash`
-4. **Never modify `unsignedTransaction`** — sign exactly what the API returns
-5. **Run a safety checklist before enter/exit** — lockup, cooldown, KYC, min/max limits
-6. **Execute transactions in `stepIndex` order** — wait for CONFIRMED between each
+3. **Never modify `unsignedTransaction`** — sign exactly what the API returns
+4. **Run a safety checklist before enter/exit** — lockup, cooldown, KYC, min/max limits
+5. **Execute transactions in `stepIndex` order** — wait for CONFIRMED between each
 
 ---
 

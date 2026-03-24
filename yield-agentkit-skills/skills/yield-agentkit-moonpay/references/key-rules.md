@@ -19,9 +19,6 @@
 5. **Execute transactions in exact `stepIndex` order.** Wait for `CONFIRMED`
    before proceeding to the next transaction.
 
-6. **Always submit the hash after broadcasting — no exceptions.**
-   `PUT /v1/transactions/{txId}/submit-hash` with `{ "hash": txHash }`.
-   Yield.xyz will not update balances until this is done.
 
 ---
 

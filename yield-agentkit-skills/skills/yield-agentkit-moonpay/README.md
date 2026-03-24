@@ -226,7 +226,6 @@ Watch Claude:
 | Skill not triggering | Run `/yield-agentkit-moonpay find ETH yields` to force-invoke |
 | MoonPay auth error | Ask Claude: `Re-authenticate my MoonPay wallet` |
 | `transaction_sign` fails | Check wallet has enough balance: `mp wallet list` |
-| Hash not submitted | Check Claude called `PUT /v1/transactions/{id}/submit-hash` in tool calls |
 | Balances not updating | Hash submission was skipped — re-enter position or submit manually |
 | Skill missing from `/context` | Wrong install path — check `ls .claude/skills/` |
 
