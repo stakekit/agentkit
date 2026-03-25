@@ -1,12 +1,11 @@
-# Yield.xyz Agent — Claude Code Plugin
+# Yield.xyz AgentKit — Claude Code Plugin
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
 **The yield layer for the agent era.**
 
-2,988 yield opportunities. 75+ chains. One unified interface. Staking, lending, vaults, restaking, and liquidity pools — all via the Yield.xyz MCP server. Secure, controlled access to on-chain yield for AI agents.
+2,988 yield opportunities. 80+ networks. One unified interface. Staking, lending, vaults, restaking, and liquidity pools, all via the Yield.xyz AgentKit MCP server. Secure, controlled access to on-chain yield for AI agents.
 
 Non-custodial. Schema-driven. Agent-native.
 
@@ -23,7 +22,7 @@ Non-custodial. Schema-driven. Agent-native.
 
 **Step 2 — Install the plugin:**
 ```bash
-/plugin install yield_xyz_agent@stakekit
+/plugin install yield_agentkit_agent@agentkit
 ```
 
 Restart Claude Code. That's it — just talk to it:
@@ -50,7 +49,7 @@ Restart Claude Code. That's it — just talk to it:
 
 ## Available MCP Tools
 
-The plugin connects to the Yield.xyz MCP server at `https://mcp.yield.xyz/mcp` and exposes these tools natively in Claude Code:
+The plugin connects to the Yield.xyz AgentKit MCP server at `https://mcp.yield.xyz/mcp` and exposes these tools natively in Claude Code:
 
 | Tool | Description |
 |---|---|
@@ -69,7 +68,7 @@ The plugin connects to the Yield.xyz MCP server at `https://mcp.yield.xyz/mcp` a
 
 This plugin bundles two things together:
 
-**1. Skill (`skills/yield-xyz-agent/SKILL.md`)** — Instructs Claude on how to behave: output formatting, pre-action safety checklists, workflow patterns, and display rules.
+**1. Skill (`yield-agentkit/SKILL.md`)** — Instructs Claude on how to behave: output formatting, pre-action safety checklists, workflow patterns, and display rules.
 
 **2. MCP server (`.mcp.json`)** — Registers `https://mcp.yield.xyz/mcp` as a native tool server so Claude calls `yields_get_all`, `actions_enter`, etc. directly — no curl, no bash.
 
@@ -81,10 +80,9 @@ When you install the plugin, both are wired automatically in one step.
 
 1. **Always fetch the yield schema before acting** — the API is self-documenting
 2. **Amounts are human-readable** — `"100"` = 100 USDC, `"1"` = 1 ETH
-3. **Always submit the tx hash after broadcasting** — `PUT /v1/transactions/{txId}/submit-hash`
-4. **Never modify `unsignedTransaction`** — sign exactly what the API returns
-5. **Run a safety checklist before enter/exit** — lockup, cooldown, KYC, min/max limits
-6. **Execute transactions in `stepIndex` order** — wait for CONFIRMED between each
+3. **Never modify `unsignedTransaction`** — sign exactly what the API returns
+4. **Run a safety checklist before enter/exit** — lockup, cooldown, KYC, min/max limits
+5. **Execute transactions in `stepIndex` order** — wait for CONFIRMED between each
 
 ---
 
@@ -103,22 +101,8 @@ Yield.xyz is **SOC 2 compliant** ([trust.yield.xyz](https://trust.yield.xyz)). T
 
 ## Links
 
-- [Yield.xyz](https://yield.xyz)
-- [MCP Server Docs](https://docs.yield.xyz)
-- [GitHub](https://github.com/yield-xyz/agentkit)
+- [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview)
+- [GitHub](https://github.com/stakekit/agentkit)
 
 ---
 
-## Risk Disclosure
-
-YieldAgent is a software tool for discovering yield opportunities and constructing transactions via the Yield.xyz infrastructure. It is not a financial advisor. Nothing in this repository constitutes investment advice or a recommendation to transact in any digital asset.
-
-All actions are initiated at your sole discretion. Digital assets and DeFi involve substantial risk, including potential total loss of funds. Only use funds you can afford to lose.
-
-By using this plugin, you acknowledge and accept these risks.
-
----
-
-## License
-
-Apache 2.0
