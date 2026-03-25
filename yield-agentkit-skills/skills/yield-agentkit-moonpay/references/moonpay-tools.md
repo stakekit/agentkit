@@ -31,9 +31,8 @@ For each transaction in order:
 ```bash
    node -e "
      const { ethers } = require('ethers');
-     const tx = <unsignedTransaction JSON>;
-     delete tx.from;
-     const serialized = ethers.Transaction.from(tx).unsignedSerialized;
+     const { from, ...txToSerialize } = unsignedTransaction;
+     const serialized = ethers.Transaction.from(txToSerialize).unsignedSerialized;
      const b64 = Buffer.from(serialized.slice(2), 'hex').toString('base64');
      console.log(b64);
    "
