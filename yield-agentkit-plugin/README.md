@@ -68,7 +68,7 @@ The plugin connects to the Yield.xyz AgentKit MCP server at `https://mcp.yield.x
 
 This plugin bundles two things together:
 
-**1. Skill (`skills/yield-agentkit/SKILL.md`)** — Instructs Claude on how to behave: output formatting, pre-action safety checklists, workflow patterns, and display rules.
+**1. Skill (`yield-agentkit/SKILL.md`)** — Instructs Claude on how to behave: output formatting, pre-action safety checklists, workflow patterns, and display rules.
 
 **2. MCP server (`.mcp.json`)** — Registers `https://mcp.yield.xyz/mcp` as a native tool server so Claude calls `yields_get_all`, `actions_enter`, etc. directly — no curl, no bash.
 

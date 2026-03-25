@@ -53,7 +53,7 @@ Never dump raw JSON or plain comma-separated data. Always follow the formats def
 
 ## ⚠️ API Usage Policy
 
-**You must follow** the guidelines defined in **[`references/policies.md`](./references/policies.md)**` for API usage, data fetching, and efficiency.
+**You must follow** the guidelines defined in **[`references/policies.md`](./references/policies.md)** for API usage, data fetching, and efficiency.
 
 ---
 

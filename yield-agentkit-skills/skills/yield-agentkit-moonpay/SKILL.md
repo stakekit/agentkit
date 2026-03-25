@@ -19,16 +19,6 @@ transactions, MoonPay signs and broadcasts them.
 **Never call the Yield.xyz API directly** (e.g. via curl or HTTP requests). Direct API calls require an API key and will return `401 Unauthorized`. All Yield.xyz data and transactions must go through the connected MCP server, no API key is needed when using MCP.
 
 
-## ⚠️ Critical: Never Modify Transactions
-
-> **DO NOT modify `unsignedTransaction` returned by Yield.xyz AgentKit MCP under any
-> circumstances.** Pass it to MoonPay exactly as received — no changes to
-> addresses, amounts, data, gas, or encoding.
->
-> Modifying `unsignedTransaction` WILL result in permanent loss of funds.
-
----
-
 ## Two MCPs, One Flow
 
 This skill requires both MCP servers to be connected:
