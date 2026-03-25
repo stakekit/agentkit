@@ -31,7 +31,7 @@ Run `claude mcp list` and confirm `yield-agentkit` appears in the output.
 
 Then run a quick smoke-test:
 
-```
+```text
 Find the best USDC yields on Base
 ```
 

@@ -26,7 +26,7 @@ All display rules for Yield.xyz Agentkit tool outputs. Always follow these forma
 
 ## yields_get_all — Listing Yields
 
-Default: call with `limit: 50`, sort client-side by `rewardRate.total` descending, show **top 10**.
+Default: call with `limit: 20`, sort client-side by `rewardRate.total` descending, show **top 10**.
 
 Always display as a table, never as individual cards:
 

@@ -18,20 +18,41 @@ Get token balances for a wallet.
 
 ---
 
-## Transaction signing
+## Transaction signing and broadcasting
 
 ### `transaction_sign` and `transaction_send`
 Sign and broadcast a transaction.
 
-**Critical rules:**
-- Pass `unsignedTransaction` from Yield.xyz exactly as received — no modifications
-- This is the ONLY way to sign — never attempt to sign outside MoonPay
-- Returns a `txHash`
+For each transaction in order:
 
-**Input:** the raw `unsignedTransaction` object from Yield.xyz `actions_enter` /
-`actions_exit` / `actions_manage` response
+1. **Serialize** the `unsignedTransaction` JSON from Yield.xyz AgentKit MCP into base64 RLP.
+   MoonPay's `transaction_sign` expects base64, not raw JSON.
+   Use this script — keep it in memory and reuse for every transaction that includes getting unsigned transaction from yield.xyz and signing via moonpay:
+```bash
+   node -e "
+     const { ethers } = require('ethers');
+     const tx = <unsignedTransaction JSON>;
+     delete tx.from;
+     const serialized = ethers.Transaction.from(tx).unsignedSerialized;
+     const b64 = Buffer.from(serialized.slice(2), 'hex').toString('base64');
+     console.log(b64);
+   "
+```
 
-**Output:** `{ txHash: "0x..." }`
+   Key points:
+   - Serialization is a format conversion only — **never change any value** (amounts, addresses, gas, nonce, data) from the original `unsignedTransaction`. Only`from` must be deleted — ethers throws if it's present in an unsigned tx
+   - If serialization fails for any reason, **stop immediately and flag to the user** — do not retry with modified values, or proceed to signing.
+   - `ethers.Transaction.from(tx).unsignedSerialized` RLP-encodes the EIP-1559 tx (prefixed with `0x02`)
+   - `.slice(2)` strips the `0x` prefix before converting hex → base64
+   - The base64 string is what `transaction_sign` expects
+
+2. Pass the base64 string to MoonPay's `transaction_sign`
+3. Pass the signed transaction to MoonPay's `transaction_send` to broadcast
+4. Capture the returned `txHash`
+5. Only proceed to the next transaction after the previous one is confirmed
+
+**Never pass raw JSON to `transaction_sign`.** Always serialize to base64 RLP first.
+
 
 ---
 

@@ -1,7 +1,7 @@
 # Yield.xyz AgentKit — Claude Code Plugin
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
 **The yield layer for the agent era.**
 

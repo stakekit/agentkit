@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit Claude Skill
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yield-xyz/agentkit)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
 > **The brain for on-chain yield agents.** This skill teaches Claude how to discover yields, build transactions, manage positions, and navigate the Yield.xyz API across 80+ networks — without hallucinating endpoints or guessing arguments.
 
@@ -124,7 +124,7 @@ yield-agentkit-skills/skills/yield-agentkit/
 ├── README.md                # This file
 └── references/
     ├── setup.md             # Agent-executed setup guide
-    ├── key_rules.md         # Core rules: tool mapping, amounts, tx ordering, validator selection
+    ├── key-rules.md         # Core rules: tool mapping, amounts, tx ordering, validator selection
     ├── output-formats.md    # Display rules for yields, tables, and summaries
     └── policies.md          # API usage and efficiency guidelines
 ```

@@ -112,35 +112,12 @@ The response contains `transactions[]` ordered by `stepIndex`.
 
 ### Step 6 — Sign and broadcast via MoonPay
 
-For each transaction in order:
+**This step is critical. Read `references/moonpay-tools.md` in full before proceeding.**
+> Mistakes here result in permanent loss of funds or a silent failure
 
-1. **Serialize** the `unsignedTransaction` JSON from Yield.xyz AgentKit MCP into base64 RLP.
-   MoonPay's `transaction_sign` expects base64, not raw JSON.
-   Use this script — keep it in memory and reuse for every transaction that includes getting unsigned tranasction from yield.xyz and signing via moonpay:
-```bash
-   node -e "
-     const { ethers } = require('ethers');
-     const tx = <unsignedTransaction JSON>;
-     delete tx.from;
-     const serialized = ethers.Transaction.from(tx).unsignedSerialized;
-     const b64 = Buffer.from(serialized.slice(2), 'hex').toString('base64');
-     console.log(b64);
-   "
-```
-
-   Key points:
-   - Serialization is a format conversion only — **never change any value** (amounts, addresses, gas, nonce, data) from the original `unsignedTransaction`. Only`from` must be deleted — ethers throws if it's present in an unsigned tx
-   - If serialization fails for any reason, **stop immediately and flag to the user** — do not retry with modified values, or proceed to signing.
-   - `ethers.Transaction.from(tx).unsignedSerialized` RLP-encodes the EIP-1559 tx (prefixed with `0x02`)
-   - `.slice(2)` strips the `0x` prefix before converting hex → base64
-   - The base64 string is what `transaction_sign` expects
-
-2. Pass the base64 string to MoonPay's `transaction_sign`
-3. Pass the signed transaction to MoonPay's `transaction_send` to broadcast
-4. Capture the returned `txHash`
-5. Only proceed to the next transaction after the previous one is confirmed
-
-**Never pass raw JSON to `transaction_sign`.** Always serialize to base64 RLP first.
+You now have `transactions[]` from Step 5, ordered by `stepIndex`.
+Execute each transaction **sequentially**, never in parallel, never out of order.
+Do not begin transaction N+1 until transaction N is `CONFIRMED`.
 
 ### Step 7 — Confirm
 
