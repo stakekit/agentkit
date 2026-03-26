@@ -1,6 +1,6 @@
 # Privy Transactions
 
-How to pass `unsignedTransaction` objects from the yield.xyz AgentKit MCP
+How to pass `unsignedTransaction` objects from the Yield.xyz AgentKit MCP
 to Privy for signing and broadcast.
 
 ---

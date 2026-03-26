@@ -1,6 +1,6 @@
 # yield.xyz MCP Tools
 
-All 7 tools exposed by the yield.xyz AgentKit MCP server. Use these
+All 7 tools exposed by the Yield.xyz AgentKit MCP server. Use these
 tools exclusively for all yield.xyz operations — never call the
 yield.xyz REST API directly with curl.
 

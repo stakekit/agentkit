@@ -1,6 +1,6 @@
-# yield.xyz AgentKit × Privy Skill
+# Yield.xyz AgentKit × Privy Skill
 
-> **End-to-end on-chain yield, fully in Claude.** This skill combines yield.xyz's yield discovery and transaction building with Privy's wallet infrastructure, policy enforcement, and transaction signing — so you can go from "find me the best USDC yield on Base" to a confirmed on-chain position without leaving your AI assistant.
+> **End-to-end on-chain yield, fully in Claude.** This skill combines Yield.xyz's yield discovery and transaction building with Privy's wallet infrastructure, policy enforcement, and transaction signing — so you can go from "find me the best USDC yield on Base" to a confirmed on-chain position without leaving your AI assistant.
 
 ---
 
@@ -12,7 +12,7 @@ One MCP server, one wallet layer, one seamless flow:
 User prompt
     │
     ▼
-yield.xyz AgentKit MCP              Privy Wallet Layer
+Yield.xyz AgentKit MCP              Privy Wallet Layer
 ──────────────────────              ──────────────────
 yields_get_all             →    check wallet balance
 yields_get                 →    inspect position schema
@@ -22,7 +22,7 @@ submit-hash                ←    hash returned from Privy
 yields_get_balances             confirm position on-chain
 ```
 
-**yield.xyz AgentKit MCP** handles: yield discovery, schema validation, transaction building  
+**Yield.xyz AgentKit MCP** handles: yield discovery, schema validation, transaction building  
 **Privy** handles: wallet creation, policy enforcement (TEE), signing, broadcasting
 
 ---
@@ -70,7 +70,7 @@ Set up the yield-agentkit-privy skill
 ```
 
 Claude will read `SKILL.md` and automatically:
-- Register the yield.xyz AgentKit MCP server
+- Register the Yield.xyz AgentKit MCP server
 - Ask for your Privy App ID and App Secret
 - Ask which workflow you want (Autonomous or Semi-Autonomous)
 - Walk you through policy configuration (recommended)
@@ -157,7 +157,7 @@ back to yield.xyz after broadcasting.
 Privy supports signing on: **Ethereum, Base, Polygon, Arbitrum, Optimism,
 BNB Chain, Avalanche, Solana, and more**
 
-yield.xyz supports **80+ networks** — the overlap covers all major EVM chains
+Yield.xyz supports **80+ networks** — the overlap covers all major EVM chains
 and Solana where most yield opportunities exist.
 
 ---
@@ -202,13 +202,13 @@ curl -s "https://api.privy.io/v1/wallets" \
 If you see `{"data": [...]}` → credentials are valid and ready.  
 If you get a 401 → check your App ID and Secret at [dashboard.privy.io](https://dashboard.privy.io).
 
-### Step 4 — Test yield.xyz independently
+### Step 4 — Test Yield.xyz independently
 
 ```
 Find USDC yields on Base, limit 5
 ```
 
-If yields appear in a table → yield.xyz AgentKit MCP is working.
+If yields appear in a table → Yield.xyz AgentKit MCP is working.
 
 ### Step 5 — Test the combined flow (start small)
 
@@ -253,7 +253,7 @@ yield-agentkit-skills/skills/yield-agentkit-privy/
 ├── README.md                       # This file
 └── references/
     ├── architecture.md             # Full system diagram and end-to-end flow
-    ├── yield-mcp-tools.md          # yield.xyz AgentKit MCP tool reference
+    ├── yield-mcp-tools.md          # Yield.xyz AgentKit MCP tool reference
     ├── yield-input-format.md       # Exact input parameters for each MCP tool
     ├── yield-output-format.md      # Format for displaying results to the user
     ├── privy-policies.md           # Policy templates, rule shapes, conditions
@@ -268,8 +268,8 @@ yield-agentkit-skills/skills/yield-agentkit-privy/
 
 ## Related
 
-- [yield.xyz AgentKit MCP](https://mcp.yield.xyz/mcp) — yield tools
-- [yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
+- [Yield.xyz AgentKit MCP](https://mcp.yield.xyz/mcp) — yield tools
+- [Yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
 - [Privy docs — Manual approvals](https://docs.privy.io/controls/dashboard/overview) — intents API reference
 - [Privy dashboard](https://dashboard.privy.io) — wallet and policy management
 - [yield AgentKit + MoonPay Skill](../yield-agentkit-moonpay/) — MoonPay wallet variant

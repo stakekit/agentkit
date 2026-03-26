@@ -16,7 +16,7 @@ together in a single end-to-end agent loop.
           │                                    │
           ▼                                    ▼
 ┌──────────────────────┐         ┌──────────────────────────────┐
-│  yield.xyz AgentKit  │         │   Privy Wallet Layer         │
+│  Yield.xyz AgentKit  │         │   Privy Wallet Layer         │
 │  MCP Server          │         │                              │
 │                      │         │  wallet creation             │
 │  yield discovery     │         │  policy enforcement (TEE)    │

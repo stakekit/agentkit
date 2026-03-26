@@ -1,6 +1,6 @@
 # Examples
 
-End-to-end examples covering the most common yield.xyz AgentKit + Privy
+End-to-end examples covering the most common Yield.xyz AgentKit + Privy
 flows. Each example shows the full agent reasoning and action sequence.
 
 ---

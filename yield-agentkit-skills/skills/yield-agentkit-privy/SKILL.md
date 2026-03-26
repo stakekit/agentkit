@@ -1,7 +1,7 @@
 ---
 name: yield-agentkit-privy
 description:
-  Full DeFi yield agent powered by yield.xyz and Privy. Discovers yields, builds transactions via the yield.xyz AgentKit MCP, and signs and broadcasts them via Privy's policy-enforced wallet infrastructure. Use when the user wants to find yields, stake, lend, deposit into vaults, check balances, claim rewards, exit positions, or manage any on-chain yield position across 80+ networks — with a secured agent wallet.
+  Full DeFi yield agent powered by yield.xyz and Privy. Discovers yields, builds transactions via the Yield.xyz AgentKit MCP, and signs and broadcasts them via Privy's policy-enforced wallet infrastructure. Use when the user wants to find yields, stake, lend, deposit into vaults, check balances, claim rewards, exit positions, or manage any on-chain yield position across 80+ networks — with a secured agent wallet.
 metadata:
   claude:
     emoji: "📈"
@@ -15,7 +15,7 @@ metadata:
 
 # Yield.xyz AgentKit + Privy
 
-An end-to-end DeFi yield agent. The yield.xyz AgentKit MCP discovers
+An end-to-end DeFi yield agent. The Yield.xyz AgentKit MCP discovers
 yields and builds unsigned transactions. Privy's wallet infrastructure
 holds the key, enforces policy rules, and signs and broadcasts
 those transactions.
@@ -24,7 +24,7 @@ those transactions.
 
 ## ⚠️ CRITICAL: Never Modify Unsigned Transactions
 
-> **DO NOT MODIFY `unsignedTransaction` returned by the yield.xyz AgentKit MCP
+> **DO NOT MODIFY `unsignedTransaction` returned by the Yield.xyz AgentKit MCP
 > UNDER ANY CIRCUMSTANCES.**
 >
 > Do not change addresses, amounts, fees, encoding, or any field on
@@ -58,7 +58,7 @@ signing operation. The key never leaves the TEE.
 
 ```
 User prompt
-  → yield.xyz AgentKit MCP builds unsignedTransaction
+  → Yield.xyz AgentKit MCP builds unsignedTransaction
   → Privy (checks policy rules)
   → Privy signs + broadcasts
   → yield.xyz hash submitted + confirmed
@@ -130,7 +130,7 @@ Once the user selects, proceed to the corresponding setup section:
 
 ## Onboarding: Autonomous Workflow
 
-### Step 1 — Register the yield.xyz AgentKit MCP
+### Step 1 — Register the Yield.xyz AgentKit MCP
 
 Execute this automatically — do not ask the user to run it:
 
@@ -145,13 +145,13 @@ claude mcp list
 ```
 
 If `yield-agentkit` appears, confirm to the user:
-> "I have registered the yield.xyz AgentKit MCP. You can verify it is
+> "I have registered the Yield.xyz AgentKit MCP. You can verify it is
 > connected by asking me: Do you have the yield MCP connected?"
 
 If it does not appear, report the error and retry once before asking
 the user to intervene.
 
-> **Mandatory — read before using any yield.xyz AgentKit MCP tool:**
+> **Mandatory — read before using any Yield.xyz AgentKit MCP tool:**
 >
 > - **`{baseDir}/references/yield-input-format.md`** — defines the exact
 >   parameters to pass when calling each MCP tool. Always consult this
@@ -194,7 +194,7 @@ The user can now issue DeFi instructions directly:
 
 ## Key Rules
 
-### yield.xyz AgentKit MCP
+### Yield.xyz AgentKit MCP
 
 > **The MCP is self-documenting.** Every yield describes its own
 > requirements. Before taking any action, always call `yields_get`
