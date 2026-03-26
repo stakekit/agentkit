@@ -142,7 +142,6 @@ the agent can proceed:
 
 | Action | Why Manual |
 |---|---|
-| Get Privy App ID + App Secret | Account-bound |
 | Fund the agent wallet | Requires an existing external wallet |
 | Invite approver to Privy app *(semi-autonomous)* | Invitation tied to authenticated user account |
 | Complete MFA on Privy dashboard *(semi-autonomous)* | Device-bound |

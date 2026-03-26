@@ -10,12 +10,12 @@ flows. Each example shows the full agent reasoning and action sequence.
 **User:** I want to start earning yield on my USDC on Base.
 
 **Agent steps:**
-1. MCP registered? Run `claude mcp list` — confirms `yield-xyz` present
-2. Asks for `PRIVY_APP_ID` and `PRIVY_APP_SECRET` → stored
+1. MCP registered? Run `claude mcp list` — confirms `yield-agentkit` present
+2. Check privy already configured.
 3. Presents workflow choice (Autonomous selected)
 4. Presents policy templates → user picks Conservative
 5. Creates policy via `POST https://api.privy.io/v1/policies` → stores `PRIVY_POLICY_ID`
-6. Creates wallet via `POST https://api.privy.io/v1/wallets` → stores `PRIVY_WALLET_ID`, shows address
+6. Creates wallet via `POST https://api.privy.io/v1/wallets` , shows address
 7. Tells user to fund it
 
 **User:** I've sent 500 USDC. Can you find the best yield?
@@ -42,7 +42,6 @@ flows. Each example shows the full agent reasoning and action sequence.
 3. MCP returns 2 transactions (approval + deposit)
 4. For each transaction:
    - POST to Privy RPC → get hash
-   - PUT submit-hash to yield.xyz
    - Poll until CONFIRMED
 5. Confirms: "Done. 500 USDC is now earning 5.21% APY in Aave V3 on Base."
 
@@ -63,7 +62,7 @@ flows. Each example shows the full agent reasoning and action sequence.
 
 **Agent steps:**
 1. Calls `actions_manage("base-usdc-aave-v3-lending", "0x...", "CLAIM_REWARDS", "eyJ...")`
-2. Single transaction: POST to Privy → submit hash → CONFIRMED
+2. Single transaction: POST to Privy → Poll status → CONFIRMED
 3. Confirms: "Rewards claimed. Hash: `0x...`"
 
 ---
@@ -198,14 +197,13 @@ authorized this transfer."*
    >
    > □ Your account and approver has completed MFA"
 3. User confirms all four
-4. Asks for `PRIVY_APP_ID` and `PRIVY_APP_SECRET` → stored
-5. Asks user to create a key quorum on the dashboard and return with the ID
-6. User returns: "My Key Quorum ID is `tb54eps4z44ed0jepousxi4n`"
-7. Agent verifies via `GET /v1/key_quorums/tb54eps4z44ed0jepousxi4n` → valid
-8. Presents policy templates → user picks Balanced
-9. Creates policy → stores `PRIVY_POLICY_ID`
-10. Creates wallet with `owner_id: KEY_QUORUM_ID` + `policy_ids: [PRIVY_POLICY_ID]`
-11. Shows address, tells user to fund it
+4. Asks user to create a key quorum on the dashboard and return with the ID
+5. User returns: "My Key Quorum ID is `tb54eps4z44ed0jepousxi4n`"
+6. Agent verifies via `GET /v1/key_quorums/tb54eps4z44ed0jepousxi4n` → valid
+7. Presents policy templates → user picks Balanced
+8. Creates policy → stores `PRIVY_POLICY_ID`
+9. Creates wallet with `owner_id: KEY_QUORUM_ID` + `policy_ids: [PRIVY_POLICY_ID]`
+10. Shows address, tells user to fund it
 
 **User:** Funded. Deposit 1,000 USDC into Aave V3 on Base.
 
@@ -215,6 +213,7 @@ authorized this transfer."*
 3. MCP returns 2 transactions (approval + deposit)
 
 **Transaction 0 — ERC-20 Approval:**
+
 4. Agent POSTs TX 0 to `POST /v1/intents/wallets/{id}/rpc` → returns `intent_id_0`, status `pending`
 5. Agent notifies user:
    > "Transaction 1 of 2 (ERC-20 approval) has been submitted for

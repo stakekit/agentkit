@@ -6,7 +6,7 @@ yield.xyz REST API directly with curl.
 
 **MCP server registration:**
 ```bash
-claude mcp add --transport http yield-xyz https://mcp.yield.xyz/mcp
+claude mcp add --transport http yield-agentkit https://mcp.yield.xyz/mcp
 ```
 
 ---
@@ -261,4 +261,3 @@ rewards, restake, redelegate, etc.
 | Modifying `unsignedTransaction` | Never — pass verbatim to Privy |
 | Guessing or generating a `passthrough` value | Always take it from the balances response |
 | Converting amounts to wei | Amounts are human-readable — the API handles decimals |
-| Skipping `submit-hash` after broadcast | Always submit the hash — balances won't update without it |

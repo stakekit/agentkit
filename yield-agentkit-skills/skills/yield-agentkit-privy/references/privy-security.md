@@ -132,5 +132,3 @@ financial guardrails.
    transactions
 3. If the policy needs to be updated to prevent further transactions,
    walk through the policy deletion guard flow above
-4. Ask the user to rotate `PRIVY_APP_SECRET` at
-   https://dashboard.privy.io → Configuration → App Settings → Basics
