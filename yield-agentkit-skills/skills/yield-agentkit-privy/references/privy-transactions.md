@@ -69,19 +69,29 @@ CAIP-2 table below.
 
 ## Solana Transactions
 
+Privy requires the Solana transaction as a base64 string, not the raw
+hex that the Yield.xyz AgentKit MCP returns. Build a new base64-encoded variable
+from the original, do not modify UNSIGNED_TX.
+
 ```bash
+TX_BASE64=$(echo "$UNSIGNED_TX" | xxd -r -p | base64)
+
 curl -s -X POST "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/rpc" \
   --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
   -H "privy-app-id: $PRIVY_APP_ID" \
   -H "Content-Type: application/json" \
   -d "{
     \"method\": \"signAndSendTransaction\",
-    \"caip2\": \"solana:mainnet\",
+    \"caip2\": \"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\",
     \"params\": {
-      \"transaction\": $UNSIGNED_TX
+      \"transaction\": \"$TX_BASE64\",
+      \"encoding\": \"base64\"
     }
   }"
 ```
+
+UNSIGNED_TX stays untouched. TX_BASE64 is the new Privy-compatible
+value built from it.
 
 ---
 
@@ -96,7 +106,7 @@ curl -s -X POST "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/rpc" \
 | Polygon | `eip155:137` |
 | Avalanche C-Chain | `eip155:43114` |
 | BNB Chain | `eip155:56` |
-| Solana | `solana:mainnet` |
+| Solana | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` |
 
 ---
 
@@ -121,9 +131,9 @@ followed by deposit). Always process them in `stepIndex` order, one at
 a time, never in parallel:
 
 ```
-TX stepIndex=0: Privy signs → broadcast → submit hash → poll CONFIRMED
-TX stepIndex=1: Privy signs → broadcast → submit hash → poll CONFIRMED
-TX stepIndex=2: Privy signs → broadcast → submit hash → poll CONFIRMED
+TX stepIndex=0: Privy signs → broadcast → poll CONFIRMED
+TX stepIndex=1: Privy signs → broadcast → poll CONFIRMED
+TX stepIndex=2: Privy signs → broadcast → poll CONFIRMED
 ```
 
 If any transaction reaches `FAILED`, stop immediately. Do not proceed
