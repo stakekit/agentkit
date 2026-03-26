@@ -18,7 +18,23 @@ POST https://api.privy.io/v1/wallets/{wallet_id}/rpc
 Used for: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain,
 Avalanche, and all other EVM-compatible chains.
 
+Take the fields Privy accepts from unsignedTransaction and create a
+new object. Do not modify the original transaction returned by the MCP.
+
 ### Send Transaction (DeFi deposit / approval / exit)
+
+
+**Step 1 — Build a Privy-compatible transaction**
+
+Take the fields Privy accepts from unsignedTransaction and create a
+new object. Do not modify the original transaction returned by the MCP.
+```bash
+PRIVY_TX=$(echo "$UNSIGNED_TX" | jq '{from, to, data, nonce, type}')
+```
+UNSIGNED_TX stays untouched. PRIVY_TX is the new Privy-compatible
+object you pass in the request.
+
+**Step 2 — Submit to Privy**
 
 ```bash
 curl -s -X POST "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/rpc" \
@@ -29,13 +45,13 @@ curl -s -X POST "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/rpc" \
     \"method\": \"eth_sendTransaction\",
     \"caip2\": \"eip155:8453\",
     \"params\": {
-      \"transaction\": $UNSIGNED_TX
+      \"transaction\": $PRIVY_TX
     }
   }"
-```
 
-`$UNSIGNED_TX` is the verbatim `unsignedTransaction` object from the
-yield.xyz MCP response. Do not modify it.
+```
+Set caip2 to match the chain the yield position is on. See the
+CAIP-2 table below.
 
 ### Response
 
@@ -48,9 +64,6 @@ yield.xyz MCP response. Do not modify it.
   }
 }
 ```
-
-Extract `data.hash` — this is the on-chain hash to submit back to
-yield.xyz.
 
 ---
 

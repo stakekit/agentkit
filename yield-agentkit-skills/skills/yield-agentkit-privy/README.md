@@ -269,4 +269,3 @@ yield-agentkit-skills/skills/yield-agentkit-privy/
 - [Yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
 - [Privy docs — Manual approvals](https://docs.privy.io/controls/dashboard/overview) — intents API reference
 - [Privy dashboard](https://dashboard.privy.io) — wallet and policy management
-- [yield AgentKit + MoonPay Skill](../yield-agentkit-moonpay/) — MoonPay wallet variant

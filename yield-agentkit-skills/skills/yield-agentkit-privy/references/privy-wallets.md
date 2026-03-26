@@ -52,7 +52,8 @@ curl -s "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID" \
 
 ## Get Wallet Balance
 
-Check this after funding to confirm the wallet is ready:
+**When fetching wallet balances for Privy wallets, ALWAYS use the following endpoint.
+This is the recommended and reliable method for retrieving balances across supported chains.**
 
 Example: 
 ```bash
