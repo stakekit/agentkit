@@ -71,14 +71,12 @@ Set up the yield-agentkit-privy skill
 
 Claude will read `SKILL.md` and automatically:
 - Register the Yield.xyz AgentKit MCP server
-- Ask for your Privy App ID and App Secret
 - Ask which workflow you want (Autonomous or Semi-Autonomous)
 - Walk you through policy configuration (recommended)
 - Create your agent wallet
 - Confirm your wallet address
 
 The only moments Claude will pause and ask for your input are:
-- Your Privy App ID and App Secret
 - Which workflow you want to use
 - Your policy preferences (or skip if you prefer no policy)
 - Which chain(s) to operate on
@@ -238,7 +236,6 @@ Watch Claude:
 | Skill not triggering | Ask Claude: `Set up the yield-agentkit-privy skill` |
 | Transaction blocked | A policy rule was violated — ask Claude which rule triggered |
 | Wallet has no balance | Send funds to your wallet address first |
-| Balances not updating | Hash submission was skipped — ask Claude to resubmit the hash |
 | Skill missing from `/context` | Wrong install path — check `ls .claude/skills/` |
 | Intent stuck pending (Semi-Autonomous) | Approver hasn't approved yet — check dashboard.privy.io/apps?page=approvals |
 | Intent expired (Semi-Autonomous) | 72-hour window elapsed — ask Claude to resubmit the intent |
