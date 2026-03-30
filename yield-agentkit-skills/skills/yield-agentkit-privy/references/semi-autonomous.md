@@ -297,14 +297,29 @@ approved individually on the dashboard. Process them in `stepIndex`
 order — do not submit the next intent until the previous one reaches
 `executed`.
 
+> **⚠️ Nonce handling:** The yield.xyz MCP may return all transactions
+> with the **same nonce** because they are built before any are executed
+> on-chain. You **must** increment the nonce for each subsequent
+> transaction. Take the nonce from `stepIndex=0` and add the stepIndex
+> value to compute the correct nonce for each transaction:
+>
+> - `stepIndex=0` → use nonce as-is
+> - `stepIndex=1` → nonce + 1
+> - `stepIndex=2` → nonce + 2
+>
+> Convert the nonce from hex to decimal, add the offset, then convert
+> back to hex before submitting to Privy.
+
 ```
 TX stepIndex=0:
+  → Use nonce from unsignedTransaction as-is
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_0
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_0} until "executed"
   → Read hash from action_result → submit to yield.xyz
 
 TX stepIndex=1:
+  → Increment nonce by 1 from stepIndex=0's nonce
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_1
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_1} until "executed"
