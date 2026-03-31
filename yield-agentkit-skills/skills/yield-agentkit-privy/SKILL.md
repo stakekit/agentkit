@@ -159,8 +159,9 @@ the user to intervene.
 > - **`{baseDir}/references/yield-output-format.md`** — defines the exact
 >   format in which every tool response must be presented to the user.
 >   Always follow this before displaying any output.
+> - **`{baseDir}/references/yield-policies.md`** — defines data fetching and API usage rules
 >
-> These two files are not optional. Every MCP tool call and every
+> These three files are not optional. Every MCP tool call and every
 > response shown to the user must conform to them.
 
 ### Step 3 — Fund the Wallet
@@ -326,6 +327,7 @@ Read on demand when you need specifics.
 | **`{baseDir}/references/yield-output-format.md`** | **Before displaying any yield.xyz result** — exact output format per tool |
 | `{baseDir}/references/architecture.md` | You need the full system diagram |
 | `{baseDir}/references/yield-mcp-tools.md` | You need MCP tool params or response shapes |
+| `{baseDir}/references/yield-policies.md` | Data fetching and API usgae rules for Yield AgentKit MCP |
 | `{baseDir}/references/privy-policies.md` | Creating or updating policies and rules |
 | `{baseDir}/references/privy-wallets.md` | Creating wallets or checking balances |
 | `{baseDir}/references/privy-transactions.md` | Executing transactions via Privy RPC |

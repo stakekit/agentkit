@@ -1,4 +1,4 @@
-# yield.xyz MCP Tools
+# Yield.xyz AgentKit MCP Tools
 
 All 7 tools exposed by the Yield.xyz AgentKit MCP server. Use these
 tools exclusively for all yield.xyz operations — never call the

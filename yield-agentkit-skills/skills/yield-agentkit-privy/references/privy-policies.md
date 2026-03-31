@@ -354,3 +354,7 @@ the wallet:
 □ Policy name is descriptive and identifiable
 □ Policy ID stored as PRIVY_POLICY_ID before creating the wallet
 ```
+
+## References
+
+- Privy Policy API References: https://docs.privy.io/api-reference/policies/rules/create

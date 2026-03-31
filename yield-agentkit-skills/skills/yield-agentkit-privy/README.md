@@ -253,6 +253,7 @@ yield-agentkit-skills/skills/yield-agentkit-privy/
     ├── yield-mcp-tools.md          # Yield.xyz AgentKit MCP tool reference
     ├── yield-input-format.md       # Exact input parameters for each MCP tool
     ├── yield-output-format.md      # Format for displaying results to the user
+    ├── yield-policies.md           # API Usage rules
     ├── privy-policies.md           # Policy templates, rule shapes, conditions
     ├── privy-wallets.md            # Wallet creation and management
     ├── privy-transactions.md       # Transaction signing and broadcasting (Autonomous)
