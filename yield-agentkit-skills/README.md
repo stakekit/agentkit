@@ -20,13 +20,24 @@ Requires: Yield.xyz AgentKit MCP
 
 ### [`yield-agentkit-moonpay`](./skills/yield-agentkit-moonpay/)
 
-**Yield discovery via Yield.xyz AgentKit + signing and broadcasting via MoonPay, end-to-end in Claude.**
+**Yield discovery via Yield.xyz AgentKit + signing and broadcasting via MoonPay.**
 
 Claude orchestrates both MCP servers: Yield.xyz AgentKit builds the unsigned transactions, MoonPay authenticates the user, signs, and broadcasts. The full flow from "find me ETH staking yields" to a confirmed on-chain position without leaving Claude Code.
 
 Requires: Yield.xyz AgentKit MCP + MoonPay MCP (guided setup included)
 
 ---
+
+
+### [`yield-agentkit-privy`](./skills/yield-agentkit-privy/)
+
+**Yield discovery via Yield.xyz AgentKit + secure signing and execution via Privy.**
+
+Claude orchestrates the full flow: Yield.xyz AgentKit builds unsigned transactions, and Privy handles authentication, signing, and broadcasting. From "find me ETH staking yields" to executing a confirmed on-chain position.
+
+Supports both autonomous and semi-autonomous workflows, enabling flexible execution depending on whether policies and ownership controls are configured.
+
+Requires: Yield.xyz AgentKit MCP + Privy Skill (with configured credentials)
 
 ## Install
 
