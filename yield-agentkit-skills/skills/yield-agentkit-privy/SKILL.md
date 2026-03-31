@@ -61,7 +61,6 @@ User prompt
   → Yield.xyz AgentKit MCP builds unsignedTransaction
   → Privy (checks policy rules)
   → Privy signs + broadcasts
-  → yield.xyz hash submitted + confirmed
 ```
 
 See `{baseDir}/references/architecture.md` for the full diagram.
@@ -242,19 +241,21 @@ After any MCP action call (`actions_enter`, `actions_exit`,
 transaction, in `stepIndex` order:
 
 ```
-1. Take unsignedTransaction from the MCP response — do not modify it
+1. Take unsignedTransaction from the MCP response.
 
-2. POST https://api.privy.io/v1/wallets/{PRIVY_WALLET_ID}/rpc
+2. Refer to "{baseDir}/references/privy-transactions.md" to make the transaction Privy-compatible for the target chain (EVM/Solana), then pass the resulting transaction in `params.transaction`.
+
+3. POST https://api.privy.io/v1/wallets/{PRIVY_WALLET_ID}/rpc
    {
      "method": "eth_sendTransaction",
      "caip2": "eip155:8453", // Example for Base chain
      "params": { "transaction": <unsignedTransaction> }
    }
 
-3. Privy TEE evaluates policy (if set) → signs → broadcasts
+4. Privy TEE evaluates policy (if set) → signs → broadcasts
    Response: { "data": { "hash": "0x..." } }
 
-4. Move to next transaction (if any)
+5. Move to next transaction (if any)
 ```
 
 For Solana, use `"method": "signAndSendTransaction"` and
