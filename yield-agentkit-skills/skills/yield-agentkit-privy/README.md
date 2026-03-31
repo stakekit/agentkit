@@ -18,7 +18,7 @@ yields_get_all             →    check wallet balance
 yields_get                 →    inspect position schema
 actions_enter / exit       →    POST /v1/wallets/{id}/rpc   (Autonomous)
                            →    POST /v1/intents/wallets/{id}/rpc  (Semi-Autonomous)
-submit-hash                ←    hash returned from Privy
+                           
 yields_get_balances             confirm position on-chain
 ```
 
