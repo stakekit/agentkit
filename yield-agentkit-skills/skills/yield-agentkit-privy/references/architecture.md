@@ -11,7 +11,7 @@ together in a single end-to-end agent loop.
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │                         Claude Code                                          │
 │                                                                              │
-│  User prompt → Skill reads → Yield AgentiKit MCP tool → Privy API curl       │
+│  User prompt → Skill reads → Yield AgentKit MCP tool → Privy API curl       │
 └──────────────────────────────────────────────────────────────────────────────┘
           │                                    │
           ▼                                    ▼

@@ -1,7 +1,7 @@
 ---
 name: yield-agentkit-privy
 description:
-  Full DeFi yield agent powered by yield.xyz and Privy. Discovers yields, builds transactions via the Yield.xyz AgentKit MCP, and signs and broadcasts them via Privy's policy-enforced wallet infrastructure. Use when the user wants to find yields, stake, lend, deposit into vaults, check balances, claim rewards, exit positions, or manage any on-chain yield position across 80+ networks — with a secured agent wallet.
+  End-to-end DeFi yield execution with Privy agentic wallets. Yield.xyz discovers yields and builds transactions, Privy handles wallet creation, policy enforcement, signing, and broadcasting. Supports autonomous and semi-autonomous (enterprise approval) modes. Use when user wants to execute yield transactions via Privy wallet, set up autonomous yield strategies, or manage agentic wallet policies. Requires Yield.xyz MCP and Privy API credentials.
 metadata:
   claude:
     emoji: "📈"
