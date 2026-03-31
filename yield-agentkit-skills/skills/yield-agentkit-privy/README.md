@@ -18,7 +18,7 @@ yields_get_all             →    check wallet balance
 yields_get                 →    inspect position schema
 actions_enter / exit       →    POST /v1/wallets/{id}/rpc   (Autonomous)
                            →    POST /v1/intents/wallets/{id}/rpc  (Semi-Autonomous)
-                           
+
 yields_get_balances             confirm position on-chain
 ```
 
@@ -137,16 +137,9 @@ Stake 1 ETH on Ethereum
 ```
 Show me ETH liquid staking options — I want to use Lido
 ```
-```
-Check my current yield positions
-```
-```
-Claim my staking rewards
-```
 
 Claude will automatically load the skill, call the right tools in order,
-confirm each step with you before signing, and submit the transaction hash
-back to yield.xyz after broadcasting.
+confirm each step with you before signing, and submit the transactions.
 
 ---
 
