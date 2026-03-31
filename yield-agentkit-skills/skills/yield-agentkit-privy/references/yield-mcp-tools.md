@@ -203,12 +203,7 @@ Each transaction in the array includes:
 - `id` — the yield.xyz transaction ID (needed for `submit-hash`)
 - `stepIndex` — execution order, starting at 0
 - `type` — e.g., `"approval"`, `"deposit"`, `"stake"`
-- `unsignedTransaction` — the raw transaction object to pass to Privy
-
-> ⚠️ Pass `unsignedTransaction` directly to Privy. Do not modify it.
-> The exact fields inside `unsignedTransaction` vary by chain — the
-> MCP returns whatever the chain requires. If you are unsure about the
-> structure, refer to https://docs.yield.xyz or ask the user to check.
+- `unsignedTransaction` — the raw transaction object to pass to Privy.
 
 ---
 

@@ -41,7 +41,8 @@ curl -s -X POST "https://api.privy.io/v1/policies" \
   }'
 ```
 
-**Response:**
+Response:
+
 ```json
 {
   "id": "tb54eps4z44ed0jepousxi4n",
@@ -52,168 +53,68 @@ curl -s -X POST "https://api.privy.io/v1/policies" \
 }
 ```
 
-Store the returned `id` as `PRIVY_POLICY_ID`.
+Store the returned id as PRIVY_POLICY_ID.
 
 ---
 
 ## Policy Templates
 
-### 🔒 Conservative — Recommended Starting Point
+> ⚠️ Critical — Rule Evaluation Logic
+>
+> Privy allows a transaction if any single rule matches. Conditions
+> across separate rules do NOT stack. Always combine chain + amount
+> restrictions into the same rule so both must be true together.
+>
+> ❌ Rule 1: ALLOW if chain = Base       ← allows unlimited amounts on Base
+>    Rule 2: ALLOW if value ≤ $4         ← allows any chain if value is low
+>
+> ✅ Rule 1: ALLOW if chain = Base AND value ≤ $4   ← both enforced together
 
-Single chain, ~$500 per-tx cap:
+### 🔒 Conservative — Single chain, small ETH cap
 
-```bash
-curl -s -X POST "https://api.privy.io/v1/policies" \
-  --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
-  -H "privy-app-id: $PRIVY_APP_ID" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "version": "1.0",
-    "name": "Yield Agent — Conservative",
-    "chain_type": "ethereum",
-    "rules": [
-      {
-        "name": "Max ~$500 per transaction",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "value",
-          "operator": "lte",
-          "value": "200000000000000000"
-        }],
-        "action": "ALLOW"
-      },
-      {
-        "name": "Base mainnet only",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "chain_id",
-          "operator": "eq",
-          "value": "8453"
-        }],
-        "action": "ALLOW"
-      }
-    ]
-  }'
+One rule combining chain + native ETH value cap.
+
+```json
+rules: [
+  { chain_id eq "8453", value lte "2000000000000000" }   // Base only, ~$4 ETH cap
+]
 ```
 
-### ⚖️ Balanced — 2–3 Chains, ~$5,000 Cap
+For ERC-20 / DeFi token caps (USDC, vault deposits, etc.), use
+ethereum_calldata conditions — see Rule Structure below.
 
-```bash
-curl -s -X POST "https://api.privy.io/v1/policies" \
-  --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
-  -H "privy-app-id: $PRIVY_APP_ID" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "version": "1.0",
-    "name": "Yield Agent — Balanced",
-    "chain_type": "ethereum",
-    "rules": [
-      {
-        "name": "Max ~$5,000 per transaction",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "value",
-          "operator": "lte",
-          "value": "2000000000000000000"
-        }],
-        "action": "ALLOW"
-      },
-      {
-        "name": "L2 chains only",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "chain_id",
-          "operator": "in",
-          "value": ["8453", "42161", "10", "137"]
-        }],
-        "action": "ALLOW"
-      }
-    ]
-  }'
+### ⚖️ Balanced — Multi-chain, ERC-20 token cap
+
+One rule per function type, each combining chain + calldata amount.
+
+```json
+rules: [
+  { chain_id in ["8453","42161"], transfer.amount lte "5000000" },   // ERC-20 transfer
+  { chain_id in ["8453","42161"], deposit.assets  lte "5000000" },   // ERC-4626 deposit
+  { chain_id in ["8453","42161"], withdraw.assets lte "5000000" },   // ERC-4626 withdraw
+  { chain_id in ["8453","42161"], redeem.shares   lte "5000000" }    // ERC-4626 redeem
+]
 ```
 
-### 🎯 DeFi Contract Allowlist — Specific Protocols Only
+5000000 = 5 USDC (6 decimals). Adjust per token decimals.
 
-Restricts to named smart contracts. Get contract addresses from
-`yields_get` → `inputTokens[].address` for each protocol you want
-to allowlist.
+### 🎯 DeFi Contract Allowlist — Specific protocols only
 
-```bash
-curl -s -X POST "https://api.privy.io/v1/policies" \
-  --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
-  -H "privy-app-id: $PRIVY_APP_ID" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "version": "1.0",
-    "name": "Yield Agent — DeFi Allowlist",
-    "chain_type": "ethereum",
-    "rules": [
-      {
-        "name": "Spend cap",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "value",
-          "operator": "lte",
-          "value": "100000000000000000"
-        }],
-        "action": "ALLOW"
-      },
-      {
-        "name": "Base only",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "chain_id",
-          "operator": "eq",
-          "value": "8453"
-        }],
-        "action": "ALLOW"
-      },
-      {
-        "name": "Approved protocol contracts only",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "to",
-          "operator": "in",
-          "value": ["0x...", "0x..."]
-        }],
-        "action": "ALLOW"
-      }
-    ]
-  }'
+Combine chain + contract allowlist in one rule. Get addresses from
+yields_get → inputTokens[].address.
+
+```json
+rules: [
+  { chain_id eq "8453", to in ["0xProtocolA", "0xProtocolB"] }
+]
 ```
 
-### ⚡ Power User — All EVM + Solana, ~$50,000 Cap
+### ⚡ Power User — Loose cap, all L2s
 
-```bash
-curl -s -X POST "https://api.privy.io/v1/policies" \
-  --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
-  -H "privy-app-id: $PRIVY_APP_ID" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "version": "1.0",
-    "name": "Yield Agent — Power User",
-    "chain_type": "ethereum",
-    "rules": [
-      {
-        "name": "Max ~$50,000 per transaction",
-        "method": "eth_sendTransaction",
-        "conditions": [{
-          "field_source": "ethereum_transaction",
-          "field": "value",
-          "operator": "lte",
-          "value": "20000000000000000000"
-        }],
-        "action": "ALLOW"
-      }
-    ]
-  }'
+```json
+rules: [
+  { chain_id in ["8453","42161","10","137"], value lte "20000000000000000000" }
+]
 ```
 
 ---
@@ -225,12 +126,8 @@ curl -s -X POST "https://api.privy.io/v1/policies" \
   "name": "Human-readable name",
   "method": "eth_sendTransaction",
   "conditions": [
-    {
-      "field_source": "ethereum_transaction",
-      "field": "value",
-      "operator": "lte",
-      "value": "50000000000000000"
-    }
+    { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "in", "value": ["8453", "42161"] },
+    { "field_source": "ethereum_transaction", "field": "value",    "operator": "lte", "value": "2000000000000000" }
   ],
   "action": "ALLOW"
 }
@@ -239,41 +136,72 @@ curl -s -X POST "https://api.privy.io/v1/policies" \
 All conditions in a rule must be satisfied for the rule to apply.
 Any method without a matching rule defaults to DENY.
 
-### Supported Methods
+---
 
-| Method | Chain |
-|---|---|
-| `eth_sendTransaction` | All EVM |
-| `eth_signTransaction` | All EVM |
-| `eth_signTypedData_v4` | All EVM |
-| `signTransaction` | Solana |
-| `signAndSendTransaction` | Solana |
-| `*` | All — use with caution |
+## Supported Methods
 
-### Condition Fields (`field_source: "ethereum_transaction"`)
+| Method                    | Chain                  |
+|---------------------------|------------------------|
+| `eth_sendTransaction`     | All EVM                |
+| `eth_signTransaction`     | All EVM                |
+| `eth_signTypedData_v4`    | All EVM                |
+| `signTransaction`         | Solana                 |
+| `signAndSendTransaction`  | Solana                 |
+| `*`                       | All — use with caution |
 
-| Field | Description | Example |
-|---|---|---|
-| `to` | Recipient / contract address | `"0x..."` |
-| `value` | ETH value in wei | `"50000000000000000"` |
-| `chain_id` | EVM chain ID as string | `"8453"` |
+---
 
-### Operators
+## Condition Fields
 
-| Operator | Description |
-|---|---|
-| `eq` | Equals |
-| `gt` | Greater than |
-| `gte` | Greater than or equal |
-| `lt` | Less than |
-| `lte` | Less than or equal |
-| `in` | Value is in list |
+### `field_source: "ethereum_transaction"` — top-level tx fields
+
+| Field      | Description                  | Example                |
+|------------|------------------------------|------------------------|
+| `to`       | Recipient / contract address | `"0x..."`              |
+| `value`    | Native ETH in wei            | `"2000000000000000"`   |
+| `chain_id` | EVM chain ID as string       | `"8453"`               |
+
+### `field_source: "ethereum_calldata"` — decoded contract parameters
+
+Use to cap ERC-20 / vault token amounts. Requires an abi array and
+field in "functionName.paramName" format.
+
+| Example field     | Covers                    |
+|-------------------|---------------------------|
+| `transfer.amount` | ERC-20 direct transfer    |
+| `deposit.assets`  | ERC-4626 vault deposit    |
+| `withdraw.assets` | ERC-4626 vault withdrawal |
+| `redeem.shares`   | ERC-4626 share redemption |
+
+```json
+{
+  "field_source": "ethereum_calldata",
+  "field": "transfer.amount",
+  "abi": [{ "type": "function", "name": "transfer", "inputs": [{ "name": "to", "type": "address" }, { "name": "amount", "type": "uint256" }] }],
+  "operator": "lte",
+  "value": "4000000"
+}
+```
+
+---
+
+## Operators
+
+| Operator | Description           |
+|----------|-----------------------|
+| `eq`     | Equals                |
+| `gt`     | Greater than          |
+| `gte`    | Greater than or equal |
+| `lt`     | Less than             |
+| `lte`    | Less than or equal    |
+| `in`     | Value is in list      |
 
 ---
 
 ## Other Policy API Operations
 
 ### Get Policy
+
 ```bash
 curl -s "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID" \
   --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
@@ -281,6 +209,7 @@ curl -s "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID" \
 ```
 
 ### Add a Rule to an Existing Policy
+
 ```bash
 curl -s -X POST "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID/rules" \
   --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
@@ -291,53 +220,52 @@ curl -s -X POST "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID/rules" \
 
 ### Delete Policy
 
-```
-DELETE /v1/policies/{policy_id}
-```
+`DELETE /v1/policies/{policy_id}`
 
-> ⚠️ **PROTECTED.** Requires explicit verbal confirmation from the user.
-> See `{baseDir}/references/privy-security.md` for the required
+> ⚠️ PROTECTED. Requires explicit verbal confirmation from the user.
+> See {baseDir}/references/privy-security.md for the required
 > confirmation flow before calling this endpoint.
 
 ### Delete Rule
 
-```
-DELETE /v1/policies/{policy_id}/rules/{rule_id}
-```
+`DELETE /v1/policies/{policy_id}/rules/{rule_id}`
 
-> ⚠️ **PROTECTED.** Same confirmation requirement as policy deletion.
+> ⚠️ PROTECTED. Same confirmation requirement as policy deletion.
 
 ---
 
 ## EVM Chain ID Reference
 
-| Chain | chain_id |
-|---|---|
-| Ethereum mainnet | `1` |
-| Base | `8453` |
-| Arbitrum One | `42161` |
-| Optimism | `10` |
-| Polygon | `137` |
-| Avalanche C-Chain | `43114` |
-| BNB Chain | `56` |
+| Chain             | `chain_id` |
+|-------------------|------------|
+| Ethereum mainnet  | `1`        |
+| Base              | `8453`     |
+| Arbitrum One      | `42161`    |
+| Optimism          | `10`       |
+| Polygon           | `137`      |
+| Avalanche C-Chain | `43114`    |
+| BNB Chain         | `56`       |
+
+Note:
+The above table is not exhaustive. Do not restrict usage to only these chains.
+If a chain is not listed, fetch or derive the correct `chain_id` from public
+data or known mappings before proceeding.
 
 ---
 
 ## ❌ Policy Anti-Patterns
 
-```json
+```js
 // ❌ No spending limit — wallet can be drained
 { "method": "*", "conditions": [], "action": "ALLOW" }
 
-// ❌ Cap set way too high (10 ETH = ~$25,000+)
-{ "field": "value", "operator": "lte", "value": "10000000000000000000" }
+// ❌ Chain and amount in separate rules — each alone allows everything on its match
+Rule 1: { chain_id eq "8453" }           → allows unlimited amounts on Base
+Rule 2: { value lte "2000000000000000" } → allows any chain if ETH value is low
 
-// ❌ No chain restriction — allows expensive mainnet transactions
-{
-  "method": "eth_sendTransaction",
-  "conditions": [{ "field": "value", "operator": "lte", "value": "..." }],
-  "action": "ALLOW"
-}
+// ❌ value cap only covers native ETH — useless for ERC-20 transfers (value = 0)
+{ "field": "value", "operator": "lte", "value": "2000000000000000" }
+// To cap ERC-20 amounts, use ethereum_calldata with the function's ABI instead.
 ```
 
 ---
@@ -354,7 +282,3 @@ the wallet:
 □ Policy name is descriptive and identifiable
 □ Policy ID stored as PRIVY_POLICY_ID before creating the wallet
 ```
-
-## References
-
-- Privy Policy API References: https://docs.privy.io/api-reference/policies/rules/create

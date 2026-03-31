@@ -115,7 +115,7 @@ For networks not in this table: check the `chainId` field from the
 
 ## Poll for Confirmation
 
-Poll every 3–5 seconds to to check status. Do not proceed to
+Poll every 3–5 seconds to check status. Do not proceed to
 the next transaction until `status` reaches a terminal state.
 
 | Status | Meaning | Next Action |

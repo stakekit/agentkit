@@ -6,7 +6,8 @@ For wallet creation, listing, and general management
 
 ## Create Wallet
 
-Always attach a policy. A wallet without a policy should never exist.
+Attaching a policy during wallet creation is recommended for enabling controlled and secure transaction execution.
+
 
 ```bash
 curl -s -X POST "https://api.privy.io/v1/wallets" \

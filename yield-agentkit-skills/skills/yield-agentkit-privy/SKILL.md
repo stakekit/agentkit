@@ -84,7 +84,7 @@ echo $PRIVY_APP_SECRET
 If either is empty → **stop immediately** and tell the user:
 
 > Privy credentials are not configured in your environment.
-Please set up Privy, PRIVY_APP_ID and PRIVY_APP_SECRET
+Please set up Privy skill and credentials before using this skill.
 >
 
 ## Step 1 — Choose Your Workflow
@@ -327,7 +327,7 @@ Read on demand when you need specifics.
 | **`{baseDir}/references/yield-output-format.md`** | **Before displaying any yield.xyz result** — exact output format per tool |
 | `{baseDir}/references/architecture.md` | You need the full system diagram |
 | `{baseDir}/references/yield-mcp-tools.md` | You need MCP tool params or response shapes |
-| `{baseDir}/references/yield-policies.md` | Data fetching and API usgae rules for Yield AgentKit MCP |
+| `{baseDir}/references/yield-policies.md` | Data fetching and API usage rules for Yield AgentKit MCP |
 | `{baseDir}/references/privy-policies.md` | Creating or updating policies and rules |
 | `{baseDir}/references/privy-wallets.md` | Creating wallets or checking balances |
 | `{baseDir}/references/privy-transactions.md` | Executing transactions via Privy RPC |

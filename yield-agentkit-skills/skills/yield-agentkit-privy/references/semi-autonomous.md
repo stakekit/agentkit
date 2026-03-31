@@ -75,7 +75,7 @@ echo $PRIVY_APP_SECRET
 If either is empty → stop immediately and tell the user:
 
 "Privy credentials are not configured in your environment.
-Please configure Privy first:
+Please configure Privy first.
 
 
 ### Step 2 — Create Key Quorum on Dashboard
@@ -214,7 +214,7 @@ PRIVY_RESPONSE=$(curl -s -X PATCH \
 INTENT_ID=$(echo "$PRIVY_RESPONSE" | jq -r '.intent_id')
 echo "Intent submitted: $INTENT_ID"
 ```
-Ask the user to check the dashboard and muannly approve this.
+Ask the user to check the dashboard and manually approve this.
 
 ## Transaction Flow
 
@@ -272,7 +272,7 @@ echo "Intent submitted: $INTENT_ID"
 ```
 
 For Solana use `"method": "signAndSendTransaction"` and
-`"caip2": "solana:mainnet"`.
+`"caip2": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"`.
 
 ### Polling the Intent (curl)
 
