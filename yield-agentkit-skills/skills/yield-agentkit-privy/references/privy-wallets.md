@@ -65,6 +65,17 @@ curl -s "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/balance?chain=base&ass
 
 ---
 
+## Detach Policy from Wallet
+**To detach all policies from a Privy wallet, use the following PATCH endpoint.**
+
+```bash
+curl -s -X PATCH "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID" \
+  --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
+  -H "privy-app-id: $PRIVY_APP_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"policy_ids": []}' | jq '{id: .id, address: .address, policy_ids: .policy_ids}'
+```
+
 ## Key Guarantees
 
 - The private key is generated inside Privy's TEE. It never leaves it.

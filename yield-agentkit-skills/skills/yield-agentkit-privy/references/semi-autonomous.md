@@ -93,7 +93,7 @@ Ask the user:
 > Key Quorum ID:
 >
 > 1. Navigate to **Wallet Infrastructure → Authorization Keys**
-> 2. Click **Create Key Quorum**
+> 2. Click **New Key → Register Key Quorum instead**
 > 3. Name it (e.g., 'Transaction Approver')
 > 4. Under Members, select Team Member and choose your approver
 > 5. Set authorization threshold (e.g., 1 for single approver)
@@ -198,6 +198,24 @@ curl -s "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/balance" \
 
 ---
 
+### Wallet Management — Detach Policy
+
+To detach a policy from a semi-autonomous wallet, use the Intents API.
+No authorization signature required, the key quorum member approves on the dashboard.
+
+```bash
+PRIVY_RESPONSE=$(curl -s -X PATCH \
+  "https://api.privy.io/v1/intents/wallets/$PRIVY_WALLET_ID" \
+  --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
+  -H "privy-app-id: $PRIVY_APP_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"policy_ids": []}')
+
+INTENT_ID=$(echo "$PRIVY_RESPONSE" | jq -r '.intent_id')
+echo "Intent submitted: $INTENT_ID"
+```
+Ask the user to check the dashboard and muannly approve this.
+
 ## Transaction Flow
 
 ### Step-by-Step for Each Transaction
@@ -230,10 +248,7 @@ curl -s "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/balance" \
    GET /v1/intents/{intent_id}
    → Poll until status = "executed"
 
-7. Agent reads transaction hash from action_result
-   action_result.hash  ← the on-chain transaction hash
-
-8. Agent submits hash to yield.xyz and confirms to user
+7. Agent confirms execution to user
 ```
 
 ### Submitting the Intent (curl)
@@ -272,8 +287,7 @@ while true; do
 
   case "$STATUS" in
     "executed")
-      TX_HASH=$(echo "$INTENT" | jq -r '.action_result.hash')
-      echo "Executed. Hash: $TX_HASH"
+      echo "Intent executed."
       break
       ;;
     "failed")
@@ -316,14 +330,14 @@ TX stepIndex=0:
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_0
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_0} until "executed"
-  → Read hash from action_result → submit to yield.xyz
+  → Confirm to user
 
 TX stepIndex=1:
   → Increment nonce by 1 from stepIndex=0's nonce
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_1
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_1} until "executed"
-  → Read hash from action_result → submit to yield.xyz
+  → Confirm to user
 ```
 
 ---
@@ -334,7 +348,7 @@ TX stepIndex=1:
 |---|---|---|
 | `pending` | Awaiting approval from reviewers | Notify user, wait |
 | `granted` | Current user approved, awaiting more approvals | Wait for threshold |
-| `executed` | Threshold met, transaction executed successfully | Read hash from `action_result` |
+| `executed` | Threshold met, transaction executed successfully | Confirm to user |
 | `failed` | Threshold met but execution failed (e.g., policy block, insufficient gas) | Report to user, recreate intent |
 | `rejected` | Cancelled by a team member | Report to user |
 | `expired` | 72-hour approval window elapsed without enough approvals | Report to user, propose new intent |

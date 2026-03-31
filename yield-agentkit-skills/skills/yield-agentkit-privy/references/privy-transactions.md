@@ -108,11 +108,14 @@ value built from it.
 | BNB Chain | `eip155:56` |
 | Solana | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` |
 
+For networks not in this table: check the `chainId` field from the
+`unsignedTransaction` object and construct `eip155:{chainId}`.
+
 ---
 
 ## Poll for Confirmation
 
-Poll every 3–5 seconds via the yield.xyz MCP or API. Do not proceed to
+Poll every 3–5 seconds to to check status. Do not proceed to
 the next transaction until `status` reaches a terminal state.
 
 | Status | Meaning | Next Action |

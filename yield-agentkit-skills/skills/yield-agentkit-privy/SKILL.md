@@ -246,7 +246,7 @@ transaction, in `stepIndex` order:
 2. POST https://api.privy.io/v1/wallets/{PRIVY_WALLET_ID}/rpc
    {
      "method": "eth_sendTransaction",
-     "caip2": "eip155:8453",
+     "caip2": "eip155:8453", // Example for Base chain
      "params": { "transaction": <unsignedTransaction> }
    }
 
@@ -257,7 +257,7 @@ transaction, in `stepIndex` order:
 ```
 
 For Solana, use `"method": "signAndSendTransaction"` and
-`"caip2": "solana:mainnet"` instead.
+`"caip2": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"` instead.
 
 See `{baseDir}/references/privy-transactions.md` for chain-specific
 examples and the full CAIP-2 table.
