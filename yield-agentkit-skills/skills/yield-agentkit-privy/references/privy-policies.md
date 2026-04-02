@@ -303,7 +303,7 @@ curl -s -X POST "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID/rules" \
 `DELETE /v1/policies/{policy_id}`
 
 > ⚠️ PROTECTED. Requires explicit verbal confirmation from the user.
-> See {baseDir}/references/privy-security.md for the required
+> See references/privy-security.md for the required
 > confirmation flow before calling this endpoint.
 
 ### Delete Rule

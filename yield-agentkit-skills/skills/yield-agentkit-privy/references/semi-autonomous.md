@@ -132,7 +132,7 @@ intent even reaches the approver. Optional but recommended.
 > protection on top of your manual approval step. Would you like to
 > configure one?"
 
-If yes, see `{baseDir}/references/privy-policies.md` for templates
+If yes, see `references/privy-policies.md` for templates
 and curl commands. Store the returned `id` as `PRIVY_POLICY_ID`.
 
 ### Step 5 — Chain Selection
