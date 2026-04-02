@@ -117,9 +117,9 @@ Check current position balances and discover available pending actions
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `yieldId` | string[] | Yes | Unique yield identifier |
 | `address` | string | Yes | Wallet address |
 | `network` | string | Yes | Network the address is on (e.g., `base`) |
+| `yieldIds` | string[] | Optional | Optional array of yield ID strings to filter results |
 
 **Response (abbreviated):**
 ```json
