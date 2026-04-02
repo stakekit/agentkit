@@ -117,7 +117,7 @@ Check current position balances and discover available pending actions
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `yieldId` | string | Yes | Unique yield identifier |
+| `yieldId` | string[] | Yes | Unique yield identifier |
 | `address` | string | Yes | Wallet address |
 | `network` | string | Yes | Network the address is on (e.g., `base`) |
 
@@ -177,19 +177,8 @@ Build unsigned transactions to enter a yield position.
 |---|---|---|---|
 | `yieldId` | string | Yes | Unique yield identifier |
 | `address` | string | Yes | Wallet address entering the position |
-| `arguments_json` | string | Yes | JSON string matching `mechanics.arguments.enter` schema |
-
-**`arguments_json` examples:**
-
-Simple (most lending yields):
-```json
-{"amount": "100"}
-```
-
-With inputToken (when field is in the schema):
-```json
-{"amount": "100", "inputToken": "0x..."}
-```
+| `amount` | `string` | ✅ Yes | ✅ Human-readable decimal string. e.g. `"100"`, `"0.5"`. **Never raw wei. Never a number.** |
+| `args` | `object` | No | Optional. May include `validatorAddress` (string), `inputToken` (string) |
 
 **Response shape:**
 
@@ -197,7 +186,7 @@ The response contains an `id` (action ID) and a `transactions[]` array.
 Each transaction in the array includes:
 - `id` — the yield.xyz transaction ID (needed for `submit-hash`)
 - `stepIndex` — execution order, starting at 0
-- `type` — e.g., `"approval"`, `"deposit"`, `"stake"`
+- `type` — e.g., `"APPROVAL"`, `"STAKE"`, `"SUPPLY"`
 - `unsignedTransaction` — the raw transaction object to pass to Privy.
 
 ---
@@ -214,7 +203,9 @@ Build unsigned transactions to exit a yield position.
 |---|---|---|---|
 | `yieldId` | string | Yes | Unique yield identifier |
 | `address` | string | Yes | Wallet address exiting the position |
-| `arguments_json` | string | Yes | JSON string matching `mechanics.arguments.exit` schema |
+| `amount` | `string` | ✅ Yes | ✅ Human-readable decimal string. e.g. `"100"`. **Never raw wei. Never a number.** |
+| `passthrough` | `string` | No | From `pendingActions[].passthrough` in balances response |
+| `validatorAddress` | `string` | No | Required if yield uses validator selection |
 
 **Note:** Some exit schemas include a `passthrough` field. When present,
 fetch it from `yields_get_balances` → `pendingActions[]` on the matching
