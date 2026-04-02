@@ -150,7 +150,7 @@ Each entry maps directly to `actions_manage` parameters:
 ## `yields_get_validators`
 
 List validators for delegation-based yields that require validator
-selection (Cosmos staking, some liquid staking yields, etc.).
+selection (Some liquid staking yields, etc.).
 
 **Parameters:**
 
@@ -184,11 +184,6 @@ Build unsigned transactions to enter a yield position.
 Simple (most lending yields):
 ```json
 {"amount": "100"}
-```
-
-With validator (Cosmos staking):
-```json
-{"amount": "10", "validatorAddress": "cosmosvaloper1..."}
 ```
 
 With inputToken (when field is in the schema):

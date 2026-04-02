@@ -74,7 +74,7 @@ echo $PRIVY_APP_SECRET
 ```
 If either is empty → stop immediately and tell the user:
 
-"Privy credentials are not configured in your environment.
+Privy credentials are not configured in your environment.
 Please configure Privy first.
 
 

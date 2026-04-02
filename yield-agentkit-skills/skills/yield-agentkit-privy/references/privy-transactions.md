@@ -29,7 +29,7 @@ new object. Do not modify the original transaction returned by the MCP.
 Take the fields Privy accepts from unsignedTransaction and create a
 new object. Do not modify the original transaction returned by the MCP.
 ```bash
-PRIVY_TX=$(echo "$UNSIGNED_TX" | jq '{from, to, data, nonce, type}')
+PRIVY_TX=$(echo "$UNSIGNED_TX" | jq '{from, to, value, data, nonce, type} | with_entries(select(.value != null))')
 ```
 UNSIGNED_TX stays untouched. PRIVY_TX is the new Privy-compatible
 object you pass in the request.
@@ -133,10 +133,23 @@ Most DeFi positions require multiple transactions (e.g., ERC-20 approval
 followed by deposit). Always process them in `stepIndex` order, one at
 a time, never in parallel:
 
+> **⚠️ Nonce handling:** The yield.xyz MCP may return all transactions
+> with the **same nonce** because they are built before any are executed
+> on-chain. You **must** increment the nonce for each subsequent
+> transaction. Take the nonce from `stepIndex=0` and add the stepIndex
+> value to compute the correct nonce for each transaction:
+>
+> - `stepIndex=0` → use nonce as-is
+> - `stepIndex=1` → nonce + 1
+> - `stepIndex=2` → nonce + 2
+>
+> Convert the nonce from hex to decimal, add the offset, then convert
+> back to hex before submitting to Privy.
+
 ```
-TX stepIndex=0: Privy signs → broadcast → poll CONFIRMED
-TX stepIndex=1: Privy signs → broadcast → poll CONFIRMED
-TX stepIndex=2: Privy signs → broadcast → poll CONFIRMED
+TX stepIndex=0: use nonce as-is → Privy signs → broadcast → poll CONFIRMED
+TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → poll CONFIRMED
+TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → poll CONFIRMED
 ```
 
 If any transaction reaches `FAILED`, stop immediately. Do not proceed
