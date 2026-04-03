@@ -75,8 +75,16 @@ Store the returned id as PRIVY_POLICY_ID.
 One rule combining chain + native ETH value cap.
 
 ```json
-rules: [
-  { chain_id eq "8453", value lte "2000000000000000" }   // Base only, ~$4 ETH cap
+[
+  {
+    "name": "Base only, ~$4 ETH cap",
+    "method": "eth_sendTransaction",
+    "conditions": [
+      { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "eq", "value": "8453" },
+      { "field_source": "ethereum_transaction", "field": "value",    "operator": "lte", "value": "2000000000000000" }
+    ],
+    "action": "ALLOW"
+  }
 ]
 ```
 
@@ -88,11 +96,67 @@ ethereum_calldata conditions — see Rule Structure below.
 One rule per function type, each combining chain + calldata amount.
 
 ```json
-rules: [
-  { chain_id in ["8453","42161"], transfer.amount lte "5000000" },   // ERC-20 transfer
-  { chain_id in ["8453","42161"], deposit.assets  lte "5000000" },   // ERC-4626 deposit
-  { chain_id in ["8453","42161"], withdraw.assets lte "5000000" },   // ERC-4626 withdraw
-  { chain_id in ["8453","42161"], redeem.shares   lte "5000000" }    // ERC-4626 redeem
+[
+  {
+    "name": "ERC-20 transfer cap on Base or Arbitrum",
+    "method": "eth_sendTransaction",
+    "conditions": [
+      { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "in", "value": ["8453", "42161"] },
+      {
+        "field_source": "ethereum_calldata",
+        "field": "transfer.amount",
+        "abi": [{ "type": "function", "name": "transfer", "inputs": [{ "name": "to", "type": "address" }, { "name": "amount", "type": "uint256" }] }],
+        "operator": "lte",
+        "value": "5000000"
+      }
+    ],
+    "action": "ALLOW"
+  },
+  {
+    "name": "ERC-4626 deposit cap on Base or Arbitrum",
+    "method": "eth_sendTransaction",
+    "conditions": [
+      { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "in", "value": ["8453", "42161"] },
+      {
+        "field_source": "ethereum_calldata",
+        "field": "deposit.assets",
+        "abi": [{ "type": "function", "name": "deposit", "inputs": [{ "name": "assets", "type": "uint256" }, { "name": "receiver", "type": "address" }] }],
+        "operator": "lte",
+        "value": "5000000"
+      }
+    ],
+    "action": "ALLOW"
+  },
+  {
+    "name": "ERC-4626 withdraw cap on Base or Arbitrum",
+    "method": "eth_sendTransaction",
+    "conditions": [
+      { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "in", "value": ["8453", "42161"] },
+      {
+        "field_source": "ethereum_calldata",
+        "field": "withdraw.assets",
+        "abi": [{ "type": "function", "name": "withdraw", "inputs": [{ "name": "assets", "type": "uint256" }, { "name": "receiver", "type": "address" }, { "name": "owner", "type": "address" }] }],
+        "operator": "lte",
+        "value": "5000000"
+      }
+    ],
+    "action": "ALLOW"
+  },
+  {
+    "name": "ERC-4626 redeem cap on Base or Arbitrum",
+    "method": "eth_sendTransaction",
+    "conditions": [
+      { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "in", "value": ["8453", "42161"] },
+      {
+        "field_source": "ethereum_calldata",
+        "field": "redeem.shares",
+        "abi": [{ "type": "function", "name": "redeem", "inputs": [{ "name": "shares", "type": "uint256" }, { "name": "receiver", "type": "address" }, { "name": "owner", "type": "address" }] }],
+        "operator": "lte",
+        "value": "5000000"
+      }
+    ],
+    "action": "ALLOW"
+  }
 ]
 ```
 
@@ -104,16 +168,32 @@ Combine chain + contract allowlist in one rule. Get addresses from
 yields_get → inputTokens[].address.
 
 ```json
-rules: [
-  { chain_id eq "8453", to in ["0xProtocolA", "0xProtocolB"] }
+[
+  {
+    "name": "Allowlisted protocols on Base only",
+    "method": "eth_sendTransaction",
+    "conditions": [
+      { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "eq",  "value": "8453" },
+      { "field_source": "ethereum_transaction", "field": "to",       "operator": "in",  "value": ["0xProtocolA", "0xProtocolB"] }
+    ],
+    "action": "ALLOW"
+  }
 ]
 ```
 
 ### ⚡ Power User — Loose cap, all L2s
 
 ```json
-rules: [
-  { chain_id in ["8453","42161","10","137"], value lte "20000000000000000000" }
+[
+  {
+    "name": "All L2s, loose ETH cap",
+    "method": "eth_sendTransaction",
+    "conditions": [
+      { "field_source": "ethereum_transaction", "field": "chain_id", "operator": "in",  "value": ["8453", "42161", "10", "137"] },
+      { "field_source": "ethereum_transaction", "field": "value",    "operator": "lte", "value": "20000000000000000000" }
+    ],
+    "action": "ALLOW"
+  }
 ]
 ```
 
@@ -223,7 +303,7 @@ curl -s -X POST "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID/rules" \
 `DELETE /v1/policies/{policy_id}`
 
 > ⚠️ PROTECTED. Requires explicit verbal confirmation from the user.
-> See {baseDir}/references/privy-security.md for the required
+> See references/privy-security.md for the required
 > confirmation flow before calling this endpoint.
 
 ### Delete Rule

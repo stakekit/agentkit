@@ -165,7 +165,7 @@ claude mcp list
 If the MCP is missing, register it manually:
 
 ```bash
-claude mcp add --transport http yield-xyz https://mcp.yield.xyz/mcp
+claude mcp add --transport http yield-agentkit https://mcp.yield.xyz/mcp
 ```
 
 ### Step 2 — Check skill is loaded
@@ -219,8 +219,7 @@ Watch Claude:
 1. Call `yields_get` → inspect the enter schema
 2. Call `actions_enter` → build the unsigned transaction
 3. POST to Privy `/v1/wallets/{id}/rpc` → sign and broadcast
-4. Submit the transaction hash back to yield.xyz
-5. Call `yields_get_balances` → confirm the position
+4. Call `yields_get_balances` → confirm the position
 
 ### Step 6 — Debugging
 

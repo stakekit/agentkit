@@ -74,7 +74,7 @@ echo $PRIVY_APP_SECRET
 ```
 If either is empty → stop immediately and tell the user:
 
-"Privy credentials are not configured in your environment.
+Privy credentials are not configured in your environment.
 Please configure Privy first.
 
 
@@ -132,7 +132,7 @@ intent even reaches the approver. Optional but recommended.
 > protection on top of your manual approval step. Would you like to
 > configure one?"
 
-If yes, see `{baseDir}/references/privy-policies.md` for templates
+If yes, see `references/privy-policies.md` for templates
 and curl commands. Store the returned `id` as `PRIVY_POLICY_ID`.
 
 ### Step 5 — Chain Selection
@@ -249,9 +249,12 @@ Ask the user to check the dashboard and manually approve this.
    → Poll until status = "executed"
 
 7. Agent confirms execution to user
-```
 
 ### Submitting the Intent (curl)
+
+```bash
+PRIVY_TX=$(echo "$UNSIGNED_TX" | jq '{from, to, value, data, nonce, type} | with_entries(select(.value != null))')
+```
 
 ```bash
 PRIVY_RESPONSE=$(curl -s -X POST \
@@ -263,7 +266,7 @@ PRIVY_RESPONSE=$(curl -s -X POST \
     \"method\": \"eth_sendTransaction\",
     \"caip2\": \"eip155:8453\",
     \"params\": {
-      \"transaction\": $UNSIGNED_TX
+      \"transaction\": $PRIVY_TX
     }
   }")
 

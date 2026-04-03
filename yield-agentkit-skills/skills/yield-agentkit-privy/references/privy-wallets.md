@@ -27,7 +27,6 @@ curl -s -X POST "https://api.privy.io/v1/wallets" \
 |---|---|
 | `ethereum` | All EVM chains — Ethereum, Base, Arbitrum, Optimism, Polygon, etc. |
 | `solana` | Solana mainnet |
-| `cosmos` | Cosmos-based chains |
 
 ---
 

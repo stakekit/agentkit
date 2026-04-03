@@ -34,7 +34,7 @@ together in a single end-to-end agent loop.
           │                              │
           │  Base · Ethereum · Arbitrum  │
           │  Optimism · Polygon · Solana │
-          │  Cosmos · and 80+ more       │
+          │  BNB · and 80+ more          │
           └──────────────────────────────┘
 ```
 
