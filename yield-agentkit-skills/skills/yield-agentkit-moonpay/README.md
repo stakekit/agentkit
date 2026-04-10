@@ -40,6 +40,16 @@ yields_get_balances          confirm position
 
 ## Install
 
+
+### Install via `npx skills` (recommended)
+
+```bash
+npx skills add https://github.com/stakekit/agentkit
+```
+
+The CLI will list all available skills, pick `yield-agentkit-moonpay`
+
+
 Open your AI Agent and say:
 
 ```
