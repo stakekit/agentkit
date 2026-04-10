@@ -30,7 +30,8 @@ yields_get_balances          confirm position
 
 | Requirement | Details |
 |---|---|
-| Claude Code | [Install guide](https://code.claude.com/docs/en/quickstart) |
+|Yield AgentKit MCP | https://mcp.yield.xyz/mcp
+|MoonPay MCP | mp
 | MoonPay CLI | `npm install -g @moonpay/cli` |
 | MoonPay account | Free — created via `mp login` |
 | Node.js | v18 or higher (for MoonPay CLI) |

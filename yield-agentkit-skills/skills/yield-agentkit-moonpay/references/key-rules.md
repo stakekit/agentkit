@@ -27,8 +27,9 @@
 6. **Get wallet address first.** Call `wallet_list` before any yield action.
    The wallet address from MoonPay = the `address` param in all Yield.xyz calls.
 
-7. **Never modify `unsignedTransaction` before passing to MoonPay.**
-   Pass the complete object exactly as returned by Yield.xyz.
+7. **Never alter transaction values from       `unsignedTransaction` returned by Yield.xyz.**
+
+   For `transaction_sign`, serialize the unsigned tx to base64 RLP exactly as documented in `references/moonpay-tools.md` (format conversion only; no value changes).
 
 8. **Capture `txHash` from every `transaction_send` call.**
 
