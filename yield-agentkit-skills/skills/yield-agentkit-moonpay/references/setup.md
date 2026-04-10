@@ -15,7 +15,7 @@ Run `claude mcp list` and check if `yield-agentkit` is already registered.
 claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
 ```
 
-If not using claude then add this MCP: 
+If not using claude then determine the AI Agent/IDE and add this MCP: 
 
 ```bash
 MCP name: yield-agentkit
