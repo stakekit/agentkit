@@ -29,7 +29,7 @@ This skill requires both MCP servers to be connected:
 | **MoonPay** | Auth + wallet + sign + broadcast | `wallet_list`, `transaction_sign`, `transaction_send`, `token_balance_list` and more |
 
 If either MCP is missing, stop and tell the user. See
-`{baseDir}/references/setup.md` for connection instructions.
+`references/setup.md` for connection instructions.
 
 ---
 

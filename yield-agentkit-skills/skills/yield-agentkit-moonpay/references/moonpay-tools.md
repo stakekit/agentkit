@@ -13,6 +13,7 @@ List all local wallets and their addresses.
 
 ### `token_balance_list`
 Get token balances for a wallet.
+- Both `wallet` and `chain` are required
 - Use to verify the user has enough funds before calling `actions_enter`
 - Use to confirm a position was entered after hash submission
 

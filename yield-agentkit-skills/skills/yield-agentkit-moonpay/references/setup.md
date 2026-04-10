@@ -15,6 +15,16 @@ Run `claude mcp list` and check if `yield-agentkit` is already registered.
 claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
 ```
 
+If not using claude, register the MCP in agent/IDE's MCP settings with:: 
+
+```bash
+MCP name: yield-agentkit
+MCP URL: https://mcp.yield.xyz/mcp
+Transport: http
+```
+
+Then verify in your agent that `yield-agentkit` appears in the connected MCP list before continuing.
+
 ---
 
 ## 2. MoonPay MCP

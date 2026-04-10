@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit Skill × MoonPay Skill
 
-> **End-to-end on-chain yield, fully in Claude.** This skill combines Yield.xyz's yield discovery and transaction building with MoonPay's wallet authentication, signing, and broadcasting — so you can go from "find me ETH staking yields" to a confirmed on-chain position without leaving your AI assistant.
+> **End-to-end on-chain yield.** This skill combines Yield.xyz's yield discovery and transaction building with MoonPay's wallet authentication, signing, and broadcasting — so you can go from "find me ETH staking yields" to a confirmed on-chain position without leaving your AI assistant.
 
 ---
 
@@ -16,8 +16,8 @@ Yield.xyz AgentKit MCP          MoonPay MCP
 ─────────────                   ───────────
 yields_get_all          →    wallet_list (get address)
 yields_get              →    check balance
-actions_enter           →    wallet_send_transaction (sign + broadcast)
-submit-hash             ←    txHash returned
+actions_enter           →    transaction_sign + transaction_send (sign + broadcast)
+                        ←    txHash returned
 yields_get_balances          confirm position
 ```
 
@@ -30,7 +30,8 @@ yields_get_balances          confirm position
 
 | Requirement | Details |
 |---|---|
-| Claude Code | [Install guide](https://code.claude.com/docs/en/quickstart) |
+|Yield AgentKit MCP | https://mcp.yield.xyz/mcp
+|MoonPay MCP | mp
 | MoonPay CLI | `npm install -g @moonpay/cli` |
 | MoonPay account | Free — created via `mp login` |
 | Node.js | v18 or higher (for MoonPay CLI) |
@@ -39,20 +40,30 @@ yields_get_balances          confirm position
 
 ## Install
 
-Open Claude Code and say:
+
+### Install via `npx skills` (recommended)
+
+```bash
+npx skills add https://github.com/stakekit/agentkit
+```
+
+The CLI will list all available skills, pick `yield-agentkit-moonpay`
+
+
+Open your AI Agent and say:
 
 ```
 Set up the yield-agentkit-moonpay skill
 ```
 
-Claude will read `references/setup.md` and automatically:
+The agent will read `references/setup.md` and automatically:
 - Register the Yield.xyz AgentKit MCP (if not already connected)
 - Check if the MoonPay CLI is installed, and install it if needed
 - Check if you're already logged in to MoonPay, and run the login flow only if needed
 - Check for existing wallets, and create one only if none exist
 - Register the MoonPay MCP server (if not already connected)
 
-The only moments Claude will pause and ask for your input are:
+The only moments the agent will pause and ask for your input are:
 - Your MoonPay email address (if login is needed)
 - The verification code sent to your email (if login is needed)
 - A wallet name (if wallet creation is needed)
@@ -99,7 +110,7 @@ You can fund it by:
 ```
   Buy 100 USDC on Base via MoonPay
 ```
-  Claude will trigger the MoonPay on-ramp flow inside the conversation.
+  The agent will trigger the MoonPay on-ramp flow inside the conversation.
 
 Once funded, confirm your balance:
 ```
@@ -115,9 +126,6 @@ Then you're ready to enter yield positions.
 Once both MCPs are connected:
 
 ```
-Stake 1 ETH on Ethereum via my MoonPay wallet
-```
-```
 Find the best USDC yields on Base and deposit 100 USDC
 ```
 ```
@@ -126,11 +134,9 @@ Show me ETH liquid staking options, I want to use Lido
 ```
 Check my current yield positions for my MoonPay wallet
 ```
-```
-Claim my staking rewards
-```
 
-Claude will automatically load the skill, call the right tools in order,
+
+The agent will automatically load the skill, call the right tools in order,
 confirm each step with you before signing, and submit the transaction hash
 back to Yield.xyz after broadcasting.
 
@@ -152,18 +158,18 @@ where most yield opportunities exist.
 
 ```bash
 claude mcp list
-# Should show: yield-agentkit, moonpay
+# Should show: yield-agentkit, moonpay (if using claude)
 ```
 
-If either MCP is missing, ask Claude to set up the skill:
+If either MCP is missing, ask the agent to set up the skill:
 
 ```
 Set up the yield-agentkit-moonpay skill
 ```
 
-Claude will read `references/setup.md` and resolve any missing MCPs automatically.
+The agent will read `references/setup.md` and resolve any missing MCPs automatically.
 
-### Step 2 — Open Claude Code and check skill is loaded
+### Step 2 — Open the agent and check skill is loaded
 
 **Option 1** — view loaded skills via `/context`:
 ```
@@ -186,7 +192,7 @@ What wallets do I have in MoonPay?
 ```
 
 If you see a wallet address → you're authenticated and ready.  
-If you get an auth error → ask Claude to re-authenticate: `Re-authenticate my MoonPay wallet`
+If you get an auth error → ask the agent to re-authenticate: `Re-authenticate my MoonPay wallet`
 
 ### Step 4 — Test Yield.xyz independently
 
@@ -210,7 +216,7 @@ Get full details on ethereum-eth-lido-staking
 I want to stake 0.01 ETH via Lido using my MoonPay wallet
 ```
 
-Watch Claude:
+Watch your AI agent:
 1. Call `wallet_list` → get your address
 2. Call `yields_get` → inspect the schema
 3. Call `actions_enter` → build the transaction
@@ -224,10 +230,10 @@ Watch Claude:
 | Symptom | Fix |
 |---|---|
 | Skill not triggering | Run `/yield-agentkit-moonpay find ETH yields` to force-invoke |
-| MoonPay auth error | Ask Claude: `Re-authenticate my MoonPay wallet` |
-| `transaction_sign` fails | Check wallet has enough balance: `mp wallet list` |
+| MoonPay auth error | Ask the agent: `Re-authenticate my MoonPay wallet` |
+| `transaction_sign` fails | Ask the agent to check if wallet has enough balance |
 | Balances not updating | Hash submission was skipped — re-enter position or submit manually |
-| Skill missing from `/context` | Wrong install path — check `ls .claude/skills/` |
+| Skill missing from `/context` | Ask the agent to check and reload the skill.  |
 
 ---
 
