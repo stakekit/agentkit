@@ -92,7 +92,7 @@ These fields appear in every intent webhook payload regardless of event type.
 | `action_result.status_code` | HTTP status of the execution |
 | `action_result.executed_at` | Execution timestamp |
 | `action_result.authorized_by_display_name` | Display name of the authorizing quorum |
-| `action_result.authorized_by_id` | ID of the authorizing quorum member |
+| `action_result.authorized_by_id` | ID of the authorizing key quorum |
 | `action_result.response_body` | Response from the execution |
 
 
@@ -127,14 +127,26 @@ Always verify the payload signature to confirm it came from Privy.
 
 **Using `@privy-io/node`:**
 ```js
-const payload = await privy.webhooks().verify(requestBody, {
-  "svix-id": req.headers["svix-id"],
-  "svix-timestamp": req.headers["svix-timestamp"],
-  "svix-signature": req.headers["svix-signature"],
+import {PrivyClient} from '@privy-io/node';
+
+const privy = new PrivyClient({
+  appId: process.env.PRIVY_APP_ID,
+  appSecret: process.env.PRIVY_APP_SECRET,
+  webhookSigningSecret: process.env.PRIVY_WEBHOOK_SIGNING_SECRET
+});
+
+// req is an input of type `NextApiRequest`
+const verifiedPayload = await privy.webhooks().verify({
+  payload: req.body,
+  svix: {
+    id: req.headers['svix-id'],
+    timestamp: req.headers['svix-timestamp'],
+    signature: req.headers['svix-signature']
+  }
 });
 ```
 
-**Manual verification:** Follow Svix's documentation.
+**Manual verification:** Follow [Svix's documentation](https://docs.svix.com/receiving/verifying-payloads/how-manual).
 
 ---
 
