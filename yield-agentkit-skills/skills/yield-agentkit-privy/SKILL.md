@@ -360,6 +360,7 @@ Read on demand when you need specifics.
 | `references/privy-security.md` | Security rules, injection defense, policy deletion guard |
 | `references/examples.md` | End-to-end examples |
 | `references/semi-autonomous.md` | Semi-Autonomous workflow — full onboarding + transaction flow (Enterprise) |
+| `references/privy-webhooks.md` | Intent webhook setup — real-time notifications on intent creation, authorization, execution, and failure |
 
 If you cannot find relevant information in the reference files above,
 refer to the official documentation and guide the user from there:

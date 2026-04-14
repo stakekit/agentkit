@@ -235,6 +235,16 @@ Ask the user to check the dashboard and manually approve this.
    at https://dashboard.privy.io/apps?page=approvals
    Come back here once you've approved it."
 
+   Ask the user:
+   > "Would you like to set up webhooks to receive real-time notifications
+   > on intent creation, authorization, and execution? This is optional
+   > and can be skipped."
+
+   - If **yes** → walk them through setup using `references/privy-webhooks.md`,
+     then return to step 4.
+   - If **no** → proceed directly to step 4.
+
+
 4. Approver reviews and approves on the Privy dashboard
    Dashboard → Approvals page → Pending tab
    Approver inspects the transaction preview, clicks Approve,
