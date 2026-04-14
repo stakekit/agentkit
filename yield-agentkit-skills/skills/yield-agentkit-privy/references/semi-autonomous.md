@@ -183,6 +183,15 @@ Confirm:
 > require manual approval before executing.
 > View your wallet at https://dashboard.privy.io"
 
+Ask the user:
+   > "Would you like to set up webhooks to receive real-time notifications
+   > on intent creation, authorization, and execution? This is optional
+   > and can be skipped."
+
+   - If **yes** → walk them through setup using `references/privy-webhooks.md`,
+     then return to step 7.
+   - If **no** → proceed directly to step 7.
+
 ### Step 7 — Fund the Wallet
 
 > "Your wallet is ready but currently empty. Send assets to `0x...`
@@ -234,16 +243,6 @@ Ask the user to check the dashboard and manually approve this.
    "Transaction submitted for approval. Please review and approve it
    at https://dashboard.privy.io/apps?page=approvals
    Come back here once you've approved it."
-
-   Ask the user:
-   > "Would you like to set up webhooks to receive real-time notifications
-   > on intent creation, authorization, and execution? This is optional
-   > and can be skipped."
-
-   - If **yes** → walk them through setup using `references/privy-webhooks.md`,
-     then return to step 4.
-   - If **no** → proceed directly to step 4.
-
 
 4. Approver reviews and approves on the Privy dashboard
    Dashboard → Approvals page → Pending tab
