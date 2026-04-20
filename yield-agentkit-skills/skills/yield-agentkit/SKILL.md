@@ -72,7 +72,7 @@ Never dump raw JSON or plain comma-separated data. Always follow the formats def
 List and filter yield opportunities across networks and tokens.
 
 **Key parameters:**
-- `networks` — array of network slugs e.g. `["base"]`, `["ethereum", "arbitrum"]`. Never make multiple calls per network — pass all in one array. Use `networks_get_all` to resolve a network name if unsure.
+- `networks` — array of network slugs e.g. `["base"]`, `["ethereum", "arbitrum"]`. For unified search pass all in one array. For fair cross-network comparison ("ethereum vs arbitrum", "which network is better") run one call per network in parallel — see Intelligence Notes. Use `networks_get_all` to resolve a network name if unsure.
 - `token` — token symbol e.g. `"USDC"`, `"ETH"`, `"WBTC"` or a contract address.
 - `types` — array of yield types. Valid values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. These are the **only valid types**. Map user requests to nearest match (e.g. "liquid staking" → `staking`, "earn" → `vault`, "LP" → `liquidity_pool`) or confirm before calling.
 - `sort` — server-side sort order. **Always pass `rewardRateDesc` by default** — do not re-sort client-side. Switch to `rewardRateAsc`, `statusEnterDesc`, `statusEnterAsc`, `statusExitDesc`, or `statusExitAsc` per user request.

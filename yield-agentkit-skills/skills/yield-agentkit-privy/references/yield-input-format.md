@@ -22,7 +22,7 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 
 | Parameter | Type | Required | Notes |
 |---|---|---|---|
-| `networks` | `string[]` | No | Array of lowercase slugs. e.g. `["base"]`, `["ethereum", "arbitrum"]`. Never make multiple calls — pass all in one array. |
+| `networks` | `string[]` | No | Array of lowercase slugs. e.g. `["base"]`, `["ethereum", "arbitrum"]`. For unified search pass all in one array (`limit: 50`). For fair cross-network comparison, run one call per network in parallel (`limit: 20` each) — see yield-output-format.md. |
 | `token` | `string` | No | Uppercase. e.g. `"USDC"`, `"ETH"`, `"WBTC"` |
 | `types` | `string[]` (enum) | No | Array. Valid values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. Map user requests to nearest match or confirm before calling. |
 | `sort` | `string` (enum) | No | Server-side sort. **Always pass `"rewardRateDesc"` by default.** Other values: `rewardRateAsc`, `statusEnterDesc`, `statusEnterAsc`, `statusExitDesc`, `statusExitAsc`. |

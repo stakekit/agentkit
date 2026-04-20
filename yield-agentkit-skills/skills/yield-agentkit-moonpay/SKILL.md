@@ -68,7 +68,7 @@ Before anything else:
 Call `yields_get_all` with the user's preferred network and token.
 
 - Pass `sort: "rewardRateDesc"` — always use server-side sort, never re-sort client-side
-- Pass `networks` as an array e.g. `["base"]` — never make multiple calls per network
+- Pass `networks` as an array e.g. `["base"]` 
 - Default to `limit: 20` unless user asks for more
 - Show a table: Protocol, Type, APY, Network, Token
 - Valid `types` values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`
