@@ -217,6 +217,15 @@ The user can now issue DeFi instructions directly:
 
 ---
 
+## Intelligence Notes
+
+- **Multi-network intent detection:** Detect whether the user wants a *unified search* or a *fair comparison*. Keywords like "compare", "vs", "which network is better", "ethereum vs arbitrum" → parallel calls (one per network, `limit: 20` each) so every network gets fair representation. Keywords like "show me yields on ethereum and arbitrum", "find yields across chains" → single call (`networks: [...]`, `limit: 50`). The API sorts globally — without parallel calls for comparisons, a high-APY network will crowd out all others from the results.
+- **High APY (>20%):** Check `rewardRate.components` — if driven by incentives, flag as potentially short-lived.
+- **submit_hash is mandatory:** Always call after every broadcast. Never skip — without it, the platform cannot track the transaction.
+- **Network resolution:** If a user mentions a chain name that doesn't match a known slug (e.g. "Binance Smart Chain", "BNB Chain"), call `networks_get_all` with a search term before calling any other tool.
+
+---
+
 ## Key Rules
 
 ### Yield.xyz AgentKit MCP
@@ -280,7 +289,10 @@ transaction, in `stepIndex` order:
 4. Privy TEE evaluates policy (if set) → signs → broadcasts
    Response: { "data": { "hash": "0x..." } }
 
-5. Move to next transaction (if any)
+5. Call submit_hash with transactionId (from transactions[].id) and the hash — MANDATORY
+   Then poll get_transaction until status is CONFIRMED or FAILED.
+
+6. Move to next transaction (if any)
 ```
 
 For Solana, use `"method": "signAndSendTransaction"` and
@@ -309,11 +321,20 @@ REST API directly with curl.
 | `yields_get` | **Always call before enter/exit** — inspect schema, limits, tokens |
 | `yields_get_balances` | **Always call before manage** — read pendingActions[] |
 | `yields_get_validators` | When enter schema has a `validatorAddress` optionsRef |
+| `yields_get_reward_rate_history` | Historical APY trend for a yield |
+| `yields_get_tvl_history` | Historical TVL trend for a yield |
+| `yields_get_risk` | Detailed risk data for a yield |
 | `actions_enter` | Build enter-position transactions |
 | `actions_exit` | Build exit-position transactions |
 | `actions_manage` | Build claim / restake / redelegate transactions |
+| `actions_get` | Check status of a specific action |
+| `actions_get_all` | List action history for a wallet |
+| `submit_hash` | **Call after every broadcast** — submit on-chain tx hash |
+| `get_transaction` | Poll transaction status until CONFIRMED or FAILED |
+| `networks_get_all` | Resolve network names to slugs |
+| `providers_get_all` | List supported protocols/providers |
 
-Full parameter reference: `references/yield-mcp-tools.md`
+Full parameter reference and common mistakes: `references/yield-input-format.md`
 
 ---
 
@@ -352,7 +373,6 @@ Read on demand when you need specifics.
 | **`references/yield-input-format.md`** | **Before every yield.xyz MCP tool call** — exact input parameters |
 | **`references/yield-output-format.md`** | **Before displaying any yield.xyz result** — exact output format per tool |
 | `references/architecture.md` | You need the full system diagram |
-| `references/yield-mcp-tools.md` | You need MCP tool params or response shapes |
 | `references/yield-policies.md` | Data fetching and API usage rules for Yield AgentKit MCP |
 | `references/privy-policies.md` | Creating or updating policies and rules |
 | `references/privy-wallets.md` | Creating wallets or checking balances |

@@ -10,8 +10,9 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 - `limit` and `offset` are **always numbers**, never strings. Pass `20`, not `"20"`.
 - `amount` is **always a string** — human-readable decimal, never raw wei. Pass `"100"`, not `100`.
 - `network` is **always a lowercase string**. Pass `"base"`, not `"Base"`.
+- `networks` is **always an array of lowercase strings**. Pass `["base"]`, not `"base"`.
 - `token` is **always uppercase**. Pass `"USDC"`, not `"usdc"`.
-- `type` must be an **exact enum value** — see `yields_get_all` below.
+- `types` must be an **array of exact enum values** — see `yields_get_all` below.
 
 ---
 
@@ -21,16 +22,22 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 
 | Parameter | Type | Required | Notes |
 |---|---|---|---|
-| `network` | `string` | No | Lowercase. e.g. `"base"`, `"ethereum"`, `"arbitrum"` |
+| `networks` | `string[]` | No | Array of lowercase slugs. e.g. `["base"]`, `["ethereum", "arbitrum"]`. Never make multiple calls — pass all in one array. |
 | `token` | `string` | No | Uppercase. e.g. `"USDC"`, `"ETH"`, `"WBTC"` |
-| `type` | `string` (enum) | No | Must be one of: `staking`, `restaking`, `lending`, `vault`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. These are the **only valid types** — no others exist. If the user asks for a type not in this list, map it to the nearest match (e.g. "liquid staking" → `staking`, "earn" → `vault`, "LP" → `liquidity_pool`) or confirm with the user before calling the tool. |
+| `types` | `string[]` (enum) | No | Array. Valid values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. Map user requests to nearest match or confirm before calling. |
+| `sort` | `string` (enum) | No | Server-side sort. **Always pass `"rewardRateDesc"` by default.** Other values: `rewardRateAsc`, `statusEnterDesc`, `statusEnterAsc`, `statusExitDesc`, `statusExitAsc`. |
+| `search` | `string` | No | Free-text search across names, tokens, providers. |
+| `yieldIds` | `string[]` | No | Batch fetch up to 100 specific yields by ID. |
+| `inputTokens` | `string[]` | No | Filter by accepted deposit tokens e.g. `["USDC"]`. |
+| `providers` | `string[]` | No | Filter by provider IDs e.g. `["lido", "aave"]`. |
+| `hasCooldownPeriod` | `boolean` | No | `true` to include only yields with a cooldown. |
+| `hasWarmupPeriod` | `boolean` | No | `true` to include only yields with a warmup period. |
 | `limit` | `number` | No | ✅ Integer. Default: `20`, max: `50`. **Never pass as string.** |
 | `offset` | `number` | No | ✅ Integer. Default: `0`. **Never pass as string.** |
-| `status` | `string` | No | `"enter"` or `"exit"` |
 
 **Correct:**
 ```json
-{ "network": "base", "token": "USDC", "limit": 20, "offset": 0 }
+{ "networks": ["base"], "token": "USDC", "sort": "rewardRateDesc", "limit": 20, "offset": 0 }
 ```
 **Wrong:**
 ```json
@@ -57,12 +64,17 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 | Parameter | Type | Required | Notes |
 |---|---|---|---|
 | `yieldId` | `string` | ✅ Yes | Yield ID that requires validator selection |
-| `limit` | `number` | No | ✅ Integer. Default: `10`. **Never pass as string.** |
+| `limit` | `number` | No | ✅ Integer. Default: `20`, max: `50`. **Never pass as string.** |
 | `offset` | `number` | No | ✅ Integer. Default: `0`. **Never pass as string.** |
+| `preferred` | `boolean` | No | `true` to return only curated validators. |
+| `name` | `string` | No | Filter by validator name (partial match). |
+| `status` | `string` | No | Filter by status e.g. `"active"`, `"jailed"`. |
+| `address` | `string` | No | Filter by exact validator address. |
+| `provider` | `string` | No | Filter by provider ID. |
 
 **Correct:**
 ```json
-{ "yieldId": "ethereum-eth-p2p", "limit": 10, "offset": 0 }
+{ "yieldId": "ethereum-eth-p2p", "limit": 20, "offset": 0 }
 ```
 
 ---
@@ -127,6 +139,7 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 | `address` | `string` | ✅ Yes | User's wallet address |
 | `action` | `string` | ✅ Yes | Exact value from `pendingActions[].type` e.g. `"CLAIM_REWARDS"` |
 | `passthrough` | `string` | ✅ Yes | Exact value from `pendingActions[].passthrough` in balances response |
+| `amount` | `string` | No | Human-readable amount for partial claims e.g. `"10.5"`. Omit to claim full amount. |
 
 **Correct:**
 ```json
@@ -135,14 +148,138 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 
 ---
 
+### `submit_hash`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `transactionId` | `string` | ✅ Yes | UUID from `transactions[].id` in the action response |
+| `hash` | `string` | ✅ Yes | On-chain tx hash after broadcasting e.g. `"0x1234…abcdef"` |
+
+**Call this after every broadcast — mandatory.**
+
+---
+
+### `get_transaction`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `transactionId` | `string` | ✅ Yes | Same UUID passed to `submit_hash` |
+
+Returns `status`: `CREATED` | `BROADCASTED` | `CONFIRMED` | `FAILED`
+
+---
+
+### `actions_get`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `actionId` | `string` | ✅ Yes | Action UUID from `actions_enter`, `actions_exit`, or `actions_manage` response |
+
+---
+
+### `actions_get_all`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `address` | `string` | ✅ Yes | Wallet address to query |
+| `statuses` | `string[]` | No | Filter by status. Values: `"CREATED"`, `"PROCESSING"`, `"WAITING_FOR_NEXT"`, `"SUCCESS"`, `"FAILED"`, `"CANCELED"`, `"STALE"` |
+| `intent` | `string` | No | `"enter"`, `"exit"`, or `"manage"` |
+| `type` | `string` | No | e.g. `"STAKE"`, `"UNSTAKE"`, `"CLAIM_REWARDS"` |
+| `yieldId` | `string` | No | Filter by yield ID |
+| `network` | `string` | No | Filter by network |
+| `limit` | `number` | No | ✅ Integer. Default: `20`, max: `100`. |
+| `offset` | `number` | No | ✅ Integer. Default: `0`. |
+
+---
+
+### `networks_get_all`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `search` | `string` | No | Filter by name or ID (min 2 chars) e.g. `"bnb"`, `"base"` |
+| `category` | `string` | No | `"evm"`, `"cosmos"`, `"substrate"`, or `"misc"` |
+
+---
+
+### `providers_get_all`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `limit` | `number` | No | ✅ Integer. Default: `20`, max: `100`. |
+| `offset` | `number` | No | ✅ Integer. Default: `0`. |
+
+---
+
+### `yields_get_reward_rate_history`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `yieldId` | `string` | ✅ Yes | Yield ID |
+| `period` | `string` | No | `"1d"`, `"7d"`, `"30d"`, `"90d"`, `"1y"`, `"all"`. Default: `"30d"`. Ignored if `from`/`to` set. |
+| `from` | `string` | No | ISO 8601 start date. Overrides `period`. |
+| `to` | `string` | No | ISO 8601 end date. Defaults to now. |
+| `interval` | `string` | No | `"day"`, `"week"`, `"month"`. Default: `"day"`. |
+| `limit` | `number` | No | ✅ Integer. Default: `30`, max: `365`. |
+| `offset` | `number` | No | ✅ Integer. Default: `0`. |
+
+---
+
+### `yields_get_tvl_history`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `yieldId` | `string` | ✅ Yes | Yield ID |
+| `period` | `string` | No | `"1d"`, `"7d"`, `"30d"`, `"90d"`, `"1y"`, `"all"`. Default: `"30d"`. Ignored if `from`/`to` set. |
+| `from` | `string` | No | ISO 8601 start date. Overrides `period`. |
+| `to` | `string` | No | ISO 8601 end date. Defaults to now. |
+| `interval` | `string` | No | `"day"`, `"week"`, `"month"`. Default: `"day"`. |
+| `limit` | `number` | No | ✅ Integer. Default: `30`, max: `365`. |
+| `offset` | `number` | No | ✅ Integer. Default: `0`. |
+
+---
+
+### `yields_get_risk`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `yieldId` | `string` | ✅ Yes | Yield ID |
+
+If response contains only `updatedAt` (no `exponentialFi` or `credora`), risk data is unavailable — not an error.
+
+---
+
+## Common Mistakes
+
+| Mistake | Correct Behaviour |
+|---|---|
+| Calling `actions_enter` without calling `yields_get` first | Always inspect the schema |
+| Calling `actions_manage` without calling `yields_get_balances` first | Always read pendingActions[] |
+| Modifying `unsignedTransaction` | Never — pass verbatim to Privy |
+| Guessing or generating a `passthrough` value | Always take it from the balances response |
+| Converting amounts to wei | Amounts are human-readable — the API handles decimals |
+| Skipping `submit_hash` after broadcast | Always call — it's mandatory for tracking |
+| Using `network` instead of `networks` in `yields_get_all` | Use the `networks` array parameter |
+| Passing `type` instead of `types` in `yields_get_all` | Use the `types` array parameter |
+
+---
+
 ## Quick Reference
 
 | Tool | `limit` / `offset` | `amount` |
 |---|---|---|
-| `yields_get_all` | `number` ✅ | — |
+| `yields_get_all` | `number` ✅ (max 50) | — |
 | `yields_get` | — | — |
-| `yields_get_validators` | `number` ✅ | — |
+| `yields_get_validators` | `number` ✅ (max 50) | — |
 | `yields_get_balances` | — | — |
+| `yields_get_reward_rate_history` | `number` ✅ (max 365) | — |
+| `yields_get_tvl_history` | `number` ✅ (max 365) | — |
+| `yields_get_risk` | — | — |
 | `actions_enter` | — | `string` ✅ |
 | `actions_exit` | — | `string` ✅ |
-| `actions_manage` | — | — |
+| `actions_manage` | — | `string` (optional) |
+| `actions_get` | — | — |
+| `actions_get_all` | `number` ✅ (max 100) | — |
+| `submit_hash` | — | — |
+| `get_transaction` | — | — |
+| `networks_get_all` | — | — |
+| `providers_get_all` | `number` ✅ (max 100) | — |

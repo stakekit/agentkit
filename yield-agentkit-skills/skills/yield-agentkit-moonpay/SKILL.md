@@ -25,7 +25,7 @@ This skill requires both MCP servers to be connected:
 
 | MCP | Role | Tools used |
 |---|---|---|
-| **Yield.xyz AgentKit** | Yield discovery + transaction building | `yields_get_all`, `yields_get`, `yields_get_validators`, `yields_get_balances`, `actions_enter`, `actions_exit`, `actions_manage` |
+| **Yield.xyz AgentKit** | Yield discovery + transaction building | `yields_get_all`, `yields_get`, `yields_get_validators`, `yields_get_balances`, `yields_get_reward_rate_history`, `yields_get_tvl_history`, `yields_get_risk`, `actions_enter`, `actions_exit`, `actions_manage`, `actions_get`, `actions_get_all`, `submit_hash`, `get_transaction`, `networks_get_all`, `providers_get_all` |
 | **MoonPay** | Auth + wallet + sign + broadcast | `wallet_list`, `transaction_sign`, `transaction_send`, `token_balance_list` and more |
 
 If either MCP is missing, stop and tell the user. See
@@ -67,10 +67,12 @@ Before anything else:
 
 Call `yields_get_all` with the user's preferred network and token.
 
-- Sort results: preferred validators/yields first, then by APY descending
-- Show a table: Protocol, Type, APY, Network, Token
+- Pass `sort: "rewardRateDesc"` — always use server-side sort, never re-sort client-side
+- Pass `networks` as an array e.g. `["base"]` — never make multiple calls per network
 - Default to `limit: 20` unless user asks for more
-- Valid `type` values: `staking`, `restaking`, `lending`, `vault`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`
+- Show a table: Protocol, Type, APY, Network, Token
+- Valid `types` values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`
+- If the user's network name doesn't match a known slug, call `networks_get_all` to resolve it first
 ### Step 3 — Inspect the yield
 
 Call `yields_get` with the chosen `yieldId`. Read:
@@ -109,6 +111,10 @@ You now have `transactions[]` from Step 5, ordered by `stepIndex`.
 Execute each transaction **sequentially**, never in parallel, never out of order.
 Do not begin transaction N+1 until transaction N is `CONFIRMED`.
 
+After MoonPay broadcasts each transaction:
+1. Call `submit_hash` with the `transactionId` (from `transactions[].id`) and the on-chain hash — **this is mandatory**
+2. Poll `get_transaction` until status is `CONFIRMED` or `FAILED` before moving to the next step
+
 ### Step 7 — Confirm
 
 After all transactions are confirmed:
@@ -124,6 +130,16 @@ For claiming rewards, restaking, or exiting:
 2. Each action has `type`, `passthrough`, optional `arguments`
 3. Call `actions_manage` or `actions_exit` with values from the response
 4. Sign each transaction via MoonPay (same as Step 6)
+5. Call `submit_hash` after each broadcast (**mandatory**), then poll `get_transaction` until `CONFIRMED`
+
+---
+
+## Intelligence Notes
+
+- **Multi-network intent detection:** Detect whether the user wants a *unified search* or a *fair comparison*. Keywords like "compare", "vs", "which network is better", "ethereum vs arbitrum" → parallel calls (one per network, `limit: 20` each) so every network gets fair representation. Keywords like "show me yields on ethereum and arbitrum", "find yields across chains" → single call (`networks: [...]`, `limit: 50`). The API sorts globally — without parallel calls for comparisons, a high-APY network will crowd out all others from the results.
+- **High APY (>20%):** Check `rewardRate.components` — if driven by incentives, flag as potentially short-lived.
+- **submit_hash is mandatory:** Always call after every broadcast. Never skip — without it, the platform cannot track the transaction.
+- **Network resolution:** If a user mentions a chain name that doesn't match a known slug (e.g. "Binance Smart Chain", "BNB Chain"), call `networks_get_all` with a search term before calling any other tool.
 
 ---
 

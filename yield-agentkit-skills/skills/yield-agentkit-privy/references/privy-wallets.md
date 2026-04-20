@@ -38,6 +38,19 @@ curl -s "https://api.privy.io/v1/wallets" \
   -H "privy-app-id: $PRIVY_APP_ID" | jq .
 ```
 
+**During onboarding, always call List Wallets before prompting to create a new one.** If the response contains existing wallets, show them to the user as a table:
+
+| # | Wallet ID | Address | Chain | Owner |
+|---|-----------|---------|-------|-------|
+| 1 | `abc123…` | `0x742d…` | ethereum | key quorum (semi-auto) |
+| 2 | `def456…` | `0x9f3a…` | ethereum | none (autonomous) |
+
+Ask: *"You already have wallets set up. Would you like to use one of these, or create a new one?"*
+
+- If the user picks an existing wallet → store its `id` as `PRIVY_WALLET_ID` and proceed.
+- If the user wants a new one → proceed to Create Wallet below.
+- Use the `owner_id` field to determine wallet type: present → semi-autonomous (use Intents API), absent → autonomous (use normal RPC).
+
 ---
 
 ## Get Wallet

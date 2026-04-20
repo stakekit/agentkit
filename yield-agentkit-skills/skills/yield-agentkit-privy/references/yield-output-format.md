@@ -26,23 +26,49 @@ All display rules for Yield.xyz Agent tool outputs. Always follow these formats 
 
 ## yields_get_all — Listing Yields
 
-Default: call with `limit: 20`, sort client-side by `rewardRate.total` descending, show **top 10**.
+**Single network:** call with `limit: 20`, `sort: "rewardRateDesc"` — results arrive pre-sorted, show top 10.
 
-Always display as a table, never as individual cards:
+**Multiple networks — two intents, two strategies:**
 
+- **Unified search** ("show me top yields on ethereum and arbitrum", "find me ETH yields across chains") → single call with `networks: [...]`, `limit: 50`, `sort: "rewardRateDesc"`. Group results by network in the table. Acceptable that one network may dominate if its APYs are genuinely higher.
 
-📈 Top USDC Yields on Base  (76 total)
+- **Fair comparison** ("compare yields between ethereum and arbitrum", "which network has better USDC yields", "ethereum vs arbitrum") → run one call per network **in parallel** (same params, each with `limit: 20`). Show a table per network side by side. This guarantees every network gets fair representation regardless of APY distribution.
+
+Always display as a table, never as individual cards.
+
+**Single network example:**
+
+📈 Top ETH Yields on Ethereum
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 | # | Protocol | Vault | APY | TVL | Type | Lockup | Cooldown | Min |
 |---|----------|-------|-----|-----|------|--------|----------|-----|
-| 🥇 | Morpho | coUSDC | 7.02% | $4.93M | vault | None | None | — |
-| 🥈 | Morpho | csrUSDC | 6.20% | $322K | vault | None | None | — |
-| 🥉 | Euler | eUSDC-29 | 6.04% | $145K | vault | None | None | — |
-| #4 | Euler | eUSDC-49 | 5.81% | $567K | vault | None | None | — |
-| #5 | Yo Protocol | yoUSD | 5.02% | — | vault | None | None | — |
+| 🥇 | Lido | stETH | 3.80% | $32.1B | staking | None | 1–5 days | — |
+| 🥈 | Aave | aWETH | 3.10% | $1.2B | lending | None | None | — |
+| 🥉 | Morpho | mWETH | 2.95% | $540M | vault | None | None | — |
 
-Showing top 10 of 76 — ask for more or filter by network/token.
+Showing top 5 of 24 — ask for more or filter.
+
+**Multi-network comparison example (parallel calls, one per network):**
+
+📈 ETH Yields · Ethereum vs Arbitrum
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**🔵 Ethereum**
+| # | Protocol | Vault | APY | TVL | Type | Lockup | Cooldown | Min |
+|---|----------|-------|-----|-----|------|--------|----------|-----|
+| 🥇 | Lido | stETH | 3.80% | $32.1B | staking | None | 1–5 days | — |
+| 🥈 | Aave | aWETH | 3.10% | $1.2B | lending | None | None | — |
+| 🥉 | Morpho | mWETH | 2.95% | $540M | vault | None | None | — |
+
+**🟠 Arbitrum**
+| # | Protocol | Vault | APY | TVL | Type | Lockup | Cooldown | Min |
+|---|----------|-------|-----|-----|------|--------|----------|-----|
+| 🥇 | Aave | aWETH | 2.85% | $210M | lending | None | None | — |
+| 🥈 | Compound | cWETH | 2.40% | $88M | lending | None | None | — |
+| 🥉 | Morpho | mWETH | 2.10% | $65M | vault | None | None | — |
+
+Showing top 5 per network — ask for more or filter.
 
 
 Badges go in the Protocol cell when applicable, e.g. `Morpho ⭐`.
@@ -147,6 +173,89 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 | Cooldown on exit | `mechanics.cooldownPeriod` | Funds take X days to become available after exit. |
 | Warmup | `mechanics.warmupPeriod` | Takes X days to start earning after deposit. |
 | Fees | `mechanics.fee` | Summarise any non-zero fees (deposit / withdrawal / performance). |
+
+---
+
+## actions_get_all — Displaying Action History
+
+Always display as a table, never as a list of cards:
+
+```
+📋 Action History · 0x742d…f44e
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| # | Yield | Type | Amount | Network | Status | Date |
+|---|-------|------|--------|---------|--------|------|
+| 1 | Lido stETH | STAKE | 1.5 ETH | ethereum | ✅ SUCCESS | Apr 18 |
+| 2 | Aave USDC | STAKE | 500 USDC | base | ⏳ PROCESSING | Apr 20 |
+| 3 | Cosmos ATOM | CLAIM_REWARDS | — | cosmos | ✅ SUCCESS | Apr 15 |
+
+Showing 3 of 12 — ask for more or filter by status/network.
+```
+
+**Status badges:**
+- `✅ SUCCESS` — confirmed on-chain
+- `⏳ PROCESSING` — in-flight
+- `🕐 CREATED` — submitted, not yet on-chain
+- `⏸ WAITING_FOR_NEXT` — multi-step, awaiting next tx
+- `❌ FAILED` — reverted or errored
+- `🚫 CANCELED` — user-cancelled
+- `⌛ STALE` — timed out
+
+---
+
+## yields_get_reward_rate_history — APY Trend
+
+```
+📈 APY History · Lido stETH · Last 30 days
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  High:    2.51%  (Mar 28)
+  Low:     2.39%  (Apr 10)
+  Current: 2.43%
+
+  Trend: ↘ Slight decline over the period.
+```
+
+- `rewardRate` values are decimals — format as `(value * 100).toFixed(2) + "%"`
+- If `items` is empty: *"Historical APY data is not available for this yield."*
+
+---
+
+## yields_get_tvl_history — TVL Trend
+
+```
+📊 TVL History · Lido stETH · Last 30 days
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  High:    $32.1B  (Mar 21)
+  Low:     $30.4B  (Apr 14)
+  Current: $31.2B
+
+  Trend: → Relatively stable over the period.
+```
+
+- Format TVL values as `$4.93M` / `$322K` / `$1.2B` — never raw string
+- Trend direction: ↗ Growing / ↘ Declining / → Stable (use ±5% as threshold)
+- If `items` is empty: *"Historical TVL data is not available for this yield."*
+- ⚠️ Flag a consistent downward trend as a potential risk signal
+
+---
+
+## yields_get_risk — Risk Rating
+
+```
+🛡 Risk Assessment · Lido stETH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Exponential.fi:  A  (Score: 1)  — "A"
+  🔗 Full report: https://exponential.fi/pools/…
+```
+
+- If both `exponentialFi` and `credora` are present, show both
+- If only one is present, show it and note the other is unavailable
+- If neither is present: *"Detailed risk data is not available for this yield."*
+- Always show the `exponentialFi.url` link when present
 
 ---
 
