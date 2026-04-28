@@ -45,7 +45,7 @@
 | `yields_get_all` | `GET /v1/yields` |
 | `yields_get` | `GET /v1/yields/{yieldId}` |
 | `yields_get_validators` | `GET /v1/yields/{yieldId}/validators` |
-| `yields_get_balances` | `POST /v1/yields/{yieldId}/balances` |
+| `yields_get_balances` | `POST /v1/yields/balances` |
 | `actions_enter` | `POST /v1/actions/enter` |
 | `actions_exit` | `POST /v1/actions/exit` |
 | `actions_manage` | `POST /v1/actions/manage` |

@@ -256,8 +256,14 @@ Ask the user to check the dashboard and manually approve this.
 6. Agent polls the intent until executed
    GET /v1/intents/{intent_id}
    → Poll until status = "executed"
+   → Extract transaction hash from the executed intent response
 
-7. Agent confirms execution to user
+7. Agent calls submit_hash on the Yield.xyz MCP (mandatory)
+   submit_hash(actionId, hash)
+   This is required — without it, Yield.xyz cannot track the position.
+   Never skip this step, even in semi-autonomous flow.
+
+8. Agent confirms execution to user
 
 ### Submitting the Intent (curl)
 
@@ -342,6 +348,7 @@ TX stepIndex=0:
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_0
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_0} until "executed"
+  → Call submit_hash(actionId, hash) on Yield.xyz MCP ← mandatory
   → Confirm to user
 
 TX stepIndex=1:
@@ -349,6 +356,7 @@ TX stepIndex=1:
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_1
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_1} until "executed"
+  → Call submit_hash(actionId, hash) on Yield.xyz MCP ← mandatory
   → Confirm to user
 ```
 

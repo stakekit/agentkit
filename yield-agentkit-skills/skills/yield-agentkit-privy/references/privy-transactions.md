@@ -147,10 +147,12 @@ a time, never in parallel:
 > back to hex before submitting to Privy.
 
 ```
-TX stepIndex=0: use nonce as-is → Privy signs → broadcast → poll CONFIRMED
-TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → poll CONFIRMED
-TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → poll CONFIRMED
+TX stepIndex=0: use nonce as-is → Privy signs → broadcast → poll CONFIRMED → submit_hash ← mandatory
+TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → poll CONFIRMED → submit_hash ← mandatory
+TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → poll CONFIRMED → submit_hash ← mandatory
 ```
+
+After each transaction reaches `CONFIRMED`, call `submit_hash(actionId, hash)` on the Yield.xyz MCP before proceeding to the next transaction. This is mandatory — without it, Yield.xyz cannot track the position.
 
 If any transaction reaches `FAILED`, stop immediately. Do not proceed
 with subsequent transactions. Report the failure and the hash to the user
