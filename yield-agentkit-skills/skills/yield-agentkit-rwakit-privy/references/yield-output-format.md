@@ -17,7 +17,6 @@ RWA yield requires *before* they try to enter.
 
 **Number formatting:**
 - APY/APR: `(total * 100).toFixed(2) + "%"` → `7.02%`
-- TVL: `$4.93M` / `$322K` / `$1.2B` — never raw string
 - Lockup seconds → human time: `86400 → 1 day`, `604800 → 7 days`
 
 **Badges — show only when applicable:**
@@ -28,7 +27,7 @@ RWA yield requires *before* they try to enter.
 - `📋 Allowlist` — permissioned RWA whose holder wallet must be allowlisted (any `kycRequired` RWA, e.g. Superstate)
 - `💵 Min $X` — show `mechanics.entryLimits.minimum` when non-zero (Superstate USTB: `"100000"` → `💵 Min $100K`)
 - `🌐 Open for everyone (non-US)` — RWA with **no KYC gate** (`kycRequired` not `true`) that is open to all jurisdictions except the issuer's restricted list. **Never label this "Permissionless" to the user** — always use this phrasing.
-- For a **jurisdiction-limited** issuer, use a short descriptive Access label instead of a generic one — e.g. `🔒 EU-14 · KYC` (Midas mTBILL). The lock (`🔒`) comes from `kycRequired`; the descriptive suffix (e.g. `EU-14`, `Allowlist`) comes from the per-issuer eligibility metadata in `references/rwa-overview.md`.
+- For a **jurisdiction-limited** issuer, use a short descriptive Access label instead of a generic one — e.g. `🔒 EU-14 · KYC to mint` (Midas mTBILL). The lock (`🔒`) comes from `kycRequired`; the descriptive suffix (e.g. `EU-14`, `Allowlist`) comes from the per-issuer eligibility metadata in `references/rwa-overview.md`.
 - `⭐ Preferred` — yield flagged preferred
 - `🔥 High APY` — `rewardRate.total > 0.20` — flag as potentially incentivised
 
@@ -53,11 +52,11 @@ General display rules:
 - **Single network:** `limit: 20`, `sort: "rewardRateDesc"` — pre-sorted; show top 10.
 - **Both networks** (RWA is on Base + Ethereum): pass `networks: ["ethereum","base"]`
   in one call, or one call per network if the user wants a side-by-side comparison.
-- Always display as a **table**, never individual cards. Badges go in the Provider cell.
-- **Sorting:** `rewardRate` descending by default; by `tvlUsd` if the user asks for "safest / highest TVL".
-- **TVL:** do **not** apply a TVL-minimum exclusion to RWA yields — they are often
-  newly listed, so low or zero TVL is normal. Show them with their access badges
-  rather than filtering them out.
+- Always display as a **table**, never individual cards. The access badge goes in
+  the Access column; other flags (maintenance, deprecated) go in Notes.
+- **Sorting:** `rewardRate` descending by default.
+- **Never exclude** a newly-listed RWA yield for low/zero liquidity — show it with
+  its access badges rather than filtering it out.
 
 ---
 
@@ -96,28 +95,33 @@ The slim list does **not** include `outputToken`, `metadata.name`/`.description`
 > is a decimal — format as `(rewardRate * 100).toFixed(2) + "%"`.
 
 When listing RWA yields, the access model matters as much as the APY — surface it
-in the table so the user knows what each yield requires before committing. The
-**Token / product** column comes from the yield `id` (or `outputToken` in detail) —
-`tokenSymbol` is the deposit token (USDC).
+in the table so the user knows what each yield requires before committing.
 
 🏛 Real-World Asset Yields
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-| # | Provider | Token | APY | Network | Access | Min | Supported | Restricted |
-|---|----------|-------|-----|---------|--------|-----|-----------|------------|
-| 🥇 | Superstate | USTB | `<live>` | ethereum | 🔒 KYC · Allowlist | $100K | 29 juris. | others |
-| 🥈 | Midas | mTBILL | `<live>` | ethereum | 🔒 EU-14 · KYC | — | 14 (EU) | US +15 |
+| Provider | Product | APY | Access | Min | Supported | Restricted | Notes |
+|----------|---------|-----|--------|-----|-----------|------------|-------|
+| Superstate | USTB | `<live>` | 🔒 KYC · Allowlist | $100K | 29 juris. | others | T-Bill · accredited + QP · T+1 redemption |
+| Midas | mTBILL | `<live>` | 🔒 EU-14 · KYC to mint | — | 14 (EU) | US +15 | T-Bill · freely holdable; KYC to mint/redeem |
 
-- Always show an **Access** column for RWA tables — never hide the gate.
-- For KYC-gated yields, show `🔒` plus a short descriptive label (`Allowlist`,
-  `EU-14`, …) and the `💵 minimum`. For no-KYC yields use `🌐 Open (non-US)` —
+- **Columns, in this exact order:** Provider · Product · APY · Access · Min ·
+  Supported · Restricted · Notes. Do **not** add TVL, rank, network, or any other
+  column.
+- **Product** = the fund / output token (e.g. `USTB`, `mTBILL`), from the yield `id`
+  / `outputToken` — **not** the deposit token (`USDC`). If the same product lists on
+  more than one network (e.g. Midas on Base + Ethereum), put the network in the
+  **Notes** cell so the rows stay distinct.
+- **Access** — never hide the gate. KYC-gated yields show `🔒` + a short descriptive
+  label (`Allowlist`, `EU-14`, …); no-KYC yields use `🌐 Open (non-US)` —
   **never the word "Permissionless"**.
-- **Supported / Restricted columns are COMPACT summaries only** (counts or short
-  phrases — e.g. `14 (EU)`, `US +15`, `Global ex.`). Do **not** list full country
-  names in the table — it makes the terminal table unreadable.
-- The **full country lists are static metadata in `references/rwa-overview.md`**
-  (NOT in the MCP). Show the full list only **on request** — e.g. when the user
-  asks *"where can I use Midas mTBILL?"* — using the per-yield Eligibility block below.
+- **Supported / Restricted** are COMPACT summaries only (counts or short phrases —
+  e.g. `14 (EU)`, `US +15`, `Global ex.`). Do **not** list full country names in the
+  table — it makes the terminal table unreadable. Full lists are static metadata in
+  `references/rwa-overview.md` (NOT the MCP); show them only **on request** (e.g.
+  *"where can I use Midas mTBILL?"*) via the Eligibility block below.
+- **Notes** = a short product descriptor (asset type, redemption nature, key
+  caveats) — a few words only. Read fee/cooldown live from the MCP; never surface TVL.
 - After the table, add a one-line pointer: *"KYC-gated RWA needs onboarding before
   you can deposit — ask me 'where can I use X?' for the full eligibility list."*
 - Sort by `rewardRate` descending. **Never exclude** an RWA yield for low/zero TVL —
