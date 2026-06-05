@@ -20,7 +20,7 @@ and the eligibility gate.
 | # | Provider   | Token     | APY      | Network  | Access            | Min   | Supported  | Restricted      |
 |---|------------|-----------|----------|----------|-------------------|-------|------------|-----------------|
 | 🥇 | Superstate | USTB      | `<live>` | ethereum | 🔒 KYC · Allowlist | $100K | 29 juris.  | others          |
-| 🥈 | Midas      | mTBILL    | `<live>` | ethereum | 🔒 EU-14 · KYC    | —     | 14 (EU)    | US +15          |
+| 🥈 | Midas      | mTBILL    | `<live>` | ethereum | 🔒 EU-14 · KYC to mint    | —     | 14 (EU)    | US +15          |
 
 (All from the `yields_get_all` items directly — no per-yield call: APY from
 `rewardRate`, access from `kycRequired`, minimum from `minEntry`, cooldown from
