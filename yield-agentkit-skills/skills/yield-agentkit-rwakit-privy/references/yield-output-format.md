@@ -27,7 +27,7 @@ RWA yield requires *before* they try to enter.
 - `🏛 RWA` — `mechanics.type === "real_world_asset"` (detail) or `type === "real_world_asset"` (list item)
 - `📋 Allowlist` — permissioned RWA whose holder wallet must be allowlisted (any `kycRequired` RWA, e.g. Superstate)
 - `💵 Min $X` — show `mechanics.entryLimits.minimum` when non-zero (Superstate USTB: `"100000"` → `💵 Min $100K`)
-- `🌐 Open for everyone (non-US)` — RWA with **no KYC gate** (`kycRequired` not `true`) that is open to all jurisdictions except the issuer's restricted list (e.g. Maple `syrupUSDC`/`syrupUSDT` vaults). **Never label this "Permissionless" to the user** — always use this phrasing.
+- `🌐 Open for everyone (non-US)` — RWA with **no KYC gate** (`kycRequired` not `true`) that is open to all jurisdictions except the issuer's restricted list. **Never label this "Permissionless" to the user** — always use this phrasing.
 - For a **jurisdiction-limited** issuer, use a short descriptive Access label instead of a generic one — e.g. `🔒 EU-14 · KYC` (Midas mTBILL). The lock (`🔒`) comes from `kycRequired`; the descriptive suffix (e.g. `EU-14`, `Allowlist`) comes from the per-issuer eligibility metadata in `references/rwa-overview.md`.
 - `⭐ Preferred` — yield flagged preferred
 - `🔥 High APY` — `rewardRate.total > 0.20` — flag as potentially incentivised
@@ -38,7 +38,7 @@ RWA yield requires *before* they try to enter.
 > `minEntry`.
 >
 > **Identify the issuer/fund from the yield `id`** (e.g. `…superstate-ustb…`,
-> `…syrupusdc…`) and `kycUrl` — **not** `providerId` (generic `"stakekit"`), and
+> `…midas-mtbill…`) and `kycUrl` — **not** `providerId` (generic `"stakekit"`), and
 > **not** `tokenSymbol` (that's the *deposit* token, e.g. `USDC`, not the fund).
 > `outputToken.symbol` / `metadata.name` identify the fund too but are
 > **`yields_get` detail only** — they are not in the slim list item.
@@ -63,9 +63,8 @@ General display rules:
 
 ## RWA Listing — `yields_get_all`
 
-**Discover in two passes** (Base + Ethereum), then dedupe by `id` and present as one
-table: (1) `types: ["real_world_asset"]` for typed RWA, and (2)
-`providers: ["maple"]` for vault-type RWA. See `references/rwa-overview.md`.
+**Discover in a single pass** (Base + Ethereum): `types: ["real_world_asset"]`
+(surfaces Superstate and Midas). See `references/rwa-overview.md`.
 
 **Every gating field is already in each list item — no per-yield `yields_get` needed
 to build the table or detect the access model.** The `yields_get_all` response is a
@@ -73,7 +72,7 @@ slim projection; read these flat fields directly:
 
 | List field | Meaning | Detail-tool equivalent (`yields_get`) |
 |---|---|---|
-| `id` | yield id — **use it to identify the fund/issuer** (e.g. `…superstate-ustb…`, `…syrupusdc…`) | `id` |
+| `id` | yield id — **use it to identify the fund/issuer** (e.g. `…superstate-ustb…`, `…midas-mtbill…`) | `id` |
 | `tokenSymbol` / `tokenAddress` | the **deposit/input token** (e.g. `USDC`) — NOT the fund | `inputTokens[0].symbol` / `.address` |
 | `type` | yield type (`real_world_asset`, `vault`) | `mechanics.type` |
 | `kycRequired` | `true` ⇒ permissioned / KYC-gated | `mechanics.requirements.kycRequired` |
@@ -85,7 +84,7 @@ slim projection; read these flat fields directly:
 | `rewardRate` | APY as a decimal | `rewardRate.total` |
 | `status` | `{ enter, exit }` | `status` |
 | `underMaintenance` / `deprecated` | flags | `metadata.*` |
-| `providerId` | provider (e.g. `maple`; can be generic `stakekit`) — not a reliable fund id | `providerId` |
+| `providerId` | provider (e.g. `midas`; can be generic `stakekit`) — not a reliable fund id | `providerId` |
 | `possibleFeeTakingMechanisms` | fee flags | `mechanics.possibleFeeTakingMechanisms` |
 
 The slim list does **not** include `outputToken`, `metadata.name`/`.description`,
@@ -105,9 +104,8 @@ in the table so the user knows what each yield requires before committing. The
 
 | # | Provider | Token | APY | Network | Access | Min | Supported | Restricted |
 |---|----------|-------|-----|---------|--------|-----|-----------|------------|
-| 🥇 | Maple | syrupUSDC | `<live>` | ethereum | 🌐 Open (non-US) | — | Global ex. | US + sanctioned |
-| 🥈 | Superstate | USTB | `<live>` | ethereum | 🔒 KYC · Allowlist | $100K | 29 juris. | others |
-| 🥉 | Midas | mTBILL | `<live>` | ethereum | 🔒 EU-14 · KYC | — | 14 (EU) | US +15 |
+| 🥇 | Superstate | USTB | `<live>` | ethereum | 🔒 KYC · Allowlist | $100K | 29 juris. | others |
+| 🥈 | Midas | mTBILL | `<live>` | ethereum | 🔒 EU-14 · KYC | — | 14 (EU) | US +15 |
 
 - Always show an **Access** column for RWA tables — never hide the gate.
 - For KYC-gated yields, show `🔒` plus a short descriptive label (`Allowlist`,

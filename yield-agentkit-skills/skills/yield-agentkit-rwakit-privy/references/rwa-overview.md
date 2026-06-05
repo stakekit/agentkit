@@ -6,17 +6,12 @@ private credit — wrapped as on-chain tokens. They are discovered and transacte
 through the **same Yield.xyz AgentKit MCP tools** as every other yield, on
 **Base and Ethereum only**.
 
-### RWA appears in two shapes — discover both
+### Discover RWA — single pass
 
-RWA yields don't all share one `mechanics.type`, so a single type filter misses
-some. Discover in two passes (on `networks: ["ethereum","base"]`) and dedupe by `id`:
+Discover RWA in a single pass (on `networks: ["ethereum","base"]`):
 
 ```
-# 1. Explicitly-typed RWA
-yields_get_all  →  types: ["real_world_asset"]            (e.g. Superstate USTB/USCC)
-
-# 2. Vault-type RWA from recognized providers
-yields_get_all  →  providers: ["maple"]                   (e.g. Maple syrupUSDC/USDT)
+yields_get_all  →  types: ["real_world_asset"]            (Superstate USTB/USCC, Midas mTBILL)
 ```
 
 ### Recognized RWA providers / tokens (extensible)
@@ -25,7 +20,6 @@ yields_get_all  →  providers: ["maple"]                   (e.g. Maple syrupUSD
 |---|---|---|---|
 | Superstate | USTB, USCC | `real_world_asset` | 🔒 KYC · Allowlist |
 | Midas | mTBILL| `real_world_asset`| 🔒 EU-14 · KYC to mint |
-| Maple | syrupUSDC, syrupUSDT | `vault` (ERC-4626) | 🌐 Open for everyone (non-US) |
 
 Add new providers/tokens here as they list — the gate logic itself is data-driven
 (see "How the Agent Detects the Model"). The "Access" column above is the
@@ -46,11 +40,6 @@ engineering model (permissioned vs. open) is in "The Two Access Models" below.
 > In the RWA listing table, show only **compact summaries** (e.g. `14 (EU)`,
 > `US +15`, `Global ex.`). Show the **full lists below only when the user asks**
 > (e.g. *"where can I use Midas mTBILL?"*).
-
-**Maple — syrupUSDC / syrupUSDT** · `🌐 Open for everyone (non-US)`
-- ✅ Supported: All countries **except** those restricted.
-- 🚫 Restricted: United States · Iran · North Korea · Cuba · Syria · Sudan ·
-  Crimea / Donetsk / Luhansk (Ukraine regions) · OFAC-sanctioned persons.
 
 **Superstate — USTB / USCC** · `🔒 KYC · Allowlist` (accredited + qualified purchasers; min $100K)
 - ✅ Supported (29 jurisdictions): United States · Australia · Bermuda · Bahamas ·
@@ -105,7 +94,7 @@ first thing the agent does before any `actions_enter`.
   the **mint / redeem** step (KYC + AML on the issuer's platform) and via
   **jurisdiction restrictions** (Midas: **not available to US persons**; geoblocked).
   Holding/secondary acquisition needs no onboarding.
-- Minimums vary — read `minEntry` live (Midas/Maple are typically none).
+- Minimums vary — read `minEntry` live (Midas is typically none).
 
 ---
 
@@ -120,7 +109,7 @@ Two complementary signals — both live in the MCP. Don't confuse them:
      URL; `minEntry` is the minimum; `cooldownPeriod` (in days) is the exit cooldown.
    - absent / not `true` ⇒ **open-access**.
    - Identify the *fund/issuer* from the yield `id` (e.g. `…superstate-ustb…`,
-     `…syrupusdc…`) and `kycUrl` — **not** `tokenSymbol` (that's the deposit token,
+     `…midas-mtbill…`) and `kycUrl` — **not** `tokenSymbol` (that's the deposit token,
      e.g. `USDC`) and **not** `providerId` (often a generic `"stakekit"`).
 2. **The `actions_enter` allowlist probe (is *this wallet* eligible).** For a
    permissioned yield, attempt to build the enter transaction:
@@ -161,7 +150,7 @@ onboarding (`references/kyc-flows.md`).
 
 - **Networks:** Base and Ethereum only.
 - **Providers/tokens:** see the recognized RWA providers table above (Superstate,
-  Midas, Maple) — extensible.
+  Midas) — extensible.
 
 > **All per-yield numbers — minimum, APY, cooldown, fees, KYC flag — must be read
 > live from the MCP (`yields_get_all` / `yields_get`)**, never from a table in these docs.

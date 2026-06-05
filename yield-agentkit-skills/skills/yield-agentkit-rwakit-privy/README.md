@@ -23,25 +23,23 @@ npx skills add stakekit/agentkit --skill yield-agentkit-privy
 ## What's an RWA yield?
 
 Tokenized exposure to off-chain assets — short-dated US Treasuries, cash-management
-strategies, and private credit. On **Base and Ethereum only**. Two access models:
+strategies, and private credit. On **Base and Ethereum only**. Two supported issuers:
 
 | Issuer | Tokens | Access | Minimum | Gate |
 |---|---|---|---|---|
 | **Superstate** | USTB, USCC | 🔒 KYC · Allowlist | ~$100,000* | KYC + accreditation + on-chain allowlist |
 | **Midas** | mTBILL | 🔒 EU-14 · KYC to mint | None* | EU-14 jurisdictions; KYC to mint/redeem; no US persons |
-| **Maple** | syrupUSDC, syrupUSDT | 🌐 Open for everyone (non-US) | None* | Open to all except US + sanctioned — ERC-4626 vaults (private credit) |
 
 <sub>*Indicative only. The skill always reads live per-yield values (minimum, APY,
 cooldown, KYC flag) via the Yield.xyz MCP tools (`yields_get`) — never by calling
 the REST API directly, and never from numbers in this table.</sub>
 
-- **KYC-gated** tokens (Superstate, Midas) require identity verification —
-  Superstate additionally enforces an on-chain holder allowlist (a deposit from a
-  non-allowlisted wallet reverts). The skill detects this and walks the user through
-  onboarding.
-- **Open-access** tokens (Maple `syrupUSDC`/`syrupUSDT`) are freely held by any
-  non-restricted wallet — the skill deposits without a KYC gate. Restricted
-  jurisdictions (US + sanctioned) are always excluded.
+- **Superstate** (USTB/USCC) requires KYC + accreditation and enforces an on-chain
+  holder allowlist — a deposit from a non-allowlisted wallet reverts. The skill
+  detects this and walks the user through onboarding before any deposit.
+- **Midas** (mTBILL) is freely holdable on-chain (no allowlist), but minting/
+  redeeming at NAV needs KYC and is limited to eligible EU jurisdictions — not
+  available to US persons.
 
 See `references/rwa-overview.md` and `references/kyc-flows.md`.
 

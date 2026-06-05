@@ -55,14 +55,12 @@ enter a **permissioned** RWA yield, use `actions_enter` as an eligibility probe
 { "network": "base", "token": "USDC", "limit": "20", "offset": "0" }
 ```
 
-**RWA discovery (this kit) — two passes, Base + Ethereum, dedupe by `id`:**
+**RWA discovery (this kit) — single pass, Base + Ethereum:**
 ```json
 { "types": ["real_world_asset"], "networks": ["ethereum","base"], "sort": "rewardRateDesc", "limit": 50 }
-{ "providers": ["maple"], "networks": ["ethereum","base"], "sort": "rewardRateDesc", "limit": 50 }
 ```
-Pass 1 catches typed RWA (Superstate); pass 2 catches vault-type RWA (Maple
-`syrupUSDC`/`syrupUSDT`). See `references/rwa-overview.md` for the
-recognized-providers list. If pass 1 returns nothing, RWA is not enabled for the
+This surfaces the supported RWA issuers (Superstate, Midas). See
+`references/rwa-overview.md`. If it returns nothing, RWA is not enabled for the
 connected project's credentials — confirm the project, don't keep retrying.
 
 ---

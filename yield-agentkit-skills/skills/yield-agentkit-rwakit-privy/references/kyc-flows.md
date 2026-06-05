@@ -156,18 +156,6 @@ is no allowlist probe gate. The only gate is the jurisdiction confirmation above
 
 ---
 
-## Provider Playbook — Maple (syrupUSDC / syrupUSDT)
-
-**Model:** Open-access ERC-4626 vault (`type: vault`, real-world private credit).
-
-- Yields surface as **vault-type**, not `real_world_asset` — discover them via
-  `providers: ["maple"]` (see `references/rwa-overview.md`), not the type filter alone.
-- **No KYC, no allowlist, no probe gate** — `kycRequired` is not set. The agent runs
-  the normal enter flow (read the schema, `actions_enter`, sign via Privy).
-- Read `minEntry` / fees / cooldown live; don't assume.
-
----
-
 ## New / Unknown RWA Issuers (generic fallback)
 
 The playbooks above are **reference examples, not an allowlist**. New RWA yields

@@ -28,16 +28,9 @@ applies and guides the user through onboarding when needed.
 
 ## Scope — RWA Only
 
-This skill handles **Real-World Asset (RWA) yields only** — tokenized treasuries,
-funds, and private-credit products. RWA surfaces in the API in **two shapes**:
-
-- `mechanics.type === "real_world_asset"` — e.g. Superstate USTB/USCC.
-- `mechanics.type === "vault"` (often ERC-4626) but **backed by real-world assets** —
-  e.g. Maple `syrupUSDC` / `syrupUSDT`. These are **not** caught by the type filter
-  alone, so also pull them from the recognized RWA providers list in
-  `references/rwa-overview.md`.
-
-RWA yields are currently available on **Base and Ethereum only**.
+This skill handles **Real-World Asset (RWA) yields only** — tokenized treasuries
+and cash-management funds. RWA surfaces in the API as
+`mechanics.type === "real_world_asset"`.
 
 This skill does **not** cover staking, lending, liquidity pools, or generic
 (non-RWA) DeFi vaults — and omits their mechanics (e.g. validator selection). If
@@ -245,19 +238,14 @@ See `references/privy-wallets.md` for valid `chain` / `asset` values.
 
 ### Step 3 — Discover RWA Yields
 
-RWA appears as two shapes, so discover in **two passes** (Base + Ethereum only),
-then dedupe by `id`:
+Discover RWA in a **single pass** (Base + Ethereum only):
 
 ```
-# 1. Explicitly-typed RWA (e.g. Superstate)
 yields_get_all(types: ["real_world_asset"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)
-
-# 2. Vault-type RWA from recognized providers (e.g. Maple syrupUSDC/USDT)
-yields_get_all(providers: ["maple"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)
 ```
 
 See `references/rwa-overview.md` for the recognized RWA providers/tokens list (it's
-extensible). Present the merged set with access badges per
+extensible). Present the set with access badges per
 `references/yield-output-format.md` (RWA Listing). 
 
 ### Step 4 — Enter a Position (runs the RWA Access Gate)

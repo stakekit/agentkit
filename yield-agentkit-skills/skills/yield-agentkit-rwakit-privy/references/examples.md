@@ -11,18 +11,16 @@ and the eligibility gate.
 **User:** What real-world asset yields can I access?
 
 **Agent steps:**
-1. Discovers in two passes (Base + Ethereum), then dedupes by `id`:
-   - `yields_get_all(types: ["real_world_asset"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)` — typed RWA (Superstate)
-   - `yields_get_all(providers: ["maple"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)` — vault-type RWA (Maple syrupUSDC/USDT)
-2. Presents the merged set with access badges (see `references/yield-output-format.md`):
+1. Discovers RWA in a single pass (Base + Ethereum):
+   - `yields_get_all(types: ["real_world_asset"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)` — Superstate + Midas
+2. Presents the set with access badges (see `references/yield-output-format.md`):
 
 
 🏛 Real-World Asset Yields
 | # | Provider   | Token     | APY      | Network  | Access            | Min   | Supported  | Restricted      |
 |---|------------|-----------|----------|----------|-------------------|-------|------------|-----------------|
-| 🥇 | Maple      | syrupUSDC | `<live>` | ethereum | 🌐 Open (non-US)  | —     | Global ex. | US + sanctioned |
-| 🥈 | Superstate | USTB      | `<live>` | ethereum | 🔒 KYC · Allowlist | $100K | 29 juris.  | others          |
-| 🥉 | Midas      | mTBILL    | `<live>` | ethereum | 🔒 EU-14 · KYC    | —     | 14 (EU)    | US +15          |
+| 🥇 | Superstate | USTB      | `<live>` | ethereum | 🔒 KYC · Allowlist | $100K | 29 juris.  | others          |
+| 🥈 | Midas      | mTBILL    | `<live>` | ethereum | 🔒 EU-14 · KYC    | —     | 14 (EU)    | US +15          |
 
 (All from the `yields_get_all` items directly — no per-yield call: APY from
 `rewardRate`, access from `kycRequired`, minimum from `minEntry`, cooldown from
