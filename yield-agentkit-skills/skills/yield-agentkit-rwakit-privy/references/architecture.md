@@ -111,12 +111,12 @@ directly to Privy.
 ## End-to-End Transaction Flow
 
 ```
-1. User: "Deposit 200 USDC into Aave V3 on Base"
+1. User: "Deposit 2 USDC into Midas on Base"
    │
    ▼
 2. Claude calls yield.xyz MCP tools:
-   yields_get("base-usdc-aave-v3-lending")       ← inspect schema
-   actions_enter(yieldId, address, {amount:"200"}) ← build transactions
+   yields_get("base-usdc-midas-mtbill-vault")       ← inspect schema
+   actions_enter(yieldId, address, {amount:"2"}) ← build transactions
    │
    ▼
 3. MCP returns:

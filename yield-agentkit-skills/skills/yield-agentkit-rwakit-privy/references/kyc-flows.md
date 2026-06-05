@@ -114,7 +114,7 @@ done on Superstate's portal. Guide the user step by step:
   same-day if requested before the daily cutoff.
 - USCC: does not currently run a standing redemption program; requests price at the
   day's closing NAV on a T+1 basis.
-- **Exit cooldown** — read live from MCP `yield_get` tool.
+- **Exit cooldown** — read live from MCP `yields_get` tool.
 
 **What the agent automates vs. cannot automate**
 

@@ -105,8 +105,6 @@ first thing the agent does before any `actions_enter`.
   the **mint / redeem** step (KYC + AML on the issuer's platform) and via
   **jurisdiction restrictions** (Midas: **not available to US persons**; geoblocked).
   Holding/secondary acquisition needs no onboarding.
-- Vault-type RWA like **Maple** `syrupUSDC`/`syrupUSDT` are fully open-access to
-  enter — no KYC, no jurisdiction gate beyond the issuer's general terms.
 - Minimums vary — read `minEntry` live (Midas/Maple are typically none).
 
 ---
