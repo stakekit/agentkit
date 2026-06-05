@@ -67,10 +67,7 @@ ineligible wallet can't even produce a signable transaction.
 
 Read live values from the MCP tools (`yields_get_all` / `yields_get`; field names in
 `references/yield-output-format.md`) — never hardcode, never call the yield.xyz REST
-API directly (no API key; the MCP carries auth). Example snapshot of
-`ethereum-usdc-superstate-ustb-vault` (will
-change): `kycRequired: true`, `kycUrl: https://superstate.com`, `minEntry: "100000"`,
-cooldown 1 day, input USDC → output USTB, "US Qualified Purchasers only".
+API directly (no API key; the MCP carries auth).
 
 **Products**
 - **USTB** — Superstate Short Duration US Government Securities Fund (short-dated
@@ -165,9 +162,6 @@ is no allowlist probe gate. The only gate is the jurisdiction confirmation above
 
 - Yields surface as **vault-type**, not `real_world_asset` — discover them via
   `providers: ["maple"]` (see `references/rwa-overview.md`), not the type filter alone.
-- Known yield IDs (Ethereum):
-  `ethereum-usdc-syrupusdc-0x80ac24aa929eaf5013f6436cda2a7ba190f5cc0b-4626-vault`,
-  `ethereum-usdt-syrupusdt-0x356b8d89c1e1239cbbb9de4815c39a1474d5ba7d-4626-vault`.
 - **No KYC, no allowlist, no probe gate** — `kycRequired` is not set. The agent runs
   the normal enter flow (read the schema, `actions_enter`, sign via Privy).
 - Read `minEntry` / fees / cooldown live; don't assume.

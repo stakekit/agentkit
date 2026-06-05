@@ -151,20 +151,6 @@ yield (e.g. Superstate), call `actions_enter` first as a read-only probe — it 
 > For non-Midas yields the flag is not applicable — omit it.
 >
 
-
-**Correct (Superstate / non-Midas):**
-```json
-{ "yieldId": "ethereum-usdc-superstate-ustb-vault", "address": "0xabc...123", "amount": "5000" }
-```
-**Correct (Midas — instant redemption chosen by user):**
-```json
-{ "yieldId": "ethereum-usdc-midas-mtbill-vault", "address": "0xabc...123", "amount": "5000", "useInstantExecution": true }
-```
-**Correct (Midas — standard 1–7 business day redemption chosen by user):**
-```json
-{ "yieldId": "base-usdc-midas-mtbill-vault", "address": "0xabc...123", "amount": "5000", "useInstantExecution": false }
-```
-
 ---
 
 ### `actions_manage`
@@ -178,8 +164,9 @@ yield (e.g. Superstate), call `actions_enter` first as a read-only probe — it 
 | `amount` | `string` | No | Human-readable amount for partial claims e.g. `"10.5"`. Omit to claim full amount. |
 
 **Correct:**
+
 ```json
-{ "yieldId": "base-usdc-aave-v3", "address": "0xabc...123", "action": "CLAIM_REWARDS", "passthrough": "<value from pendingActions>" }
+{ "yieldId": "<yield_id>", "address": "0xabc...123", "action": "<action>", "passthrough": "<value from pendingActions>" }
 ```
 
 ---

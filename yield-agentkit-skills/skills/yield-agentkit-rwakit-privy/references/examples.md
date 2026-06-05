@@ -42,14 +42,12 @@ and the eligibility gate.
 **User:** Deposit 100,000 USDC into Superstate USTB.
 
 **Agent steps:**
-1. `yields_get("ethereum-usdc-superstate-ustb-vault")` → reads
-   `mechanics.requirements.kycRequired === true` ⇒ **permissioned**; `kycUrl` =
-   `https://superstate.com`; `entryLimits.minimum` = `"100000"`.
+1. Call yields_get tool and fetch all the info related to kyc, apy, tvl from there.
 2. States requirements (KYC, accreditation, the minimum read from
    `entryLimits.minimum`, allowlisted wallet).
 3. Checks Privy wallet balance ≥ that live minimum via Privy balance API — confirmed.
 4. **Eligibility probe** —
-   `actions_enter("ethereum-usdc-superstate-ustb-vault", "0x8ea8…c4c9", "100000")`.
+   Build an enter txn using `actions_enter` tool
 5. Probe **builds** `transactions[]` ⇒ wallet is KYC'd + allowlisted / eligible.
 6. For each transaction in `stepIndex` order → POST to Privy
    `/v1/wallets/{id}/rpc` → poll `CONFIRMED` → `submit_hash(transactionId, hash)`.
@@ -65,7 +63,7 @@ and the eligibility gate.
 **Agent steps:**
 1. Recognises Superstate ⇒ permissioned; states requirements.
 2. **Eligibility probe** —
-   `actions_enter("ethereum-usdc-superstate-ustb-vault", "0xBa80…4542", "100000")`.
+   Build an enter txn using `actions_enter` tool.
 3. Probe **errors** (HTTP 400 — not allowlisted/enabled for this wallet) ⇒ **not
    eligible**. The agent does **not** sign anything.
 4. Runs the Superstate onboarding flow:
