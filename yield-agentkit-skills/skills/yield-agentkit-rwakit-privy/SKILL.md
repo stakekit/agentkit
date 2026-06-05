@@ -1,7 +1,7 @@
 ---
 name: yield-agentkit-rwakit-privy
 description:
-  End-to-end Real-World Asset (RWA) yield execution with Privy agentic wallets. Yield.xyz discovers tokenized RWA yields (Superstate USTB/USCC, Midas mTBILL) and builds transactions; Privy handles wallet creation, policy enforcement, signing, and broadcasting. Adds RWA access gating — KYC, accreditation, minimums, and on-chain allowlists — on top of autonomous and semi-autonomous (enterprise approval) modes. Use when a user wants to discover or enter tokenized real-world asset yields, complete RWA KYC onboarding, or manage RWA positions via a Privy wallet. Requires Yield.xyz MCP and Privy API credentials.
+  End-to-end Real-World Asset (RWA) yield execution with Privy agentic wallets. Yield.xyz discovers tokenized RWA yields (e.g. Superstate USTB/USCC, Midas mTBILL) and builds transactions; Privy handles wallet creation, policy enforcement, signing, and broadcasting. Adds RWA access gating — KYC, accreditation, minimums, and on-chain allowlists — on top of autonomous and semi-autonomous (enterprise approval) modes. Use when a user wants to discover or enter tokenized real-world asset yields, complete RWA KYC onboarding, or manage RWA positions via a Privy wallet. Requires Yield.xyz MCP and Privy API credentials.
 metadata:
   claude:
     emoji: "🏛"

@@ -64,7 +64,8 @@ General display rules:
 ## RWA Listing — `yields_get_all`
 
 **Discover in a single pass** (Base + Ethereum): `types: ["real_world_asset"]`
-(surfaces Superstate and Midas). See `references/rwa-overview.md`.
+(surfaces whatever RWA yields we support, e.g. Superstate, Midas). See
+`references/rwa-overview.md`.
 
 **Every gating field is already in each list item — no per-yield `yields_get` needed
 to build the table or detect the access model.** The `yields_get_all` response is a

@@ -11,7 +11,7 @@ through the **same Yield.xyz AgentKit MCP tools** as every other yield, on
 Discover RWA in a single pass (on `networks: ["ethereum","base"]`):
 
 ```
-yields_get_all  →  types: ["real_world_asset"]            (Superstate USTB/USCC, Midas mTBILL)
+yields_get_all  →  types: ["real_world_asset"]            (e.g. Superstate USTB/USCC, Midas mTBILL)
 ```
 
 ### Recognized RWA providers / tokens (extensible)
@@ -154,10 +154,6 @@ onboarding (`references/kyc-flows.md`).
 
 > **All per-yield numbers — minimum, APY, cooldown, fees, KYC flag — must be read
 > live from the MCP (`yields_get_all` / `yields_get`)**, never from a table in these docs.
->
-> RWA yields are enabled per Yield.xyz project. If discovery returns nothing, RWA is
-> not enabled for the connected project's credentials — confirm the project before
-> debugging further.
 
 ---
 

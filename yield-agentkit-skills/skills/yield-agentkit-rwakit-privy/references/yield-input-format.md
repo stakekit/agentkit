@@ -59,9 +59,8 @@ enter a **permissioned** RWA yield, use `actions_enter` as an eligibility probe
 ```json
 { "types": ["real_world_asset"], "networks": ["ethereum","base"], "sort": "rewardRateDesc", "limit": 50 }
 ```
-This surfaces the supported RWA issuers (Superstate, Midas). See
-`references/rwa-overview.md`. If it returns nothing, RWA is not enabled for the
-connected project's credentials — confirm the project, don't keep retrying.
+This surfaces whatever RWA yields we support (e.g. Superstate, Midas). See
+`references/rwa-overview.md`. 
 
 ---
 

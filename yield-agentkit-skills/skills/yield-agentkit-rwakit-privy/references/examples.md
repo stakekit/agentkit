@@ -12,7 +12,7 @@ and the eligibility gate.
 
 **Agent steps:**
 1. Discovers RWA in a single pass (Base + Ethereum):
-   - `yields_get_all(types: ["real_world_asset"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)` — Superstate + Midas
+   - `yields_get_all(types: ["real_world_asset"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)` — e.g. Superstate, Midas
 2. Presents the set with access badges (see `references/yield-output-format.md`):
 
 

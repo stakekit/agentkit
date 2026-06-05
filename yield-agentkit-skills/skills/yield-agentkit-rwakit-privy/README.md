@@ -23,7 +23,8 @@ npx skills add stakekit/agentkit --skill yield-agentkit-privy
 ## What's an RWA yield?
 
 Tokenized exposure to off-chain assets — short-dated US Treasuries, cash-management
-strategies, and private credit. On **Base and Ethereum only**. Two supported issuers:
+strategies, and private credit. On **Base and Ethereum only**. Example issuers and
+their access gates:
 
 | Issuer | Tokens | Access | Minimum | Gate |
 |---|---|---|---|---|
