@@ -241,7 +241,7 @@ See `references/privy-wallets.md` for valid `chain` / `asset` values.
 Discover RWA in a **single pass**:
 
 ```
-yields_get_all(types: ["real_world_asset"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)
+yields_get_all(types: ["real_world_asset"], sort: "rewardRateDesc", limit: 50)
 ```
 
 See `references/rwa-overview.md` for context. Present the set with access badges per
@@ -403,8 +403,6 @@ If you cannot find relevant information in the reference files, refer to the Res
 ## Resources
 
 - Yield.xyz AgentKit docs: https://docs.yield.xyz/docs/agents-overview
-- Superstate onboarding: https://superstate.com/register
-- Midas: https://midas.app · https://docs.midas.app
 - Privy dashboard: https://dashboard.privy.io
 - Privy docs: https://docs.privy.io
 - Privy API reference: https://docs.privy.io/api-reference/introduction

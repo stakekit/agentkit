@@ -128,9 +128,6 @@ Two complementary signals — both live in the MCP. Don't confuse them:
    whether *this wallet* is already through it. See the decision tree in
    `references/kyc-flows.md`.
 
-> A dedicated per-wallet KYC-eligibility API is planned but **not live yet** — until
-> it ships, the probe is how you confirm a specific wallet's eligibility.
-
 ---
 
 ## Pre-Deposit Checklist (RWA)
