@@ -29,6 +29,18 @@ Requires: Yield.xyz AgentKit MCP + Privy Skill (with configured credentials)
 
 ---
 
+### [`yield-agentkit-rwakit-privy`](./skills/yield-agentkit-rwakit-privy/)
+
+**Real-World Asset (RWA) yield execution via Privy.**
+
+The RWA-focused companion to `yield-agentkit-privy`. Same Yield.xyz + Privy flow, scoped to tokenized real-world asset yields (Superstate USTB/USCC, Midas). Adds a mandatory **RWA Access Gate** that handles KYC, accreditation, minimum subscription, and on-chain allowlist gating — guiding the user through issuer onboarding before any deposit, and never signing for an ineligible wallet. Supports both autonomous and semi-autonomous workflows.
+
+For staking and other DeFi yields, use `yield-agentkit-privy` instead.
+
+Requires: Yield.xyz AgentKit MCP + Privy Skill (with configured credentials)
+
+---
+
 ### [`yield-agentkit-moonpay`](./skills/yield-agentkit-moonpay/)
 
 **Yield discovery via Yield.xyz AgentKit + signing and broadcasting via MoonPay.**
@@ -78,13 +90,14 @@ Both skills should appear under available skills.
 ---
 ## Which skill should I use?
 
-| | `yield-agentkit` | `yield-agentkit-privy` | `yield-agentkit-moonpay` |
-|---|---|---|---|
-| Find yields | ✅ | ✅ | ✅ 
-| Build transactions | ✅ | ✅ | ✅ 
-| Sign + broadcast | ❌ bring your own signer | ✅ via Privy wallet | ✅ via Moonpay wallet
-| Check balances | ✅ | ✅ | ✅
-Policy Guarded | ❌ | ✅ | ❌
+| | `yield-agentkit` | `yield-agentkit-privy` | `yield-agentkit-rwakit-privy` | `yield-agentkit-moonpay` |
+|---|---|---|---|---|
+| Find yields | ✅ | ✅ | ✅ (RWA only) | ✅ |
+| Build transactions | ✅ | ✅ | ✅ | ✅ |
+| Sign + broadcast | ❌ bring your own signer | ✅ via Privy wallet | ✅ via Privy wallet | ✅ via Moonpay wallet |
+| Check balances | ✅ | ✅ | ✅ | ✅ |
+| Policy guarded | ❌ | ✅ | ✅ | ❌ |
+| RWA KYC / allowlist gating | ❌ | ❌ | ✅ | ❌ |
 
 ## Related
 

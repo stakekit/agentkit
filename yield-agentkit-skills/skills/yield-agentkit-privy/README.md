@@ -261,4 +261,5 @@ yield-agentkit-skills/skills/yield-agentkit-privy/
 - [Yield.xyz AgentKit MCP](https://mcp.yield.xyz/mcp) — yield tools
 - [Yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference
 - [Privy docs — Manual approvals](https://docs.privy.io/controls/dashboard/overview) — intents API reference
+- [Privy Recipe](https://docs.privy.io/recipes/yield/yield-agentkit-guide) - yield-agentkit-privy skill
 - [Privy dashboard](https://dashboard.privy.io) — wallet and policy management
