@@ -59,9 +59,6 @@ ineligible wallet can't even produce a signable transaction.
 > - Success (response has `transactions[]`) → this wallet is KYC'd + allowlisted → eligible.
 > - Error (HTTP 400 / fails to build) → not eligible / not allowlisted.
 
-> **Swap-in (future).** A dedicated per-wallet KYC-eligibility API is planned but
-> not live yet; when it ships, replace the probe in 2b with that check.
-
 ---
 
 ## Provider Playbook — Superstate (USTB / USCC)
