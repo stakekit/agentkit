@@ -57,8 +57,8 @@ probe** (`actions_enter`) that detects ineligibility before any signing. See
           ┌──────────────────────────────┐
           │         Blockchain           │
           │                              │
-          │     Base · Ethereum          │
-          │   (RWA yields, EVM only)     │
+          │     Base · Ethereum etc.      │
+          │         RWA yields           │
           └──────────────────────────────┘
 ```
 
@@ -72,7 +72,7 @@ claude mcp add --transport http yield-agentkit https://mcp.yield.xyz/mcp
 ```
 
 **What it does (for this skill, scoped to `types: ["real_world_asset"]`):**
-- Discovers RWA yield opportunities (Superstate, Midas)
+- Discovers RWA yield opportunities (eg: Superstate, Midas)
 - Returns the full `YieldDto` for any yield, including the exact argument
   schema required to enter or exit a position, plus the `mechanics.requirements`
   KYC gate, `entryLimits`, and cooldown
@@ -86,8 +86,7 @@ claude mcp add --transport http yield-agentkit https://mcp.yield.xyz/mcp
 - Hold or manage private keys
 
 The MCP output that matters most is `transactions[]` in any action
-response — each item has an `unsignedTransaction` that gets passed
-directly to Privy.
+response.
 
 ---
 

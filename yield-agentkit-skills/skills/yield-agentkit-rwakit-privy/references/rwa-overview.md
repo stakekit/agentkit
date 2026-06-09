@@ -7,7 +7,7 @@ through the **same Yield.xyz AgentKit MCP tools** as every other yield.
 
 ### Discover RWA — single pass
 
-Discover RWA in a single pass (on `networks: ["ethereum","base"]`):
+Discover RWA yields.
 
 ```
 yields_get_all  →  types: ["real_world_asset"]            (e.g. Ondo OUSG/USDY, Superstate USTB/USCC, Midas mTBILL)

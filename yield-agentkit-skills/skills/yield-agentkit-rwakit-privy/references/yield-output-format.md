@@ -2,7 +2,7 @@
 
 All display rules for Yield.xyz Agent tool outputs. Always follow these formats — never dump raw JSON or plain comma-separated data.
 
-This kit focuses on **RWA yields**. The display rules below apply to all yields;
+This skill focuses on **RWA yields**. The display rules below apply to all yields;
 the RWA-specific badges and the **RWA Listing** section define how to present
 KYC / accreditation / minimum / allowlist gating so the user understands what an
 RWA yield requires *before* they try to enter.
@@ -17,7 +17,6 @@ RWA yield requires *before* they try to enter.
 
 **Number formatting:**
 - APY/APR: `(total * 100).toFixed(2) + "%"` → `7.02%`
-- Lockup seconds → human time: `86400 → 1 day`, `604800 → 7 days`
 
 **Badges — show only when applicable. Every value is read live from the MCP — never hard-code it per issuer:**
 - `⚠️ Under Maintenance` / `⚠️ Deprecated` — when the corresponding flag is set
