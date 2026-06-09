@@ -232,12 +232,17 @@ curl -s -X POST "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID/rules" \
 
 ## EVM Chain ID Reference
 
-RWA yields are on Base and Ethereum only, so policy `chain_id` conditions use:
+For the EVM RWA networks such as Base and Ethereum, policy `chain_id` conditions use:
 
 | Chain             | `chain_id` |
 |-------------------|------------|
 | Ethereum mainnet  | `1`        |
 | Base              | `8453`     |
+| Arbitrum One      | `42161`    |
+| Optimism          | `10`       |
+| Polygon           | `137`      |
+| Avalanche C-Chain | `43114`    |
+| BNB Chain         | `56`       |
 
 ---
 

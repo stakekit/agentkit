@@ -33,7 +33,7 @@ enter a **permissioned** RWA yield, use `actions_enter` as an eligibility probe
 
 | Parameter | Type | Required | Notes |
 |---|---|---|---|
-| `networks` | `string[]` | No | Array of lowercase slugs. For this RWA kit use `["ethereum","base"]` (the only networks with RWA yields). Pass both in one array for a unified list, or one call per network for a side-by-side comparison. |
+| `networks` | `string[]` | No | Array of lowercase slugs. For this RWA kit use `["ethereum","base"]` to cover those networks. Pass multiple in one array for a unified list, or one call per network for a side-by-side comparison. |
 | `token` | `string` | No | Uppercase. e.g. `"USDC"`, `"ETH"`, `"WBTC"` |
 | `types` | `string[]` (enum) | No | Array. Valid values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. **For this RWA kit, pass `["real_world_asset"]` to surface RWA yields (Superstate, Midas, …).** Map other user requests to the nearest match or confirm before calling. |
 | `sort` | `string` (enum) | No | Server-side sort. **Always pass `"rewardRateDesc"` by default.** Other values: `rewardRateAsc`, `statusEnterDesc`, `statusEnterAsc`, `statusExitDesc`, `statusExitAsc`. |

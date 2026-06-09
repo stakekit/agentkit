@@ -238,15 +238,20 @@ See `references/privy-wallets.md` for valid `chain` / `asset` values.
 
 ### Step 3 — Discover RWA Yields
 
-Discover RWA in a **single pass** (Base + Ethereum only):
+Discover RWA in a **single pass**:
 
 ```
 yields_get_all(types: ["real_world_asset"], networks: ["ethereum","base"], sort: "rewardRateDesc", limit: 50)
 ```
 
-See `references/rwa-overview.md` for the recognized RWA providers/tokens list (it's
-extensible). Present the set with access badges per
-`references/yield-output-format.md` (RWA Listing). 
+See `references/rwa-overview.md` for context. Present the set with access badges per
+`references/yield-output-format.md` (RWA Listing).
+
+> The set of RWA yields is sourced live from the Yield.xyz AgentKit MCP and grows over
+> time. Always discover and read yields live — any newly listed RWA yield surfaces
+> automatically through `yields_get_all` / `yields_get` with no change to this skill.
+> Present whatever the MCP returns using `references/yield-input-format.md` and
+> `references/yield-output-format.md`; never restrict to a fixed provider list.
 
 ### Step 4 — Enter a Position (runs the RWA Access Gate)
 

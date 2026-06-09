@@ -19,28 +19,32 @@ RWA yield requires *before* they try to enter.
 - APY/APR: `(total * 100).toFixed(2) + "%"` → `7.02%`
 - Lockup seconds → human time: `86400 → 1 day`, `604800 → 7 days`
 
-**Badges — show only when applicable:**
-- `⚠️ Under Maintenance` — `metadata.underMaintenance`
-- `⚠️ Deprecated` — `metadata.deprecated`
-- `🔒 KYC Required` — `mechanics.requirements.kycRequired === true` (detail) or `kycRequired === true` (list item). Show the `mechanics.requirements.kycUrl` when present.
-- `🏛 RWA` — `mechanics.type === "real_world_asset"` (detail) or `type === "real_world_asset"` (list item)
-- `📋 Allowlist` — permissioned RWA whose holder wallet must be allowlisted (any `kycRequired` RWA, e.g. Superstate)
-- `💵 Min $X` — show `mechanics.entryLimits.minimum` when non-zero (Superstate USTB: `"100000"` → `💵 Min $100K`)
-- `🌐 Open for everyone (non-US)` — RWA with **no KYC gate** (`kycRequired` not `true`) that is open to all jurisdictions except the issuer's restricted list. **Never label this "Permissionless" to the user** — always use this phrasing.
-- For a **jurisdiction-limited** issuer, use a short descriptive Access label instead of a generic one — e.g. `🔒 EU-14 · KYC to mint` (Midas mTBILL). The lock (`🔒`) comes from `kycRequired`; the descriptive suffix (e.g. `EU-14`, `Allowlist`) comes from the per-issuer eligibility metadata in `references/rwa-overview.md`.
+**Badges — show only when applicable. Every value is read live from the MCP — never hard-code it per issuer:**
+- `⚠️ Under Maintenance` / `⚠️ Deprecated` — when the corresponding flag is set
+- `🔒 KYC Required` — `kycRequired` is `true`. The onboarding link is the `authorizeUrl`
+  inside the yield's KYC requirements (from `yields_get`) — surface it whenever present.
+- `🏛 RWA` — yield `type` is `real_world_asset`
+- `📋 Allowlist` — a KYC-gated RWA whose holder wallet must be allowlisted on-chain
+- `💵 Min $X` — the entry minimum when non-zero (e.g. `"100000"` → `💵 Min $100K`)
+- **Access label** — built from the yield's own live KYC/eligibility data, not a lookup table:
+  - No KYC gate → `🌐 Open (non-US)` where a jurisdiction restriction applies, else `🌐 Open`.
+    **Never use the word "Permissionless" to the user.**
+  - KYC-gated → `🔒` + a short descriptor from the live eligibility (e.g. `Allowlist`,
+    `non-US` when US persons aren't allowed, `US QP ok` when they are).
 - `⭐ Preferred` — yield flagged preferred
-- `🔥 High APY` — `rewardRate.total > 0.20` — flag as potentially incentivised
+- `🔥 High APY` — reward rate above ~20% — flag as potentially incentivised
 
-> **KYC field note.** `mechanics.requirements.{kycRequired,kycUrl}` and
-> `mechanics.entryLimits.minimum` are live in `yields_get` detail; the
-> `yields_get_all` list item carries the same as flat `kycRequired` / `kycUrl` /
-> `minEntry`.
+> **Where the gating data lives.** Each `yields_get_all` item is self-describing —
+> read `kycRequired`, the entry min/max, `rewardRate`, the cooldown, `status`, and
+> the fee flags straight off it. The full KYC + eligibility detail — onboarding URL,
+> eligible/blocked jurisdictions, investor tiers, a plain-language summary, and the
+> minimum — comes from `yields_get` under the yield's requirements. Read whatever
+> fields are present; don't hard-code per-issuer values.
 >
-> **Identify the issuer/fund from the yield `id`** (e.g. `…superstate-ustb…`,
-> `…midas-mtbill…`) and `kycUrl` — **not** `providerId` (generic `"stakekit"`), and
-> **not** `tokenSymbol` (that's the *deposit* token, e.g. `USDC`, not the fund).
-> `outputToken.symbol` / `metadata.name` identify the fund too but are
-> **`yields_get` detail only** — they are not in the slim list item.
+> Identify the fund/issuer from the yield `id` (e.g. `…superstate-ustb…`, `…ondo-ousg…`,
+> `…midas-mtbill…`) and the issuer name/URL in the detail — not `providerId` (can be
+> generic) and not `tokenSymbol` (that's the deposit token, e.g. `USDC`). The fund's
+> display name is in the yield's `metadata`.
 
 ---
 
@@ -50,8 +54,8 @@ The **RWA Listing** section below is the canonical table format for this skill.
 General display rules:
 
 - **Single network:** `limit: 20`, `sort: "rewardRateDesc"` — pre-sorted; show top 10.
-- **Both networks** (RWA is on Base + Ethereum): pass `networks: ["ethereum","base"]`
-  in one call, or one call per network if the user wants a side-by-side comparison.
+- **Multiple networks:** pass `networks: ["ethereum","base"]` in one call, or one call
+  per network if the user wants a side-by-side comparison.
 - Always display as a **table**, never individual cards. The access badge goes in
   the Access column; other flags (maintenance, deprecated) go in Notes.
 - **Sorting:** `rewardRate` descending by default.
@@ -62,37 +66,20 @@ General display rules:
 
 ## RWA Listing — `yields_get_all`
 
-**Discover in a single pass** (Base + Ethereum): `types: ["real_world_asset"]`
-(surfaces whatever RWA yields we support, e.g. Superstate, Midas). See
+**Discover in a single pass:** `types: ["real_world_asset"]`
+— this surfaces whatever RWA yields the project supports. See
 `references/rwa-overview.md`.
 
-**Every gating field is already in each list item — no per-yield `yields_get` needed
-to build the table or detect the access model.** The `yields_get_all` response is a
-slim projection; read these flat fields directly:
+Each list item is self-describing and already carries everything needed to build the
+table and detect the access model — no per-yield `yields_get` call is needed just to
+list them. The yield `id`/`metadata` identify the fund, `kycRequired` flags gating,
+the min/max are the limits, `rewardRate` is the APY (a decimal), and the cooldown/
+warmup/lockup periods are in **days**, plus `status` and the fee flags. Country-level
+eligibility and the onboarding URL are NOT in the list item — fetch them with
+`yields_get` only when the user asks where a yield is available, or before entering.
 
-| List field | Meaning | Detail-tool equivalent (`yields_get`) |
-|---|---|---|
-| `id` | yield id — **use it to identify the fund/issuer** (e.g. `…superstate-ustb…`, `…midas-mtbill…`) | `id` |
-| `tokenSymbol` / `tokenAddress` | the **deposit/input token** (e.g. `USDC`) — NOT the fund | `inputTokens[0].symbol` / `.address` |
-| `type` | yield type (`real_world_asset`, `vault`) | `mechanics.type` |
-| `kycRequired` | `true` ⇒ permissioned / KYC-gated | `mechanics.requirements.kycRequired` |
-| `kycUrl` | issuer onboarding URL | `mechanics.requirements.kycUrl` |
-| `minEntry` | minimum subscription | `mechanics.entryLimits.minimum` |
-| `maxEntry` | maximum | `mechanics.entryLimits.maximum` |
-| `cooldownPeriod` | exit cooldown **in days** (already rounded) | `mechanics.cooldownPeriod.seconds` |
-| `warmupPeriod` / `lockupPeriod` | in days | `mechanics.{warmup,lockup}Period.seconds` |
-| `rewardRate` | APY as a decimal | `rewardRate.total` |
-| `status` | `{ enter, exit }` | `status` |
-| `underMaintenance` / `deprecated` | flags | `metadata.*` |
-| `providerId` | provider (e.g. `midas`; can be generic `stakekit`) — not a reliable fund id | `providerId` |
-| `possibleFeeTakingMechanisms` | fee flags | `mechanics.possibleFeeTakingMechanisms` |
-
-The slim list does **not** include `outputToken`, `metadata.name`/`.description`,
-`mechanics.arguments`, or `rewardRate.components` — those require `yields_get`.
-
-> ⚠️ Watch the units: list `cooldownPeriod`/`warmupPeriod`/`lockupPeriod` are in
-> **days** (rounded); the detail `mechanics.*.seconds` are in **seconds**. `rewardRate`
-> is a decimal — format as `(rewardRate * 100).toFixed(2) + "%"`.
+> ⚠️ **Units.** List periods are in **days** (rounded); `yields_get` detail periods
+> are in **seconds**. `rewardRate` is a decimal — format as `(rewardRate*100).toFixed(2)+"%"`.
 
 When listing RWA yields, the access model matters as much as the APY — surface it
 in the table so the user knows what each yield requires before committing.
@@ -102,24 +89,38 @@ in the table so the user knows what each yield requires before committing.
 
 | Provider | Product | APY | Access | Min | Supported | Restricted | Notes |
 |----------|---------|-----|--------|-----|-----------|------------|-------|
-| Superstate | USTB | `<live>` | 🔒 KYC · Allowlist | $100K | 29 juris. | others | T-Bill · accredited + QP · T+1 redemption |
-| Midas | mTBILL | `<live>` | 🔒 EU-14 · KYC to mint | — | 14 (EU) | US +15 | T-Bill · freely holdable; KYC to mint/redeem |
+| Ondo | OUSG | `<live>` | 🔒 KYC · US QP ok | $5K | Global incl. US (QP) | Sanctioned (32) +11 regions | Short-term US govt bond · US QPs ok |
+
+(One illustrative row — fill every cell live from the MCP, one row per yield returned.)
 
 - **Columns, in this exact order:** Provider · Product · APY · Access · Min ·
   Supported · Restricted · Notes. Do **not** add TVL, rank, network, or any other
   column.
-- **Product** = the fund / output token (e.g. `USTB`, `mTBILL`), from the yield `id`
-  / `outputToken` — **not** the deposit token (`USDC`). If the same product lists on
-  more than one network (e.g. Midas on Base + Ethereum), put the network in the
-  **Notes** cell so the rows stay distinct.
-- **Access** — never hide the gate. KYC-gated yields show `🔒` + a short descriptive
-  label (`Allowlist`, `EU-14`, …); no-KYC yields use `🌐 Open (non-US)` —
-  **never the word "Permissionless"**.
-- **Supported / Restricted** are COMPACT summaries only (counts or short phrases —
-  e.g. `14 (EU)`, `US +15`, `Global ex.`). Do **not** list full country names in the
-  table — it makes the terminal table unreadable. Full lists are static metadata in
-  `references/rwa-overview.md` (NOT the MCP); show them only **on request** (e.g.
-  *"where can I use Midas mTBILL?"*) via the Eligibility block below.
+- **Product** = the fund / output token (e.g. `USTB`, `OUSG`, `mTBILL`), from the
+  yield `id` / `metadata` — **not** the deposit token (`USDC`). If the same product
+  lists on more than one network, put the network in the **Notes** cell so the rows
+  stay distinct.
+- **Access** — never hide the gate. Build the label from the yield's live KYC/
+  eligibility data: `🔒` + a short descriptor for gated yields (`Allowlist`, `non-US`,
+  `US QP ok`, …); `🌐 Open` / `🌐 Open (non-US)` for ungated. **Never use the word
+  "Permissionless".**
+- **Supported / Restricted** are short **region / jurisdiction summaries** built live
+  from the yield's eligibility — a few words each, never raw country names, never "ask":
+  - **Supported** — summarise where it's allowed: US persons allowed + open eligibility
+    → `Global incl. US (QP)` / `Global`; US persons not allowed → `Non-US` plus the
+    eligible jurisdictions (e.g. `Non-US (EEA, UK, CH, SG, HK, MY, BR)`); a country
+    allowlist → the dominant region(s) or `US + intl allowlist`.
+  - **Restricted** — summarise where it's blocked: name the blocked regions/groups
+    (e.g. `Sanctioned (32) +11 regions` — append `+N regions` for blocked subdivisions,
+    prefix `US +` when US persons aren't allowed). A deny-by-default allowlist with no
+    blocked list → `Rest of world`.
+  - MCP exposes no eligibility but a **static fallback** exists (see
+    `references/rwa-overview.md` → *Static eligibility fallback*) → summarise it the
+    same way (e.g. Midas → Supported `EU-14`, Restricted `US + sanctioned`).
+  - no jurisdiction gating anywhere → `—` in both.
+
+  **Never list full country names in the table** — show them only **on request**
+  (e.g. *"where can I use Ondo OUSG?"*) via the Eligibility block below.
 - **Notes** = a short product descriptor (asset type, redemption nature, key
   caveats) — a few words only. Read fee/cooldown live from the MCP; never surface TVL.
 - After the table, add a one-line pointer: *"KYC-gated RWA needs onboarding before
@@ -129,17 +130,25 @@ in the table so the user knows what each yield requires before committing.
 
 ### Eligibility block — full country lists (on request)
 
-When the user asks where a specific RWA yield is available, pull the supported /
-restricted lists from `references/rwa-overview.md` and render them as a **wrapped
-vertical list**, never as a wide table:
+When the user asks where a specific RWA yield is available, fetch it with `yields_get`
+and read its eligibility **live**: the model (allowlist vs open-except-blocked), the
+allowed or blocked countries, any blocked subdivisions/regions, whether US persons are
+allowed, the eligible investor tiers, and the plain-language summary. Expand country
+codes to readable names and render a **wrapped vertical list**, never a wide table:
 
 ```
-🌍 Eligibility · Midas mTBILL
-  ✅ Supported (EU-14): Austria, Belgium, France, Germany, Ireland, Italy,
-     Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Spain, Sweden
-  🚫 Restricted: United States, Canada, China, Australia, UK, Russia, Iran,
-     and other EU/US-sanctioned jurisdictions
+🌍 Eligibility · Ondo OUSG
+  ℹ️  Open to qualified purchasers in any non-restricted jurisdiction (US persons allowed).
+  ✅ Supported: all jurisdictions except those listed below.
+  🚫 Restricted (32 countries + 11 regions): Afghanistan, Albania, Belarus,
+     Bosnia & Herzegovina, Bulgaria, … plus blocked regions of Ukraine and Sudan.
+  🔗 Onboarding: https://app.ondo.finance/assets/ousg
 ```
+
+The summary, country lists, and onboarding URL come live from the MCP. **Exception:**
+if the yield exposes no eligibility but a static fallback exists (currently Midas — see
+`references/rwa-overview.md` → *Static eligibility fallback*), expand that instead, and
+say it's the issuer's published jurisdiction policy.
 
 ---
 
@@ -187,10 +196,10 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 | Exit closed | `status.exit === false` | ⚠️ This yield cannot be exited right now. |
 | Under maintenance | `metadata.underMaintenance` | ⚠️ Protocol is under maintenance. |
 | Deprecated | `metadata.deprecated` | ⚠️ Deprecated — consider alternatives. |
-| KYC required | `mechanics.requirements.kycRequired === true` | 🔒 KYC required. Complete onboarding first — see `references/kyc-flows.md`. Show `mechanics.requirements.kycUrl`. |
+| KYC required | `kycRequired` is `true` | 🔒 KYC required. Complete onboarding first — see `references/kyc-flows.md`. Show the live onboarding URL from the yield's KYC requirements. |
 | Wallet not allowlisted (permissioned RWA) | `actions_enter` probe errors | 📋 This wallet isn't on the issuer's allowlist. Do not sign — run onboarding (`references/kyc-flows.md`). |
-| RWA minimum | `mechanics.entryLimits.minimum` (read live; e.g. `"100000"`) | Minimum subscription is X `<token>` — confirm wallet balance covers it. |
-| Restricted jurisdiction (open-access RWA) | provider rules (Midas: no US persons) | 🌍 Not available to US persons / restricted regions — confirm eligibility first. |
+| RWA minimum | the yield's entry minimum (read live; e.g. `"100000"`) | Minimum subscription is X `<token>` — confirm wallet balance covers it. |
+| Restricted jurisdiction | the yield's live eligibility (blocked countries/regions, US-person rule) | 🌍 Confirm the user's jurisdiction is eligible per the yield's eligibility — stop if restricted. |
 | Below minimum | `entryLimits.minimum` | Minimum deposit is X `<token>`. |
 | Above maximum | `entryLimits.maximum` | Maximum deposit is X `<token>`. |
 | Lockup | `mechanics.lockupPeriod` | Funds locked for X days after deposit. |

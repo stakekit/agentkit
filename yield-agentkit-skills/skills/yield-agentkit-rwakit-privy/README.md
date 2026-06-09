@@ -22,9 +22,13 @@ npx skills add stakekit/agentkit --skill yield-agentkit-privy
 
 ## What's an RWA yield?
 
-Tokenized exposure to off-chain assets — short-dated US Treasuries, cash-management
-strategies, and private credit. On **Base and Ethereum only**. Example issuers and
-their access gates:
+Tokenized claims on traditional financial assets, with the yield generated off-chain — by interest on short-dated US Treasuries, lending spreads in cash-management strategies, or coupons on private credit — and distributed on-chain through the token's price or rebase.
+
+Unlike DeFi-native yields (lending pools, AMMs, staking) which earn from on-chain activity and token emissions, RWA yield comes from regulated real-world cashflows. That brings three differences worth knowing:
+
+- Source is exogenous — the yield doesn't move with crypto market conditions. A T-bill token yields roughly the T-bill rate regardless of what ETH or stablecoin demand is doing.
+- Access is gated — issuers operate under securities law, so positions typically require KYC, sometimes accreditation, and often an on-chain allowlist before mint/redeem works. Some are jurisdiction-restricted (e.g. EU-only, non-US).
+- Redemption is rarely instant — the underlying asset (a Treasury bill, a credit position) doesn't settle on chain. Standard redemptions usually queue for 1-7 business days while the issuer unwinds the off-chain leg. Some products offer an "instant" path via a liquidity pool, at a fee.
 
 | Issuer | Tokens | Access | Minimum | Gate |
 |---|---|---|---|---|
@@ -32,15 +36,7 @@ their access gates:
 | **Midas** | mTBILL | 🔒 EU-14 · KYC to mint | None* | EU-14 jurisdictions; KYC to mint/redeem; no US persons |
 
 <sub>*Indicative only. The skill always reads live per-yield values (minimum, APY,
-cooldown, KYC flag) via the Yield.xyz MCP tools (`yields_get`) — never by calling
-the REST API directly, and never from numbers in this table.</sub>
-
-- **Superstate** (USTB/USCC) requires KYC + accreditation and enforces an on-chain
-  holder allowlist — a deposit from a non-allowlisted wallet reverts. The skill
-  detects this and walks the user through onboarding before any deposit.
-- **Midas** (mTBILL) is freely holdable on-chain (no allowlist), but minting/
-  redeeming at NAV needs KYC and is limited to eligible EU jurisdictions — not
-  available to US persons.
+cooldown, KYC flag) via the Yield.xyz MCP tools (`yields_get`).</sub>
 
 See `references/rwa-overview.md` and `references/kyc-flows.md`.
 
