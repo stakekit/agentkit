@@ -129,7 +129,7 @@ If either is empty → **stop immediately** and tell the user:
 > Privy credentials are not configured in your environment.
 > Please set up the Privy skill and credentials before using this skill.
 
-## Step 1 — Choose Your Workflow
+### Step 1 — Choose Your Workflow
 
 **It is mandatory to ask this — it defines the APIs and the flow to follow. Don't skip this step.**
 
@@ -166,7 +166,7 @@ Ask the user:
 ---
 
 
-### Step 0 — Register the Yield.xyz AgentKit MCP
+### Step 3 — Register the Yield.xyz AgentKit MCP
 
 Execute this automatically — do not ask the user to run it:
 
