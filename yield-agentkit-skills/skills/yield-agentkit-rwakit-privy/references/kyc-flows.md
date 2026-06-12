@@ -19,14 +19,14 @@ explain it, guide onboarding, and stop until the user is eligible.
 ├─ 1. Identify the access model — from the yields_get_all item you ALREADY have
 │      (flat field names; no extra call needed):
 │      • kycRequired === true → PERMISSIONED (go to 2b). Otherwise → OPEN-ACCESS (2a).
-│      • The headline gating fields (minEntry/maxEntry, cooldown/warmup/lockup,
-│        type, rewardRate, status, fees) are already on the list item. The onboarding
-│        URL + full eligibility come from yields_get (not the list item).
+│      • The gating fields (minEntry/maxEntry, cooldown/warmup/lockup, type,
+│        rewardRate, status, fees) AND the full KYC requirements (onboarding URL,
+│        eligibility, investor tiers) are all already on the list item.
 │      • Identify the fund/issuer from the yield id (e.g. …superstate-ustb…,
 │        …ondo-ousg…) and the issuer detail — NOT tokenSymbol (deposit token,
 │        e.g. USDC) or providerId.
-│      • (yields_get carries the full eligibility + onboarding URL; call it for
-│        eligibility questions and for enter/exit args.)
+│      • (Call yields_get only for deeper context or for enter/exit args — not just
+│        to read KYC requirements.)
 │
 ├─ 2a. OPEN-ACCESS (e.g. Midas)
 │      • Confirm jurisdiction against the yield's LIVE eligibility (blocked
@@ -37,168 +37,81 @@ explain it, guide onboarding, and stop until the user is eligible.
 │      • Proceed to the normal enter flow (no allowlist gate).
 │
 ├─ 2b. PERMISSIONED (e.g. Superstate) — requirements & onboarding in the playbook below
-│      • Surface the requirements + live onboarding authorizeUrl (from yields_get);
+│      • Surface the requirements + live onboarding authorizeUrl (from the list item);
 │        check wallet balance ≥ the live entry minimum.
-│      • PROBE: actions_enter(yieldId, address, amount)
-│           builds  ⇒ wallet eligible ⇒ sign (autonomous) / submit intent (semi-auto)
-│           errors  ⇒ NOT eligible ⇒ run the onboarding flow below, STOP (do not sign)
+│      • CHECK KYC STATUS: yields_get_kyc_status(yieldId, address)
+│           verified/eligible ⇒ sign (autonomous) / submit intent (semi-auto)
+│           not started / pending ⇒ NOT eligible ⇒ run the onboarding flow below, STOP (do not sign)
 │
 └─ 3. Standard pre-action safety checks still apply
        (entry open, maintenance, fees, cooldown on exit — see
         references/yield-output-format.md).
 ```
 
-### Why the probe is needed
+### Why check KYC status
 
 `kycRequired` is a property of the **yield** (does it need KYC) — it does **not**
-tell you whether *this wallet* is KYC'd or allowlisted. The `actions_enter` probe
-answers that: the issuer's on-chain allowlist is checked at construction, so an
-ineligible wallet can't even produce a signable transaction.
-
-> **Probe semantics** — read-only; only *builds* an unsigned tx, never signs/broadcasts:
-> - Success (response has `transactions[]`) → this wallet is KYC'd + allowlisted → eligible.
-> - Error (HTTP 400 / fails to build) → not eligible / not allowlisted.
+tell you whether *this wallet* is KYC'd or eligible. `yields_get_kyc_status` answers
+that: pass the `yieldId` and the wallet `address` and it returns the wallet's
+normalized KYC status for that yield (and, when onboarding is still needed, the
+issuer's authorize URL). Use it to decide whether to proceed — sign only when the
+status reports the wallet is verified/eligible; otherwise run the onboarding flow
+below and do not sign.
 
 ---
 
-## Provider Playbook — Superstate (USTB / USCC)
+## RWA Playbook — generic, every issuer
 
-**Model:** Permissioned. KYC + accreditation + on-chain allowlist + minimum.
+The same flow applies to **every** RWA yield — Superstate, Ondo, Midas, Securitize etc. and any issuer enabled later:
+the yield's own live data drives every decision, so a yield you've never seen is
+handled exactly like one you have. Read everything live from the MCP — never hardcode figures, country lists,
+or tiers, and never call the yield.xyz REST API directly (always call MCP).
 
-Read live values from the MCP tools (`yields_get_all` / `yields_get`; field names in
-`references/yield-output-format.md`) — never hardcode, never call the yield.xyz REST
-API directly (no API key; the MCP carries auth).
+**1. Discover & classify from the live data.** RWA yields appear under
+`types: ["real_world_asset"]`. Each list item is self-describing: it carries the KYC
+flag and, whenever KYC applies, the full requirements (onboarding URL, jurisdiction
+allow/deny rules, US-person rule, accepted investor tiers, and any issuer notes).
+A truthy `kycRequired` ⇒ **permissioned**; otherwise ⇒ **open-access**. Identify the
+fund/issuer from the yield `id` and its metadata/issuer detail — never from
+`tokenSymbol` (that's the deposit token, e.g. USDC) or `providerId` (can be generic).
 
-**Products**
-- **USTB** — Superstate Short Duration US Government Securities Fund (short-dated
-  US Treasuries).
-- **USCC** — Superstate Crypto Carry Fund (crypto basis / carry strategy).
+**2. Surface the requirements in plain language — read, don't hardcode.** Relay
+whatever the yield's own KYC/eligibility data says: who's eligible (jurisdictions,
+US-person rule, investor tiers), the entry minimum, any cooldown, and any issuer
+notes. Quote the live figures and the issuer's own onboarding URL. If a field isn't
+present, don't infer it — and if eligibility is exposed for neither, ask the user to
+confirm they're eligible per the issuer's terms.
 
-**Hard requirements (state these to the user first; read the live figures, tiers,
-and jurisdictions from the yield's KYC requirements — do not quote fixed numbers):**
-- **KYC + AML** verification with Superstate.
-- **Investor eligibility** — the yield's eligibility lists the accepted investor
-  tiers (e.g. accredited / qualified purchaser) and jurisdictions; read them live and
-  relay the plain-language summary rather than quoting fixed asset thresholds.
-- **Minimum subscription** — quote the live entry minimum (may be waived at
-  Superstate's discretion).
-- **Wallet allowlisting** — the specific wallet address must be added to
-  Superstate's on-chain allowlist for that token before it can hold or receive it.
-  Both sender and receiver must be allowlisted for a transfer to succeed.
+**3. Permissioned — gate on KYC status before signing.** Check
+`yields_get_kyc_status(yieldId, address)`. Sign only when it reports the wallet
+verified/eligible. If KYC is not started / pending, do **not** sign — guide the user
+through onboarding at the issuer's live authorize URL, then stop. The identity-bound
+steps the agent **cannot** do for the user: KYC / AML / accreditation, executing any
+investment agreement, and adding the wallet to the issuer's on-chain allowlist. The
+allowlisted address MUST be the exact Privy wallet the user will deposit from — for an
+allowlist-gated token both sender and receiver must be allowlisted or the transfer
+reverts. After the user reports completion, re-check `yields_get_kyc_status` and
+proceed.
 
-**Onboarding flow (what the agent tells the user to do)**
+**4. Open-access — no allowlist gate, confirm jurisdiction.** The token is freely
+holdable/transferable, so there's no on-chain eligibility check to run before
+depositing. Confirm the user's jurisdiction against the yield's live eligibility (per
+point 2). Note that some open-access issuers still require KYC to mint/redeem at NAV
+on their own platform, even though holding and secondary-market acquisition are open.
 
-The agent **cannot** do any of these for the user — they are identity-bound and
-done on Superstate's portal. Guide the user step by step:
+**5. Exit / redemption — read it live, offer the choice when present.** Read the exit
+cooldown and any fees live; settlement varies by product (instant vs several business
+days). When the yield's exit offers an instant-redemption option alongside standard
+NAV redemption, ask the user which they want (instant fee vs free-but-wait) and pass
+their choice — never default it silently. See `references/yield-input-format.md`.
 
-
-1. Register at the issuer's onboarding URL — the live `authorizeUrl` from the
-   yield's KYC requirements (e.g. https://superstate.com)
-   (email + organization nickname → confirm via welcome email → set password → enable 2FA)
-2. Complete the Investing Entity Application (for yourself or your entity).
-3. Superstate runs compliance, AML screening, and accreditation / qualified-
-   purchaser verification. Provide proof of accredited-investor status when asked.
-4. On approval, review and execute the Investment Agreement Superstate provides.
-5. In the portal, go to Settings → Allowlist and add the wallet address you will
-   use (this MUST be the same Privy wallet address you intend to deposit from).
-6. Fund that wallet with at least the yield's live entry minimum (in USDC / the
-   accepted input token) plus gas.
-7. Come back here once approved and allowlisted — I'll re-probe and proceed.
-
-
-**Redemption / exit notes**
-- USTB: redemptions in USDC are processed when liquidity exists; USD redemptions
-  same-day if requested before the daily cutoff.
-- USCC: does not currently run a standing redemption program; requests price at the
-  day's closing NAV on a T+1 basis.
-- **Exit cooldown** — read live from MCP `yields_get` tool.
-
-**What the agent automates vs. cannot automate**
+**6. What the agent automates vs. cannot.**
 
 | Step | Agent |
 |---|---|
-| Discover the yield, read its schema, build/sign deposit & exit txns | ✅ Automates (once eligible) |
-| Check wallet balance ≥ minimum | ✅ Automates |
-| Probe eligibility via `actions_enter` | ✅ Automates |
-| KYC / accreditation / Investment Agreement | ❌ User, on Superstate portal |
-| Add wallet to the on-chain allowlist | ❌ User, on Superstate portal |
-
----
-
-## Provider Playbook — Ondo (OUSG / USDY)
-
-**Model:** Permissioned / KYC-gated — onboarding + eligibility on Ondo's platform;
-the holder set is gated, so the `actions_enter` probe applies.
-
-Read all values live from the MCP (minimum, eligibility, investor tiers, onboarding
-`authorizeUrl`, plain-language summary) — never hard-code them; they differ per Ondo
-product and can change.
-
-**Products** — OUSG (tokenized short-term US government bonds), USDY (tokenized US
-Treasury yield). Their eligibility differs (e.g. one may admit US qualified purchasers
-while another is non-US only) — always read each yield's own eligibility live.
-
-**Onboarding** — surface the requirements + the live `authorizeUrl`, have the user
-complete Ondo's KYC and allowlist their wallet, then run the `actions_enter` probe.
-Never sign if it errors.
-
----
-
-## Provider Playbook — Midas (mTBILL)
-
-**Model:** Open-access ERC-20. No on-chain holder allowlist.
-
-**Key points to convey**
-- The tokens are standard, freely transferable ERC-20s — composable in DeFi
-  (lending, AMMs). Holding/transferring needs **no KYC** (`kycRequired` is not `true`).
-- KYC + AML may be required to mint or redeem at NAV directly via Midas
-  (`https://midas.app`). Secondary-market acquisition is open-access.
-- **Jurisdiction:** read the yield's live eligibility — if it exposes blocked
-  countries/regions or a US-person rule, apply them. If none is exposed, ask the user
-  to confirm they're eligible per the issuer's terms before proceeding.
-- **Minimum:** read the live entry minimum.
-- **Networks:** Ethereum and Base.
-- **Yield mechanism:** value accrues via price appreciation (no rebasing), so the
-  token stays DeFi-composable while earning. Redemption via the Midas platform is
-  instant/atomic for KYC'd users.
-
-**Onboarding flow (only needed for direct mint/redeem with Midas)**
-```
-1. Confirm you're eligible per the issuer's terms (and the yield's live eligibility).
-2. Go to https://midas.app and complete KYC / AML and accept the terms.
-3. Once verified you can mint/redeem at NAV. For DeFi/secondary acquisition,
-   no onboarding is required.
-```
-
-Because Midas is open-access, the agent runs the **normal enter flow** — there
-is no allowlist probe gate. The only gate is the jurisdiction confirmation above.
-
----
-
-## New / Unknown RWA Issuers (generic fallback)
-
-The playbooks above are **reference examples, not an allowlist**. New RWA yields
-are handled automatically — the gate is driven by live MCP data, not by issuer name.
-When you hit an RWA yield with no dedicated playbook, do **not** refuse; degrade
-gracefully to the generic path:
-
-1. **Discover** it like any other — it appears under `types: ["real_world_asset"]`.
-2. **Classify from the data:** `kycRequired === true` → permissioned; otherwise
-   open-access. Read `minEntry`, `cooldownPeriod`, fees, `status` live.
-3. **Permissioned, unknown issuer:** surface the requirements generically and send
-   the user to the live onboarding `authorizeUrl` from the yield's KYC requirements
-   (don't invent issuer-specific steps you don't know). Then run the **`actions_enter`
-   probe** to confirm the wallet is eligible — this works for any issuer because it
-   checks the on-chain allowlist. Never sign if the probe errors.
-4. **Open-access, unknown issuer:** jurisdiction rules may not be in the MCP data.
-   Give a generic caution — *"confirm you're eligible to use this product in your
-   jurisdiction per the issuer's terms"* — rather than assuming a specific rule.
-5. **Identify the fund/issuer** from the yield `id` and the issuer detail (the
-   fund's display name is in the yield's `metadata`) — never `tokenSymbol` (deposit
-   token, e.g. USDC) or `providerId`.
-
-If a new issuer becomes common and needs a tailored walkthrough, add a playbook
-section above — but the skill does not require it to function.
+| Discover the yield, read requirements, check balance, check KYC status, build/sign deposit & exit txns | ✅ Automates (once eligible) |
+| KYC / AML / accreditation / investment agreements | ❌ User, on the issuer portal |
+| Add the wallet to the issuer's on-chain allowlist | ❌ User, on the issuer portal |
 
 ---
 
@@ -227,5 +140,5 @@ need KYC and can carry jurisdiction limits — confirm per the issuer."*
 | Minimum | Read live | Read live |
 | Jurisdiction | Per the yield's live eligibility | Per live eligibility; if none exposed, confirm per issuer |
 | Wallet allowlist | Required, on-chain | Not applicable |
-| Onboarding URL | Live `authorizeUrl` from `yields_get` | Issuer site (if mint/redeem KYC applies) |
-| Agent eligibility check | `actions_enter` probe | Jurisdiction confirmation |
+| Onboarding URL | Live `authorizeUrl` from the `yields_get_all` item | Issuer site (if mint/redeem KYC applies) |
+| Agent eligibility check | `yields_get_kyc_status` | Jurisdiction confirmation |

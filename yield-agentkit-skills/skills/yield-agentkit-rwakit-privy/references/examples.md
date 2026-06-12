@@ -24,12 +24,10 @@ and the eligibility gate.
 | Superstate | USTB    | `<live>` | 🔒 KYC · Allowlist     | $100K | US + intl allowlist                  | Rest of world               | T-Bill · accredited + QP · allowlisted wallet |
 | Midas      | mTBILL  | `<live>` | 🌐 EU-14 · KYC to mint | —     | EU-14                                | US + sanctioned             | T-Bill · freely holdable; KYC to mint |
 
-(Headline cells come straight from the `yields_get_all` items — APY from `rewardRate`,
-the access flag from `kycRequired`, the minimum from the entry min. Full eligibility +
-onboarding URL come from `yields_get`; for a yield with no MCP eligibility, use the
-static fallback in `references/rwa-overview.md` (currently Midas). Fund/issuer
-identified via the yield `id` + metadata, not `tokenSymbol` (deposit token = USDC) or
-`providerId`.)
+All cells come straight from the `yields_get_all` items — APY from `rewardRate`,
+the access flag from `kycRequired`, the minimum from the entry min, and the full KYC
+requirements + eligibility + onboarding URL straight off the same item (no per-yield
+`yields_get` call needed).
 
 
 3. Notes: *"Superstate (USTB) requires KYC, accreditation, a minimum, and an
@@ -45,13 +43,15 @@ identified via the yield `id` + metadata, not `tokenSymbol` (deposit token = USD
 **User:** Deposit 100,000 USDC into Superstate USTB.
 
 **Agent steps:**
-1. Call yields_get tool and fetch all the info related to kyc, apy, tvl from there.
+1. Reads the yield's KYC requirements, APY, and limits straight off the
+   `yields_get_all` listing (call `yields_get` only for the enter schema before building).
 2. States requirements (KYC, accreditation, the minimum read from
    `entryLimits.minimum`, allowlisted wallet).
 3. Checks Privy wallet balance ≥ that live minimum via Privy balance API — confirmed.
-4. **Eligibility probe** —
-   Build an enter txn using `actions_enter` tool
-5. Probe **builds** `transactions[]` ⇒ wallet is KYC'd + allowlisted / eligible.
+4. **KYC status check** —
+   `yields_get_kyc_status(<ustb-yieldId>, <wallet address>)`
+5. Status reports the wallet **verified/eligible** ⇒ build the enter txn with
+   `actions_enter`.
 6. For each transaction in `stepIndex` order → POST to Privy
    `/v1/wallets/{id}/rpc` → poll `CONFIRMED` → `submit_hash(transactionId, hash)`.
 7. Confirms: *"Done. 100,000 USDC is now in Superstate USTB on Ethereum."*
@@ -61,14 +61,14 @@ identified via the yield `id` + metadata, not `tokenSymbol` (deposit token = USD
 ## Example 3 — Superstate Deposit, Ineligible Wallet (gated → onboarding)
 
 **User:** Deposit 100,000 USDC into Superstate USTB.
-*(Wallet `0xBa80…4542` is not allowlisted.)*
+*(Wallet `address` is not allowlisted.)*
 
 **Agent steps:**
 1. Recognises Superstate ⇒ permissioned; states requirements.
-2. **Eligibility probe** —
-   Build an enter txn using `actions_enter` tool.
-3. Probe **errors** (HTTP 400 — not allowlisted/enabled for this wallet) ⇒ **not
-   eligible**. The agent does **not** sign anything.
+2. **KYC status check** —
+   `yields_get_kyc_status(<ustb-yieldId>, <address>)`.
+3. Status reports KYC **not started / pending** for this wallet ⇒ **not eligible**.
+   The agent does **not** sign anything.
 4. Runs the Superstate onboarding flow:
 
 > *"Your wallet isn't on Superstate's allowlist yet, so a deposit would revert
@@ -78,10 +78,10 @@ identified via the yield `id` + metadata, not `tokenSymbol` (deposit token = USD
 > 2. *Complete the Investing Entity Application*
 > 3. *Pass compliance / AML + accreditation review*
 > 4. *Execute the Investment Agreement*
-> 5. *In Settings → Allowlist, add this exact wallet address: `0xBa80…4542`*
-> 6. *Fund it with at least the live minimum plus gas, then come back — I'll re-probe and proceed."*
+> 5. *In Settings → Allowlist, add this exact wallet address: `0x....`*
+> 6. *Fund it with at least the live minimum plus gas, then come back — I'll re-check your KYC status and proceed."*
 
-5. Stops and waits. On return, re-probes from step 2.
+5. Stops and waits. On return, re-checks KYC status from step 2.
 
 ---
 
@@ -110,15 +110,16 @@ identified via the yield `id` + metadata, not `tokenSymbol` (deposit token = USD
 
 **Agent steps:**
 1. Recognises Ondo ⇒ **permissioned / KYC-gated** (`references/kyc-flows.md`).
-2. `yields_get(<ondo-usdy-yieldId>)` → reads the live KYC requirements: the minimum,
-   the eligible investor tiers, the jurisdiction eligibility (USDY is non-US only),
-   and the onboarding `authorizeUrl`. Surfaces them and the live minimum to the user.
+2. Reads the live KYC requirements straight off the `yields_get_all` item: the
+   minimum, the eligible investor tiers, the jurisdiction eligibility (USDY is non-US
+   only), and the onboarding `authorizeUrl`. Surfaces them and the live minimum to the
+   user. (No per-yield `yields_get` call needed just for these.)
 3. Checks Privy wallet balance ≥ the live minimum.
-4. **Eligibility probe** — build an enter txn with `actions_enter`.
-   - Builds `transactions[]` ⇒ wallet KYC'd + allowlisted ⇒ sign via Privy in
+4. **KYC status check** — `yields_get_kyc_status(<ondo-usdy-yieldId>, <address>)`.
+   - Verified/eligible ⇒ build the enter txn with `actions_enter` and sign via Privy in
      `stepIndex` order → poll `CONFIRMED` → `submit_hash(transactionId, hash)` each.
-   - Errors ⇒ not eligible ⇒ surface the requirements + the live `authorizeUrl`, run
-     Ondo onboarding, and **do not** sign.
+   - Not started / pending ⇒ not eligible ⇒ surface the requirements + the live
+     `authorizeUrl`, run Ondo onboarding, and **do not** sign.
 5. (OUSG works the same way — but read each product's own eligibility live; e.g. OUSG
    admits US qualified purchasers while USDY is non-US only.)
 
@@ -129,16 +130,16 @@ identified via the yield `id` + metadata, not `tokenSymbol` (deposit token = USD
 **User:** I'm on Enterprise, semi-autonomous. Deposit 100,000 USDC into Superstate USTB.
 
 **Agent steps:**
-1. **RWA gate first:** probe
-   `actions_enter("ethereum-usdc-superstate-ustb-vault", <allowlisted addr>, "100000")`
-   → builds ⇒ eligible.
+1. **RWA gate first:** check KYC status
+   `yields_get_kyc_status("ethereum-usdc-superstate-ustb-vault", <wallet address>)`
+   → verified/eligible. Then build the enter txn with `actions_enter`.
 2. Submit each transaction as an **intent** to
    `POST /v1/intents/wallets/{id}/rpc` → notify user → approver approves on the
    Privy dashboard → poll `GET /v1/intents/{intent_id}` until `executed` →
    `submit_hash(transactionId, hash)`.
-3. If the probe had **errored**, the agent would run onboarding and **never** submit
-   an intent — no point asking an approver to approve a transaction that can't
-   succeed. See `references/semi-autonomous.md`.
+3. If KYC status had been **not started / pending**, the agent would run onboarding
+   and **never** submit an intent — no point asking an approver to approve a
+   transaction that can't succeed. See `references/semi-autonomous.md`.
 
 ---
 

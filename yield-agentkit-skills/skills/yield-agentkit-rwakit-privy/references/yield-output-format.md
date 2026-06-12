@@ -21,7 +21,8 @@ RWA yield requires *before* they try to enter.
 **Badges — show only when applicable. Every value is read live from the MCP — never hard-code it per issuer:**
 - `⚠️ Under Maintenance` / `⚠️ Deprecated` — when the corresponding flag is set
 - `🔒 KYC Required` — `kycRequired` is `true`. The onboarding link is the `authorizeUrl`
-  inside the yield's KYC requirements (from `yields_get`) — surface it whenever present.
+  inside the yield's KYC requirements (already on the `yields_get_all` item) — surface
+  it whenever present.
 - `🏛 RWA` — yield `type` is `real_world_asset`
 - `📋 Allowlist` — a KYC-gated RWA whose holder wallet must be allowlisted on-chain
 - `💵 Min $X` — the entry minimum when non-zero (e.g. `"100000"` → `💵 Min $100K`)
@@ -34,11 +35,12 @@ RWA yield requires *before* they try to enter.
 - `🔥 High APY` — reward rate above ~20% — flag as potentially incentivised
 
 > **Where the gating data lives.** Each `yields_get_all` item is self-describing —
-> read `kycRequired`, the entry min/max, `rewardRate`, the cooldown, `status`, and
-> the fee flags straight off it. The full KYC + eligibility detail — onboarding URL,
+> read `kycRequired`, the entry min/max, `rewardRate`, the cooldown, `status`, the
+> fee flags, **and the full KYC + eligibility detail** (onboarding URL,
 > eligible/blocked jurisdictions, investor tiers, a plain-language summary, and the
-> minimum — comes from `yields_get` under the yield's requirements. Read whatever
-> fields are present; don't hard-code per-issuer values.
+> minimum) straight off it. Read whatever fields are present; don't hard-code
+> per-issuer values. Call `yields_get` only for deeper context or for the enter/exit
+> schema — not just to read KYC requirements.
 >
 > Identify the fund/issuer from the yield `id` (e.g. `…superstate-ustb…`, `…ondo-ousg…`,
 > `…midas-mtbill…`) and the issuer name/URL in the detail — not `providerId` (can be
@@ -70,12 +72,13 @@ General display rules:
 `references/rwa-overview.md`.
 
 Each list item is self-describing and already carries everything needed to build the
-table and detect the access model — no per-yield `yields_get` call is needed just to
-list them. The yield `id`/`metadata` identify the fund, `kycRequired` flags gating,
-the min/max are the limits, `rewardRate` is the APY (a decimal), and the cooldown/
-warmup/lockup periods are in **days**, plus `status` and the fee flags. Country-level
-eligibility and the onboarding URL are NOT in the list item — fetch them with
-`yields_get` only when the user asks where a yield is available, or before entering.
+table, detect the access model, and read the full KYC requirements — no per-yield
+`yields_get` call is needed just to list them or to read their KYC/eligibility detail.
+The yield `id`/`metadata` identify the fund, `kycRequired` flags gating, the min/max
+are the limits, `rewardRate` is the APY (a decimal), and the cooldown/warmup/lockup
+periods are in **days**, plus `status`, the fee flags, and the KYC requirements
+(onboarding URL, eligible/blocked jurisdictions, investor tiers, summary). Fetch
+`yields_get` only for deeper context or before entering (for the enter/exit schema).
 
 > ⚠️ **Units.** List periods are in **days** (rounded); `yields_get` detail periods
 > are in **seconds**. `rewardRate` is a decimal — format as `(rewardRate*100).toFixed(2)+"%"`.
@@ -196,7 +199,7 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 | Under maintenance | `metadata.underMaintenance` | ⚠️ Protocol is under maintenance. |
 | Deprecated | `metadata.deprecated` | ⚠️ Deprecated — consider alternatives. |
 | KYC required | `kycRequired` is `true` | 🔒 KYC required. Complete onboarding first — see `references/kyc-flows.md`. Show the live onboarding URL from the yield's KYC requirements. |
-| Wallet not allowlisted (permissioned RWA) | `actions_enter` probe errors | 📋 This wallet isn't on the issuer's allowlist. Do not sign — run onboarding (`references/kyc-flows.md`). |
+| Wallet not eligible (permissioned RWA) | `yields_get_kyc_status` reports KYC not started / pending | 📋 This wallet isn't KYC'd / allowlisted with the issuer yet. Do not sign — run onboarding (`references/kyc-flows.md`). |
 | RWA minimum | the yield's entry minimum (read live; e.g. `"100000"`) | Minimum subscription is X `<token>` — confirm wallet balance covers it. |
 | Restricted jurisdiction | the yield's live eligibility (blocked countries/regions, US-person rule) | 🌍 Confirm the user's jurisdiction is eligible per the yield's eligibility — stop if restricted. |
 | Below minimum | `entryLimits.minimum` | Minimum deposit is X `<token>`. |
