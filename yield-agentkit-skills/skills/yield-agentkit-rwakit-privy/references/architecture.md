@@ -17,16 +17,16 @@ allowlist. This gate sits *between* yield discovery and signing:
 Yield discovery (MCP)
    → RWA access gate  ← NEW: KYC / accreditation / minimum / allowlist
         • open-access (Midas)  → jurisdiction check only → continue
-        • permissioned (Superstate) → actions_enter eligibility probe
-              builds  → eligible → continue to signing
-              errors  → not eligible → onboarding flow, STOP
+        • permissioned (Superstate) → yields_get_kyc_status(yieldId, address)
+              verified/eligible    → continue to signing
+              not started/pending  → not eligible → onboarding flow, STOP
    → Privy signs + broadcasts
 ```
 
 The gate is enforced two ways: the issuer's **on-chain allowlist** (the token
 contract reverts transfers to non-allowlisted wallets) and the agent's **pre-flight
-probe** (`actions_enter`) that detects ineligibility before any signing. See
-`references/kyc-flows.md`.
+KYC-status check** (`yields_get_kyc_status`) that detects ineligibility before any
+signing. See `references/kyc-flows.md`.
 
 ---
 

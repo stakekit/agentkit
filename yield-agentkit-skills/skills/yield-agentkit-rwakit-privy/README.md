@@ -36,7 +36,8 @@ Unlike DeFi-native yields (lending pools, AMMs, staking) which earn from on-chai
 | **Midas** | mTBILL | 🔒 EU-14 · KYC to mint | None* | EU-14 jurisdictions; KYC to mint/redeem; no US persons |
 
 <sub>*Indicative only. The skill always reads live per-yield values (minimum, APY,
-cooldown, KYC flag) via the Yield.xyz MCP tools (`yields_get`).</sub>
+cooldown, KYC flag, and full KYC requirements) via the Yield.xyz MCP tools
+(`yields_get_all`).</sub>
 
 See `references/rwa-overview.md` and `references/kyc-flows.md`.
 
@@ -53,7 +54,8 @@ Yield.xyz AgentKit MCP          RWA Access Gate            Privy Wallet Layer
 yields_get_all                  KYC / accreditation        check wallet balance
   (types:[real_world_asset]) →  minimum / allowlist    →   POST /v1/wallets/{id}/rpc   (Autonomous)
 yields_get                      jurisdiction (Midas)       POST /v1/intents/...        (Semi-Autonomous)
-actions_enter (probe + build) →  eligible? sign : onboard
+yields_get_kyc_status        →  eligible? sign : onboard
+actions_enter (build)
 ```
 
 **Yield.xyz AgentKit MCP** — RWA discovery, schema validation, transaction building.  
