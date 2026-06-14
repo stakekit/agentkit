@@ -33,10 +33,9 @@ truth or as a filter.
 
 Every per-yield value — KYC requirement, entry minimum, eligible/blocked
 jurisdictions, blocked regions, US-person rule, eligible investor tiers, onboarding
-URL, and a plain-language eligibility summary — comes **live from the MCP**
-(`yields_get` for the full detail; the list item carries the headline flags). These
-docs keep **no** country tables: when a yield lists or an issuer changes its
-jurisdictions, the skill picks it up automatically.
+URL, and a plain-language eligibility summary — comes **live from the MCP** and is
+already on each `yields_get_all` item (call `yields_get` only for deeper context or
+the enter/exit schema). 
 
 In the listing table show only short **region / jurisdiction summaries** for Supported /
 Restricted (e.g. `Non-US (EEA, UK, …)` / `US + sanctioned`, or `US + intl allowlist` /
@@ -94,7 +93,7 @@ first thing the agent does before any `actions_enter`.
 
 - The token is a standard, freely transferable ERC-20 (often an ERC-4626 vault).
   **No on-chain allowlist** — any wallet can hold, transfer, and use it in DeFi, and
-  the agent can deposit/exit without a KYC probe (`kycRequired` is not `true`).
+  the agent can deposit/exit without a KYC-status check (`kycRequired` is not `true`).
 - Some open-access issuers still gate at the **mint / redeem** boundary (KYC + AML
   on the issuer's platform) and may carry jurisdiction restrictions — read those from
   the yield's eligibility live, rather than assuming a fixed rule. Holding / secondary
@@ -110,21 +109,20 @@ Two complementary signals — both live in the MCP. Don't confuse them:
 1. **`kycRequired` (does the *yield* need KYC).** This is already in every
    `yields_get_all` item — **you don't need a second `yields_get` call to detect the
    gate**:
-   - `kycRequired === true` ⇒ **permissioned**. The minimum and exit cooldown are on
-     the same list item; the onboarding URL, eligibility, and investor tiers come from
-     `yields_get`.
+   - `kycRequired === true` ⇒ **permissioned**. The minimum, exit cooldown, onboarding
+     URL, eligibility, and investor tiers are all on the same list item — no separate
+     `yields_get` call needed to read them.
    - absent / not `true` ⇒ **open-access**.
    - Identify the *fund/issuer* from the yield `id` (e.g. `…superstate-ustb…`,
      `…ondo-ousg…`, `…midas-mtbill…`) and the issuer detail — **not** `tokenSymbol`
      (that's the deposit token, e.g. `USDC`) and **not** `providerId` (can be generic).
-2. **The `actions_enter` allowlist probe (is *this wallet* eligible).** For a
-   permissioned yield, attempt to build the enter transaction:
-   - **Builds successfully** ⇒ the wallet is KYC'd / allowlisted ⇒ proceed to sign.
-   - **Returns an error** ⇒ the wallet is not allowlisted / not eligible ⇒ run the
-     issuer onboarding flow and **do not** sign anything.
+2. **`yields_get_kyc_status` (is *this wallet* eligible).** For a permissioned yield,
+   pass the `yieldId` and the wallet `address`:
+   - **Verified / eligible** ⇒ proceed to sign.
+   - **KYC not started / pending** ⇒ the wallet is not eligible ⇒ run the issuer
+     onboarding flow (using the authorize URL it returns) and **do not** sign anything.
 
-   This is a natural hard gate: an ineligible wallet cannot even produce a signable
-   transaction. `kycRequired` tells you the gate *exists*; the probe tells you
+   `kycRequired` tells you the gate *exists*; `yields_get_kyc_status` tells you
    whether *this wallet* is already through it. See the decision tree in
    `references/kyc-flows.md`.
 
@@ -137,7 +135,7 @@ Before building any RWA enter transaction, surface all that apply:
 ```
 □ Which access model? (kycRequired === true → permissioned)
 □ Permissioned — has the user completed the issuer's KYC + accreditation?
-□ Permissioned — is THIS wallet on the issuer's on-chain allowlist? (actions_enter probe)
+□ Permissioned — is THIS wallet KYC'd / eligible? (yields_get_kyc_status)
 □ Permissioned — does the wallet hold at least the live entry minimum?
 □ Open-access — is the user in an eligible jurisdiction per the yield's live eligibility?
 □ Standard checks (all read live): entry open, maintenance, fees, exit cooldown.

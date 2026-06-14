@@ -6,8 +6,8 @@ Always match these types precisely. Type mismatches will cause MCP validation er
 The RWA kit uses the **same tools** as every other yield — the only discovery
 difference is the type filter. To list RWA yields, pass
 `types: ["real_world_asset"]` to `yields_get_all`. To check whether a wallet may
-enter a **permissioned** RWA yield, use `actions_enter` as an eligibility probe
-(see `references/kyc-flows.md`).
+enter a **permissioned** RWA yield, call `yields_get_kyc_status` with the `yieldId`
+and the wallet `address` (see `references/kyc-flows.md`).
 
 > **RWA-only scope.** This skill always discovers with `types: ["real_world_asset"]`.
 > Staking-only tooling (validator selection / `yields_get_validators`,
@@ -110,17 +110,28 @@ This surfaces whatever RWA yields we support (e.g. Superstate, Midas). See
 { "yieldId": "ethereum-usdc-superstate-ustb-vault", "address": "0xabc...123", "amount": 100000 }
 ```
 
-**RWA eligibility probe (permissioned yields).** For a KYC/allowlist-gated RWA
-yield (e.g. Superstate), call `actions_enter` first as a read-only probe — it only
-*builds* an unsigned transaction, nothing is signed or broadcast:
+**RWA eligibility (permissioned yields).** For a KYC/allowlist-gated RWA yield (e.g.
+Superstate), confirm eligibility with `yields_get_kyc_status` *before* building the
+enter transaction — see that tool below and `references/kyc-flows.md`.
 
-- Response contains `transactions[]` ⇒ the wallet is allowlisted/eligible ⇒ proceed
-  to sign via Privy.
-- MCP returns an error (e.g. HTTP 400) ⇒ the wallet is **not** allowlisted/eligible
-  ⇒ do not sign; run the onboarding flow in `references/kyc-flows.md`.
+---
 
+### `yields_get_kyc_status`
+
+| Parameter | Type | Required | Notes |
+|---|---|---|---|
+| `yieldId` | `string` | ✅ Yes | The `id` field from a `yields_get_all` result, e.g. `"ethereum-usdc-superstate-ustb-vault"` |
+| `address` | `string` | ✅ Yes | Wallet address to check KYC status for. Single string, not an array. |
+
+Returns the wallet's normalized KYC status for that yield (and, when onboarding is
+still needed, the issuer's authorize URL). Use it as the RWA eligibility check before
+any permissioned `actions_enter`: proceed only when the status reports the wallet is
+verified/eligible; otherwise run the onboarding flow in `references/kyc-flows.md` and
+do not sign. Yields without a KYC requirement report that no KYC is required.
+
+**Correct:**
 ```json
-{ "yieldId": "ethereum-usdc-superstate-ustb-vault", "address": "0x...", "amount": "100000" }
+{ "yieldId": "ethereum-usdc-superstate-ustb-vault", "address": "0xabc...123" }
 ```
 
 ---
@@ -273,7 +284,7 @@ If response contains only `updatedAt` (no `stakingRewards` or `credora`), risk d
 | Mistake | Correct Behaviour |
 |---|---|
 | Calling `actions_enter` without calling `yields_get` first | Always inspect the schema |
-| Signing a permissioned RWA enter without probing eligibility | Probe with `actions_enter` first — if it errors, the wallet isn't allowlisted; run KYC onboarding instead |
+| Signing a permissioned RWA enter without checking eligibility | Check `yields_get_kyc_status` first — if KYC is not started/pending, run KYC onboarding instead |
 | Depositing into a permissioned RWA from a non-allowlisted wallet | The transfer will revert on-chain — confirm the wallet is allowlisted (see `references/kyc-flows.md`) |
 | Calling `actions_manage` without calling `yields_get_balances` first | Always read pendingActions[] |
 | Modifying `unsignedTransaction` | Never — pass verbatim to Privy |
@@ -295,6 +306,7 @@ If response contains only `updatedAt` (no `stakingRewards` or `credora`), risk d
 | `yields_get_reward_rate_history` | `number` ✅ (max 365) | — |
 | `yields_get_tvl_history` | `number` ✅ (max 365) | — |
 | `yields_get_risk` | — | — |
+| `yields_get_kyc_status` | — | — |
 | `actions_enter` | — | `string` ✅ |
 | `actions_exit` | — | `string` ✅ |
 | `actions_manage` | — | `string` (optional) |

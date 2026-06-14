@@ -3,10 +3,11 @@
 **Requires Privy Enterprise plan.**
 
 > **RWA note.** The RWA access gate runs **before** anything in this file. For a
-> permissioned RWA yield (e.g. Superstate), confirm eligibility with the
-> `actions_enter` probe and the onboarding flow in `references/kyc-flows.md`
-> *first*. Only submit an intent once the probe builds successfully — otherwise the
-> approver would be asked to approve a transaction that cannot succeed on-chain.
+> permissioned RWA yield (e.g. Superstate), confirm eligibility with
+> `yields_get_kyc_status` and the onboarding flow in `references/kyc-flows.md`
+> *first*. Only submit an intent once it reports the wallet verified/eligible —
+> otherwise the approver would be asked to approve a transaction that cannot succeed
+> on-chain.
 
 In this workflow every transaction the agent builds is submitted as an
 **intent** via the Privy Intents API. The intent is queued for manual
@@ -104,7 +105,7 @@ Ask the user:
 > 4. Under Members, select Team Member and choose your approver
 > 5. Set authorization threshold (e.g., 1 for single approver)
 > 6. Save and copy the Key Quorum ID
->    (format: `tb54eps4z44ed0jepousxi4n`)
+>    (format: `tb54eps4........`)
 > 7. Paste the Key Quorum ID here."
 
 Store as `KEY_QUORUM_ID`.
@@ -239,9 +240,9 @@ Ask the user to check the dashboard and manually approve this.
 0. RWA access gate (permissioned RWA only — e.g. Superstate)
    • Confirm KYC + accreditation done and the wallet is allowlisted.
    • Check wallet balance ≥ mechanics.entryLimits.minimum (read live).
-   • Probe: actions_enter(yieldId, address, amount)
-        builds  → eligible, continue to step 1
-        errors  → NOT eligible → run references/kyc-flows.md onboarding, STOP.
+   • Check KYC status: yields_get_kyc_status(yieldId, address)
+        verified/eligible    → continue to step 1
+        not started/pending  → NOT eligible → run references/kyc-flows.md onboarding, STOP.
           Do not submit an intent for an ineligible wallet.
    (Open-access RWA like Midas: confirm jurisdiction, then continue.)
 
