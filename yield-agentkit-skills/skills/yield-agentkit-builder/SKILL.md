@@ -1,6 +1,6 @@
 ---
 name: yield-agentkit-builder
-description: Build applications that integrate with the Yield.xyz API. Generates production-ready code for staking, lending, vaults, and DeFi yield across 80+ networks. Covers REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield, generate code, or set up a project using Yield.xyz.
+description: Build applications that integrate with the Yield.xyz APIs across all three products — Yield (staking, lending, vaults, RWA across 80+ networks), Perps (perpetual futures on Hyperliquid), and Borrow (lending/borrowing markets). Generates production-ready code covering REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield/perps/borrow, generate code, or set up a project using Yield.xyz.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -36,10 +36,17 @@ the `yield-agentkit` skill — not this one.
 
 ### 1. API Base URL
 
-**`https://api.yield.xyz`** — this is the only correct production URL.
+Each product has its own production base URL:
 
-Do not use `api.stakek.it`, `api.stakekit.io`, or any other legacy domain.
-Every code sample, fetch call, and SDK config must use `api.yield.xyz`.
+| Product | Base URL | Live spec |
+|---|---|---|
+| **Yield** | `https://api.yield.xyz` | `https://api.yield.xyz/docs.json` |
+| **Perps** | `https://perps.yield.xyz` | `https://perps.yield.xyz/docs.json` |
+| **Borrow** | `https://borrow.yield.xyz` | `https://borrow.yield.xyz/docs.json` |
+
+These are the only correct production URLs. Do not use `api.stakek.it`,
+`api.stakekit.io`, or any other legacy domain. Every code sample, fetch call,
+and SDK config must use the base URL for the product being integrated.
 
 ### 2. API Key Requirement
 
@@ -78,8 +85,9 @@ and up-to-date. Use it to look up endpoint schemas, field names, and constraints
 The API evolves continuously. Do not rely on hardcoded field names or schemas from this
 skill's reference files. Instead:
 
-1. **Fetch the live OpenAPI spec** from `https://api.yield.xyz/docs.json` (or use the
-   `yield_get_api_spec` tool) to discover current field names, types, and constraints
+1. **Fetch the live OpenAPI spec** for the product being integrated — `yield_get_api_spec({ product })`,
+   or the product's `docs.json` directly (`api.yield.xyz`, `perps.yield.xyz`, or
+   `borrow.yield.xyz`) — to discover current field names, types, and constraints
 2. **Call the actual API endpoint** with the user's key to see the real response shape
 3. **Then generate code** based on what the live spec and actual responses show
 
@@ -230,10 +238,48 @@ If registration fails, stop and surface the error to the user — do not attempt
 build anything until the MCP is connected. Full details and config snippets are in
 [`references/setup.md`](./references/setup.md).
 
-### Step 1 — Understand the Use Case
+### Step 1 — Ask Which Product (do this BEFORE anything else)
 
-Ask the user what they're building. The answer determines architecture, signing approach,
-and which reference files to load.
+**The first thing you ask the user is which Yield.xyz product they want to integrate.**
+This single question removes most of the ambiguity from the rest of the session — it
+determines the API base URL, which spec to fetch, and which integration options to
+recommend. Don't assume "Yield" just because that's the default; ask.
+
+Yield.xyz has **three products**:
+
+| Product | What it gives the integrator | Integration options to offer |
+|---|---|---|
+| **Yield** | DeFi staking, lending, vaults, and RWA yields across 80+ networks | Widget (drop-in React component), TypeScript/JS SDK, or direct REST API integration |
+| **Perps** | Perpetual futures trading (Hyperliquid integrated) | Perps REST API (integrate directly), or the **perps widget** (public reference repo — get the link via `yield_list_repos`) |
+| **Borrow** | Lending/borrowing markets | Borrow REST API (integrate the endpoints into your existing backend/app) |
+
+Ask plainly, e.g.:
+
+> "Yield.xyz has three products you can build on: **Yield** (staking, lending,
+> vaults, RWA yields), **Perps** (perpetual futures via Hyperliquid), and **Borrow**
+> (lending/borrowing markets). Which one do you want to integrate?"
+
+Once they choose, recommend the integration option that best fits what they're
+building (next step), and from then on use that product's base URL and spec
+(`yield_get_api_spec({ product: "yield" | "perps" | "borrow" })`).
+
+### Step 2 — Understand the Use Case & Recommend an Approach
+
+Now ask what they're building. Combined with the product they chose, the answer
+determines the integration option, architecture, signing approach, and which
+reference files to load.
+
+- **Yield** — recommend Widget for the fastest drop-in path, the SDK for
+  TypeScript/JS apps that want typed API access, or direct REST for everything
+  else (other languages, custom backends). Then map their product type to the
+  signing/architecture pattern below.
+- **Perps** — recommend the perps widget for a fast self-custodial trading UI
+  (fetch the repo link with `yield_list_repos` and read its source), or the Perps
+  REST API for a custom integration.
+- **Borrow** — recommend integrating the Borrow REST API endpoints into their
+  existing app/backend.
+
+For **Yield**, map the product type to architecture and signing:
 
 | Product Type | Signing | Key Reference |
 |---|---|---|
@@ -247,24 +293,33 @@ and which reference files to load.
 See **[`references/integration-patterns.md`](./references/integration-patterns.md)** for
 architecture diagrams and patterns per product type.
 
-### Step 2 — Look Up the API Spec
+When the docs don't fully resolve an integration question — or you're stuck
+implementing one — use **`yield_list_repos`** to find the relevant public repo
+(widget, perps widget, SDK, api-recipes, signers, shield, etc.) and read its raw
+source as a working reference.
 
-Before generating any code, fetch the live OpenAPI spec to discover current field names
-and request/response shapes:
+### Step 3 — Look Up the API Spec
 
-**Option A — Use the doc tool:**
+Before generating any code, fetch the live OpenAPI spec for the chosen product to
+discover current field names and request/response shapes:
+
+**Option A — Use the doc tool (pass the product):**
 ```
-yield_get_api_spec({ endpoint: "/v1/actions/enter", section: "endpoints" })
+yield_get_api_spec({ product: "yield", endpoint: "/v1/actions/enter", section: "endpoints" })
+yield_get_api_spec({ product: "perps", query: "order" })
+yield_get_api_spec({ product: "borrow", query: "market" })
 ```
 
-**Option B — Fetch directly with the user's key:**
+**Option B — Fetch directly with the user's key (use the product's spec URL):**
 ```bash
-curl https://api.yield.xyz/docs.json | jq '.paths["/v1/actions/enter"]'
+curl https://api.yield.xyz/docs.json   | jq '.paths["/v1/actions/enter"]'   # Yield
+curl https://perps.yield.xyz/docs.json | jq '.paths'                        # Perps
+curl https://borrow.yield.xyz/docs.json| jq '.paths'                        # Borrow
 ```
 
 Use the spec as the source of truth. Never assume field names from memory.
 
-### Step 3 — Call the Real API to See Actual Responses
+### Step 4 — Call the Real API to See Actual Responses
 
 Use the user's API key to make a real API call and inspect the response. This lets you
 see the actual field names, nesting, and data types in the response:
@@ -276,10 +331,10 @@ curl -s "https://api.yield.xyz/v1/yields?network=base&token=USDC&limit=1" \
 
 Use this real response as the reference when building the frontend or backend integration.
 
-### Step 4 — Generate Code
+### Step 5 — Generate Code
 
 Generate code that:
-1. Uses `https://api.yield.xyz` as the base URL
+1. Uses the chosen product's base URL (`api.yield.xyz`, `perps.yield.xyz`, or `borrow.yield.xyz`)
 2. Passes the user's API key via `x-api-key` header
 3. Uses field names exactly as seen in the live spec and API responses
 4. Handles the full transaction lifecycle (action -> sign -> broadcast -> submit-hash)
@@ -288,7 +343,7 @@ Generate code that:
 See **[`references/signing-patterns.md`](./references/signing-patterns.md)** for
 wallet SDK references and signing guidance per chain.
 
-### Step 5 — Run the Project Yourself and Report URLs
+### Step 6 — Run the Project Yourself and Report URLs
 
 **Do not tell the user "now run `npm run dev`" and walk away.** The skill's job
 isn't done until the project is actually running and you've handed the user the
