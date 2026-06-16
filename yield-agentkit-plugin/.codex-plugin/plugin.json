@@ -1,0 +1,43 @@
+{
+    "name": "yield-agentkit-plugin",
+    "version": "1.0.0",
+    "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API.",
+    "author": {
+      "name": "Yield.xyz",
+      "url": "https://yield.xyz"
+    },
+    "homepage": "https://docs.yield.xyz",
+    "repository": "https://github.com/stakekit/agentkit",
+    "license": "MIT",
+    "keywords": [
+      "defi",
+      "yield",
+      "staking",
+      "lending",
+      "web3",
+      "ethereum",
+      "solana"
+    ],
+    "skills": "./yield-agentkit",
+    "mcpServers": "./.mcp.json",
+    "interface": {
+      "displayName": "Yield.xyz AgentKit",
+      "shortDescription": "Find, compare, enter, exit, and manage DeFi yield positions.",
+      "longDescription": "Yield.xyz AgentKit connects Codex to the Yield.xyz MCP server for discovering yield opportunities, checking balances, and preparing unsigned transactions for staking, lending, vaults, restaking, and liquidity pools across supported networks.",
+      "category": "Finance",
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "websiteURL": "https://yield.xyz",
+      "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
+      "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
+      "defaultPrompt": [
+        "Show me top USDC yields on Base.",
+        "Compare ETH staking yields on Ethereum.",
+        "Check my yield balances for this wallet."
+      ],
+      "brandColor": "#FFC21B"
+    }
+  }
