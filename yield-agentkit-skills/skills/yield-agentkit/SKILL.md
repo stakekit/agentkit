@@ -335,7 +335,7 @@ Get detailed risk parameters for a yield — more granular than the `risk` field
 | `status` | `{ enter: boolean, exit: boolean }` |
 | `mechanics` | Lockup, cooldown, fees, validator requirement, entry limits |
 | `statistics` | TVL, unique users |
-| `risk` | Exponential.fi / Credora ratings |
+| `risk` | Staking Rewards / Credora ratings |
 | `metadata` | Name, logo, description, documentation URL |
 
 ### `TransactionDto` — a transaction to execute
