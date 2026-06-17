@@ -23,7 +23,7 @@ Requires: Yield.xyz AgentKit MCP
 
 Helps developers scaffold and build Yield.xyz integrations — generating code for DeFi yield (staking, lending, vaults, and real-world assets) across 80+ networks, and guiding architecture decisions across REST API integration, transaction signing, wallet connection, and fee monetization.
 
-Requires: Yield.xyz AgentKit MCP 
+Requires: Yield.xyz AgentKit MCP (Optional)
 
 ---
 ### [`yield-agentkit-privy`](./skills/yield-agentkit-privy/)
