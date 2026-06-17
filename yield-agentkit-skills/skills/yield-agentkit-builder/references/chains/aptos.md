@@ -2,7 +2,7 @@
 
 ## unsignedTransaction Format
 
-**Encoding:** Serialized Aptos `RawTransaction` (BCS bytes, returned as a string)
+**Encoding:** Base64-encoded Aptos `RawTransaction` (BCS bytes, returned as a string)
 **Parse before signing:** No — decode to bytes and deserialize into a `RawTransaction` with the SDK's `Deserializer`. Do NOT rebuild the payload.
 
 The transaction the API returns already encodes the Move entry-function call, the sender,
@@ -44,16 +44,15 @@ import {
   RawTransaction,
   SimpleTransaction,
   Deserializer,
-  Hex,
 } from "@aptos-labs/ts-sdk";
 
 const aptos = new Aptos(new AptosConfig({ network: Network.MAINNET }));
 const signer = Account.fromPrivateKey({ privateKey: new Ed25519PrivateKey(PRIVATE_KEY) });
 
 for (const tx of action.transactions) {
-  // tx.unsignedTransaction is a serialized RawTransaction. Deserialize VERBATIM —
+  // tx.unsignedTransaction is a base64-encoded RawTransaction. Deserialize VERBATIM —
   // do NOT rebuild the payload from chain state.
-  const rawTxnBytes = Hex.hexInputToUint8Array(tx.unsignedTransaction);
+  const rawTxnBytes = Buffer.from(tx.unsignedTransaction, "base64");
   const transaction = new SimpleTransaction(
     RawTransaction.deserialize(new Deserializer(rawTxnBytes)),
   );
