@@ -32,9 +32,11 @@ npx skills add https://github.com/stakekit/agentkit
 | Skill | Description |
 |---|---|
 | [`yield-agentkit`](./yield-agentkit-skills/skills/yield-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
+| [`yield-agentkit-builder`](./yield-agentkit-skills/skills/yield-agentkit-builder/) | Build applications that integrate the Yield.xyz API — generates code for DeFi yield (staking, lending, vaults, and real-world assets) across 80+ networks, covering REST integration, transaction signing, wallet connection |
 | [`yield-agentkit-privy`](./yield-agentkit-skills/skills/yield-agentkit-privy/) | Policy-aware yield execution. Yield.xyz discovers yields and builds transactions, Privy enforces policy-guarded signing and broadcasting with autonomous and semi-autonomous workflows |
 | [`yield-agentkit-rwakit-privy`](./yield-agentkit-skills/skills/yield-agentkit-rwakit-privy/) | Real-World Asset (RWA) yield execution via Privy. Same flow as the Privy skill, scoped to tokenized RWA yields (Superstate, Midas) with KYC / accreditation / minimum / on-chain allowlist gating before any deposit |
 | [`yield-agentkit-moonpay`](./yield-agentkit-skills/skills/yield-agentkit-moonpay/) | End-to-end yield flow. Yield.xyz discover yields and builds transactions, MoonPay signs and broadcasts |
+
 
 ---
 
