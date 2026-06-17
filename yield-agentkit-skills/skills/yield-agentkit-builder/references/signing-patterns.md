@@ -127,10 +127,10 @@ For apps where the user signs in the browser with an injected wallet.
 | Wallet | SDK / Integration | Docs |
 |---|---|---|
 | **MetaMask** | MetaMask SDK (`@metamask/sdk`) | https://docs.metamask.io/wallet/connect/ |
-| **Phantom (EVM)** | Phantom provider (`window.phantom.ethereum`) | https://docs.phantom.app/solana/integrating/extension |
-| **WalletConnect** | WalletConnect Web3Modal (`@web3modal/ethers` or `@web3modal/wagmi`) | https://docs.walletconnect.com/web3modal/about |
+| **Phantom (EVM)** | Phantom provider (`window.phantom.ethereum`) | https://docs.phantom.com |
+| **WalletConnect** | WalletConnect Web3Modal (`@web3modal/ethers` or `@web3modal/wagmi`) | https://docs.reown.com/appkit/overview |
 | **Rainbow** | RainbowKit (`@rainbow-me/rainbowkit`) | https://www.rainbowkit.com/docs/introduction |
-| **Coinbase Wallet** | Coinbase Wallet SDK (`@coinbase/wallet-sdk`) | https://docs.cloud.coinbase.com/wallet-sdk/docs |
+| **Coinbase Wallet** | Coinbase Wallet SDK (`@coinbase/wallet-sdk`) | https://github.com/coinbase/coinbase-wallet-sdk |
 
 ### Multi-Wallet Abstraction
 
@@ -139,7 +139,7 @@ For supporting multiple wallets with a single integration:
 | Library | What It Does | Docs |
 |---|---|---|
 | **wagmi + viem** | React hooks for wallet connection, signing, and state | https://wagmi.sh |
-| **Web3Modal** | Drop-in modal supporting 300+ wallets via WalletConnect | https://docs.walletconnect.com/web3modal/about |
+| **Web3Modal** | Drop-in modal supporting 300+ wallets via WalletConnect | https://docs.reown.com/appkit/overview |
 | **RainbowKit** | Polished wallet connection UI for React apps | https://www.rainbowkit.com/docs/introduction |
 | **ConnectKit** | Wallet connection modal by Family | https://docs.family.co/connectkit |
 
@@ -171,8 +171,8 @@ See `common-pitfalls.md` entries #4, #5, #11 for detailed explanations of each i
 | Library | Use Case | Docs |
 |---|---|---|
 | **@solana/web3.js v2** | General-purpose Solana (new version) | https://www.npmjs.com/package/@solana/web3.js |
-| **@solana/web3.js v1** | Legacy projects | https://solana-labs.github.io/solana-web3.js/ |
-| **Phantom** | Browser wallet (most popular Solana wallet) | https://docs.phantom.app/solana/integrating/extension |
+| **@solana/web3.js v1** | Legacy projects | https://github.com/solana-labs/solana-web3.js |
+| **Phantom** | Browser wallet (most popular Solana wallet) | https://docs.phantom.com |
 | **Backpack** | Browser wallet (multi-chain, popular in Solana) | https://docs.backpack.app |
 | **Solana Wallet Adapter** | Multi-wallet abstraction for React | https://github.com/anza-xyz/wallet-adapter |
 
@@ -194,7 +194,7 @@ See `common-pitfalls.md` entries #4, #5, #11 for detailed explanations of each i
 | **@cosmjs/proto-signing** | Protobuf-based signing | https://cosmos.github.io/cosmjs/ |
 | **Keplr** | Browser wallet (most popular Cosmos wallet) | https://docs.keplr.app/api/ |
 | **Leap** | Browser wallet (multi-chain Cosmos) | https://docs.leapwallet.io |
-| **CosmosKit** | Multi-wallet abstraction for React | https://cosmoskit.com |
+| **CosmosKit** | Multi-wallet abstraction for React | https://github.com/cosmology-tech/cosmos-kit |
 
 ### Cosmos-Specific Requirement
 Cosmos yields require the user's **public key** as an argument when calling the action
