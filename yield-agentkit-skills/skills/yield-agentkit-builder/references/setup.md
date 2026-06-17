@@ -2,61 +2,18 @@
 
 ## Prerequisites
 
-- An MCP-compatible AI agent (Claude Code, Codex, Gemini CLI, etc.)
 - A Yield.xyz API key (get one at https://dashboard.yield.xyz/login)
 - Node.js 18+ (for SDK usage) or any HTTP client (for REST API)
+- Optional: an MCP-compatible AI agent (Claude Code, Codex, Gemini CLI, etc.) if you
+  want to use the build-time doc tools described in the optional step below
+
+The production integration calls `https://api.yield.xyz` directly — via the
+`@yieldxyz/sdk` or REST/curl. That's the real starting point. The MCP doc tools are
+only a build-time aid; nothing you ship depends on them.
 
 ---
 
-## Step 1 — Register the Yield.xyz MCP Server (REQUIRED — do this first)
-
-**This step is mandatory, not optional.** The builder skill depends on the live tools
-exposed by the `yield-agentkit` MCP server (`yield_get_api_spec`, `yield_lookup_docs`,
-`yield_fetch_doc`, `yield_troubleshoot_error`, `yield_list_repos`). Without the MCP
-registered, the skill cannot fetch the live OpenAPI spec, search/read the live docs, or
-diagnose API errors against the live spec — so code generation will fall back on
-stale/hallucinated information. (Chain-specific signing, transaction lifecycle, yield
-types, and safety guidance live in this skill's own `references/` files.)
-
-**The skill MUST auto-configure the MCP for the user as the very first action** when
-the skill is invoked (before asking for an API key, before anything else).
-
-### Automatic configuration
-
-Run the correct command for the user's agent:
-
-```bash
-# Claude Code
-claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
-
-# Codex, Gemini CLI, or any agent using an MCP config file — write to ~/.mcp.json
-# or the project-local .mcp.json:
-# {
-#   "mcpServers": {
-#     "yield-agentkit": {
-#       "command": "npx",
-#       "args": ["-y", "mcp-remote", "https://mcp.yield.xyz/mcp"]
-#     }
-#   }
-# }
-```
-
-### Verify registration
-
-After registering, confirm the server is connected:
-
-```bash
-claude mcp list
-```
-
-The output should include `yield-agentkit` with status `✓ Connected`. If it fails,
-re-run the add command or inspect `.mcp.json` for typos.
-
-**Do not proceed to Step 2 until the MCP is registered and connected.**
-
----
-
-## Step 2 — Get a Yield.xyz API Key
+## Step 1 — Get a Yield.xyz API Key
 
 If you don't have one yet:
 1. Go to https://dashboard.yield.xyz/login
@@ -72,7 +29,7 @@ YIELD_API_KEY=your_api_key_here
 
 ---
 
-## Step 3 — Verify API Access
+## Step 2 — Verify API Access
 
 Test that your key works:
 
@@ -99,7 +56,7 @@ and only switch the network id to mainnet once the flow works end-to-end.
 
 ---
 
-## Step 4 — Install SDK (optional)
+## Step 3 — Install SDK (optional)
 
 For TypeScript/JavaScript projects, the SDK provides typed wrappers:
 
@@ -116,10 +73,60 @@ The full OpenAPI spec is at `https://api.yield.xyz/docs.json`.
 
 ---
 
+## Optional — Register the Yield.xyz MCP Server (build-time reference)
+
+This is an optional convenience, not a requirement. The `yield-agentkit` MCP server
+exposes doc tools (`yield_get_api_spec`, `yield_lookup_docs`, `yield_fetch_doc`,
+`yield_troubleshoot_error`, `yield_list_repos`) that let an AI agent ground generated
+code against the live OpenAPI spec and docs **while building**. It is a build-time
+reference only — nothing you ship calls the MCP, and it is not a runtime dependency.
+
+If you skip it, the same information is available by fetching the live spec directly:
+
+```bash
+curl -s https://api.yield.xyz/docs.json | jq .
+```
+
+(Chain-specific signing, transaction lifecycle, yield types, and safety guidance all
+live in this skill's own `references/` files regardless.)
+
+To register the doc tools, run the correct command for your agent:
+
+```bash
+# Claude Code
+claude mcp add yield-agentkit --transport http https://mcp.yield.xyz/mcp
+
+# Codex, Gemini CLI, or any agent using an MCP config file — write to ~/.mcp.json
+# or the project-local .mcp.json:
+# {
+#   "mcpServers": {
+#     "yield-agentkit": {
+#       "command": "npx",
+#       "args": ["-y", "mcp-remote", "https://mcp.yield.xyz/mcp"]
+#     }
+#   }
+# }
+```
+
+To confirm it's connected:
+
+```bash
+claude mcp list
+```
+
+The output should include `yield-agentkit` with status `✓ Connected`. If it fails,
+re-run the add command or inspect `.mcp.json` for typos.
+
+---
+
 ## Choosing your integration approach
 
-Pick the integration approach that matches the use case. When in doubt, default to the
-TypeScript SDK.
+Pick the integration approach that matches the use case. There is no single flat
+default — match the situation:
+
+- **Greenfield / unspecified staking app** → `@stakekit/widget` (fastest to a running app)
+- **Existing React/TS app needing custom UI** → TypeScript SDK
+- **Non-JS (Python, Go, …)** → REST directly
 
 ### Widget Component (`@stakekit/widget`)
 
@@ -140,7 +147,7 @@ transaction signing, and position tracking.
 ```tsx
 npm install @stakekit/widget   // requires React 19+ — see common-pitfalls.md #14
 
-import "@stakekit/widget/package/css";
+import "@stakekit/widget/style.css";
 import { SKApp, darkTheme } from "@stakekit/widget";
 
 function YieldPage() {
@@ -156,14 +163,15 @@ The React component is `SKApp`. For a non-React app, use the bundled build:
   - [widget repo](https://github.com/stakekit/widget)
   - [Widget Documentation](https://docs.yield.xyz/docs/widget)
 
-### TypeScript SDK (`@yieldxyz/sdk`) — Recommended Default
+### TypeScript SDK (`@yieldxyz/sdk`) — Recommended for custom TypeScript/JS apps
 
 Typed SDK with methods for all API endpoints. Handles auth, request formatting, and
-type safety. The best developer experience for most use cases.
+type safety. The best developer experience when you're building custom UI in a
+TypeScript/JavaScript app.
 
 - **Best for:** Consumer wallets, frontend apps, mobile apps, and any
-  TypeScript/JavaScript project that wants typed access. Start here unless you have a
-  specific reason to use something else.
+  TypeScript/JavaScript project that wants typed access and a custom UI (when the
+  prebuilt widget isn't a fit).
 - **Tradeoffs:** TypeScript/JavaScript only. Covers all endpoints. Good balance of
   control and convenience. For other languages, use the REST API directly.
 - **Match signals:** sdk, typescript, npm, typed, client, frontend, wallet, consumer,
@@ -236,7 +244,12 @@ curl -X POST "https://api.yield.xyz/v1/actions/enter" \
 - **Resources:**
   - [API Reference](https://docs.yield.xyz/reference/getting-started-with-your-api)
   - [Core Concepts](https://docs.yield.xyz/docs/core-concepts)
-  - [API Recipes](https://github.com/stakekit/api-recipes) — runnable REST + ethers.js examples (no SDK)
+  - **Non-JS (Python/Go/…) on-ramp:** follow the language-agnostic REST flow in
+    `references/transaction-lifecycle.md`, then sign with the Python block in
+    `references/signing-patterns.md` (EVM — Server-Side Signing).
+  - [API Recipes](https://github.com/stakekit/api-recipes) — TypeScript/ethers.js
+    reference (no SDK), useful for understanding the raw REST calls. Note: TS only, not
+    a Python on-ramp.
 
 ### Programmatic Access API + REST API
 
@@ -270,7 +283,7 @@ A single index of everything this skill recommends, with links.
 **Repos**
 - SDK — [github.com/stakekit/sdk](https://github.com/stakekit/sdk)
 - Widget — [github.com/stakekit/widget](https://github.com/stakekit/widget)
-- API recipes (runnable REST + ethers.js examples) — [github.com/stakekit/api-recipes](https://github.com/stakekit/api-recipes)
+- API recipes (TypeScript/ethers.js REST reference — TS only, not a Python on-ramp) — [github.com/stakekit/api-recipes](https://github.com/stakekit/api-recipes)
 - Shield (transaction-security validation) — [github.com/stakekit/shield](https://github.com/stakekit/shield)
 - Signers (signing helpers) — [github.com/stakekit/signers](https://github.com/stakekit/signers)
 

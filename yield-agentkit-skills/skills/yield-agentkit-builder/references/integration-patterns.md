@@ -62,7 +62,7 @@ The `@stakekit/widget` is a pre-built React component that handles the entire yi
 flow — discovery, entry, exit, and management. No need to call the API directly.
 
 ```tsx
-import "@stakekit/widget/package/css";
+import "@stakekit/widget/style.css";
 import { SKApp, darkTheme } from "@stakekit/widget";
 
 function YieldPage() {
@@ -84,7 +84,7 @@ pass the **`externalProviders`** prop. This **skips the connection step entirely
 widget uses the address and signer you supply instead of asking the user to connect.
 
 ```tsx
-import "@stakekit/widget/package/css";
+import "@stakekit/widget/style.css";
 import { SKApp, darkTheme } from "@stakekit/widget";
 
 <SKApp
@@ -104,7 +104,7 @@ import { SKApp, darkTheme } from "@stakekit/widget";
       // the widget hands you a DECODED tx + metadata; you sign AND broadcast,
       // then return the on-chain hash.
       sendTransaction: async (skTx, txMeta) => {
-        // skTx is a discriminated union by chain: { type: "evm" | "solana" | "ton" | "tron", tx }
+        // skTx is a discriminated union by chain: { type: "evm" | "solana" | "ton" | "tron" | "bittensor", tx }
         // txMeta carries { txId, txType, actionId, actionType, amount, inputToken, providersDetails }
         const txHash = await myInfra.signAndBroadcast(skTx);
         return { type: "success", txHash };   // or { type: "error", error } or just the hash string
@@ -121,8 +121,12 @@ Key points for this path:
   handles the submit-hash/tracking for you. You never hand keys to the widget.
 - `currentAddress` is the address the widget operates on; update it (re-render with a new
   value) when your wallet switches accounts.
-- `skTx` is already decoded per chain (`evm`/`solana`/`ton`/`tron`) — sign it as-is; don't
-  mutate it (same rule as raw `unsignedTransaction`).
+- `skTx` is already decoded per chain (`evm`/`solana`/`ton`/`tron`/`bittensor`) — sign it
+  as-is; don't mutate it (same rule as raw `unsignedTransaction`).
+- **Theming:** `SKApp` accepts a `theme` prop (a `ThemeWrapperTheme` object — use the
+  exported `darkTheme`/`lightTheme`, or supply a custom theme to match your brand) plus
+  `tokenIconMapping`/`chainIconMapping` to override token/chain icons. The widget is more
+  customizable than "you get the default UI" implies — restyle it instead of forking.
 - Related props: `disableInjectedProviderDiscovery` (stop the widget probing for injected
   wallets when you supply your own), `validatorsConfig` (allow/block/prefer validators per
   chain), and `mapWalletListFn`/`mapWalletFn` (customize the connector list *if* you do use

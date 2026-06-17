@@ -138,7 +138,7 @@ x-api-key: YOUR_API_KEY
 
 The set of status codes the **application** returns is `400, 401, 403, 404, 412, 422, 429, 500`.
 A transient `502`/`503` can still reach you from the edge/infra layer (CDN, load balancer)
-rather than the application — treat those as retryable with backoff (see `policies.md`).
+rather than the application — treat those as retryable with backoff (see `api-limits.md`).
 
 | Code | Meaning |
 |---|---|

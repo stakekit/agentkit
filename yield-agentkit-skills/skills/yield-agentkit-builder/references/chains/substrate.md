@@ -45,34 +45,32 @@ All chain-specific arguments are flat keys inside `arguments` (no `additionalAdd
 
 ## Signing
 
-```typescript
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import { Keyring } from "@polkadot/keyring";
+> **This is an outline, not a drop-in snippet.** Substrate extrinsic signing is fiddly:
+> you must sign the **exact** payload the API returned (`method`, `era`, `nonce`, `tip`,
+> `specVersion`, `transactionVersion`, `genesisHash`, `blockHash`) over the SCALE-encoded
+> `ExtrinsicPayload`, then attach the signature to the call — **do NOT rebuild the call or
+> re-derive era/nonce from chain state**, or the signature will not verify. The precise
+> `@polkadot/api` / `@polkadot/util-crypto` calls depend on the metadata version of the
+> target chain, so follow the reference signer in the Yield.xyz signers repo:
+> https://github.com/stakekit/signers
 
-const provider = new WsProvider("wss://rpc.polkadot.io");
-const api = await ApiPromise.create({ provider });
-const keyring = new Keyring({ type: "sr25519" });
-const account = keyring.addFromUri("//Alice");
+> **Sign the API's transaction VERBATIM — don't rebuild it.** Every field above is part of
+> what gets signed. Re-fetching the nonce, regenerating the era, or reconstructing the call
+> from the `method` bytes alone changes the signed payload and the broadcast fails.
 
-for (const tx of action.transactions) {
-  const payload = JSON.parse(tx.unsignedTransaction);
+Outline of the flow:
 
-  // Reconstruct the extrinsic and sign the full payload (era, nonce, blockHash, ...),
-  // not just the method bytes — otherwise the signature is invalid.
-  const extrinsic = api.createType("Extrinsic", payload.method);
-  const signingPayload = api.createType("ExtrinsicPayload", payload, {
-    version: extrinsic.version,
-  });
-  const { signature } = signingPayload.sign(account);
-  extrinsic.addSignature(account.address, signature, signingPayload.toHex());
-
-  // Broadcast
-  const hash = await api.rpc.author.submitExtrinsic(extrinsic);
-
-  // Submit hash — MANDATORY
-  await sdk.api.submitTransactionHash(tx.id, { hash: hash.toHex() });
-}
-```
+1. **Decode the returned payload.** `const payload = JSON.parse(tx.unsignedTransaction);`
+   This carries the SCALE-encoded `method` plus the signed-extra fields (`era`, `nonce`,
+   `tip`, `specVersion`, `transactionVersion`, `genesisHash`, `blockHash`).
+2. **Sign the payload as-is** with the account's sr25519 (Polkadot/Bittensor default) or
+   ed25519 keypair — sign the SCALE-encoded `ExtrinsicPayload` built from the fields above,
+   not just `method`. See the signers repo for the exact construction per chain metadata.
+3. **Attach the signature** to the extrinsic (signer address + signature + the signed
+   payload), producing the final signed extrinsic — without mutating any of the signed fields.
+4. **Submit** the signed extrinsic via `author.submitExtrinsic` (or the chain's RPC) and read
+   the returned tx hash.
+5. **Submit hash — MANDATORY:** `await sdk.api.submitTransactionHash(tx.id, { hash });`
 
 ## Common Gotchas
 

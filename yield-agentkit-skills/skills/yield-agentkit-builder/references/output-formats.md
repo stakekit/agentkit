@@ -43,6 +43,11 @@ Filter out low-TVL yields before displaying:
 | BTC / wrapped BTC | $500K |
 | Other tokens | $100K |
 
+> **Note:** `GET /v1/yields` list items carry **no current-`tvl` field** — you cannot filter
+> the list response on TVL directly. To apply these thresholds, fetch TVL per yield from the
+> `/v1/yields/{id}/tvl/history` endpoint and filter client-side. Don't filter on a `tvl`
+> property that isn't on list items.
+
 ---
 
 ## Transaction Summary

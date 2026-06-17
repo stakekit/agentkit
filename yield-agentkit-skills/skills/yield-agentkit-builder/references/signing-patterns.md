@@ -112,9 +112,23 @@ For backends, custody platforms, and any environment where you control the priva
 - `receipt.wait()` (ethers) or `waitForTransactionReceipt()` (viem) works correctly server-side
 
 **Python (`eth-account` + `web3.py`):** `eth-account` requires two key-shape adaptations
-before signing — drop the `from` key and rename `gasLimit` → `gas` (neither changes a
-value). Sign with `Account.from_key(...).sign_transaction(tx)`, then broadcast
-`signed.raw_transaction`. Full example: `references/chains/evm.md` ("EVM signing — Python").
+before signing — drop the `from` key and rename `gasLimit` → `gas`. Both are key-shape
+adaptations to satisfy `eth-account`, **NOT** modifications to the transaction: do not
+touch `to` / `data` / `value` / amounts, and do not change the gas values themselves.
+
+```python
+from eth_account import Account
+from web3 import Web3
+
+tx = json.loads(unsigned_transaction)   # EVM unsignedTransaction is a JSON string
+tx.pop("from", None)                    # eth-account derives sender from the key; it rejects `from`
+tx["gas"] = tx.pop("gasLimit")          # eth-account uses `gas`, not `gasLimit`
+signed = Account.from_key(PRIVATE_KEY).sign_transaction(tx)   # .raw_transaction (eth-account >=0.13); older: .rawTransaction
+tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction).hex()
+# then PUT /v1/transactions/{id}/submit-hash with { "hash": tx_hash }, or POST .../submit to let Yield broadcast
+```
+
+`references/chains/evm.md` carries the same example under "EVM signing — Python".
 
 ---
 
@@ -222,8 +236,10 @@ Check the yield schema to confirm.
 
 ## Validator Object Shape (All Chains)
 
-`GET /v1/yields/{yieldId}/validators` returns an array of validator objects. The
-stable fields, identical across every staking chain, are:
+`GET /v1/yields/{yieldId}/validators` returns a **paginated envelope**
+`{ items: ValidatorDto[], total, limit, offset }` — **not** a bare array. Read the
+validators off `.items` (mapping or indexing the raw response directly will crash).
+The stable fields on each `ValidatorDto`, identical across every staking chain, are:
 
 | Field | Type | Notes |
 |---|---|---|
@@ -236,8 +252,9 @@ stable fields, identical across every staking chain, are:
 | `providerId` | string | Validator provider id |
 | `rewardRate` | object | `{ total, rateType: "APR", components }` |
 
-> **There is no `apr` field.** The validator's APR is `rewardRate.total` (a decimal
-> fraction; `rateType` is `"APR"`). Per-chain additions: **Polkadot** adds `nominatorCount`;
+> **`apr` is null/deprecated — use `rewardRate.total` for the rate.** The validator object
+> does carry an `apr` key, but its value is `null`; read the APR from `rewardRate.total`
+> (a decimal fraction; `rateType` is `"APR"`). Per-chain additions: **Polkadot** adds `nominatorCount`;
 > **Bittensor** adds a `subnet {}` object.
 
 ---

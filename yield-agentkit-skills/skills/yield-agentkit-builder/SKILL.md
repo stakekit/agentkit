@@ -16,6 +16,13 @@ API usage across all supported chains and protocols.
 **Scope: this skill builds Yield integrations** — staking, lending, vaults, and RWA
 across 80+ networks.
 
+**What ships vs. what's build-time:** the integration you ship always calls
+`https://api.yield.xyz` directly — via the `@yieldxyz/sdk` or REST/curl. **Nothing the
+user ships calls the MCP.** The MCP's doc tools are only a *build-time reference* for you
+(the builder) — they let you ground field names against the live spec/docs while
+generating code. The MCP is not a runtime dependency and not a hard prerequisite; if it's
+unavailable, fetch `https://api.yield.xyz/docs.json` directly.
+
 ---
 
 ## Quickstart — minimal end-to-end (Yield)
@@ -39,6 +46,11 @@ code — the shapes below are a map, not a contract.
    hash so Yield.xyz can track it.
 6. **Poll to confirm** — `GET /v1/transactions/{id}` until status is `CONFIRMED`
    (there are no webhooks — poll with backoff).
+
+Non-TypeScript (Python, Go, …)? Every endpoint is plain REST — see
+[`references/signing-patterns.md`](./references/signing-patterns.md) for server-side
+signing (e.g. Python `eth-account`), and
+[`references/chains/<chain>.md`](./references/chains/).
 
 For the full lifecycle (status states, error/retry handling, exit/manage) see
 [`references/transaction-lifecycle.md`](./references/transaction-lifecycle.md); for
@@ -86,45 +98,23 @@ Once you have the key:
 
 ### 3. Never Call MCP Action Tools in a Builder Session — and Never Advise the User to
 
-The MCP server exposes **17 action tools** (e.g. `yields_get_all`, `yields_get`,
-`yields_get_balances`, `yields_get_kyc_status`, `actions_enter`, `actions_exit`,
-`actions_manage`, `submit_hash` — the full list with descriptions is in
-[`references/mcp-tools.md`](./references/mcp-tools.md)).
+The MCP server's **action tools** (`actions_enter`, `actions_exit`, `submit_hash`,
+`yields_get_balances`, etc.) return trimmed/reshaped responses that omit fields present
+in the full API, so code built against them will be wrong. **Never call them, and never
+advise the user to call them as part of their integration.** Build against the REST API
+instead — call the live endpoint directly with the user's key (`https://api.yield.xyz/v1/...`)
+for the full, unmodified response. The only MCP tools you use are the read-only **doc
+tools** (`yield_get_api_spec`, `yield_list_repos`, etc.).
 
-**In a builder session you must never call any of them, and never advise the user
-to call them as part of their integration.** They return trimmed/reshaped responses
-that omit fields present in the full API, so code built against them will be wrong —
-and execution/signing belongs to the dedicated skills below, not to a code-generation
-session.
+Explaining what an action tool does is fine (explaining ≠ calling). If the user actually
+wants to *run* one — enter/exit/manage, check live balances — that's out of scope here;
+redirect them to the matching execute skill (`yield-agentkit`, `yield-agentkit-privy`,
+`yield-agentkit-moonpay`, `yield-agentkit-rwakit-privy`), which carry the wallet/signing
+guidance execution requires.
 
-**For building, get data from the REST API instead.** Use the user's API key to call
-the live REST endpoint directly (`https://api.yield.xyz/v1/...`) via `curl`, `fetch`,
-or any HTTP client — that gives the full, unmodified
-response to build against. The only MCP tools you use are the read-only **doc tools**
-(`yield_get_api_spec`, `yield_list_repos`, etc.).
-
-**Two things you _may_ do with action tools:**
-
-1. **Explain what an action tool does, if the user asks.** Describing a tool is fine —
-   the one-line descriptions are in [`references/mcp-tools.md`](./references/mcp-tools.md).
-   Explaining ≠ calling.
-2. **If the user actually wants to run or test action tools** (enter a position, check
-   live balances, manage rewards), that is out of scope for this skill. Point them to
-   the dedicated skill that fits — each carries the wallet, signing, and security
-   guidance that action-tool execution requires:
-
-   | If the user wants to… | Use this skill | What it provides |
-   |---|---|---|
-   | Explore yields / see what tools & yields exist, no wallet needed | **`yield-agentkit`** | Conversational discovery + action-tool reference; no signing |
-   | Execute (enter/exit/manage) with an privy agentic wallet | **`yield-agentkit-privy`** | Privy wallet — policy, signing, broadcast (requires Privy) |
-   | Execute with a MoonPay wallet | **`yield-agentkit-moonpay`** | MoonPay wallet auth + signing (requires MoonPay + MCP) |
-   | Execute tokenized RWA yields (KYC/accreditation gated) | **`yield-agentkit-rwakit-privy`** | RWA access gating on top of Privy execution |
-
-   Don't reproduce execution/signing steps here — they live in those skills by design.
-
-> 📖 **For the full MCP tool list — which are safe in builder sessions (doc tools)
-> and which must never be called (action tools), plus a one-line description and REST
-> equivalent for each — see [`references/mcp-tools.md`](./references/mcp-tools.md).**
+> 📖 **Full action-tool list + which are safe (doc tools) vs. never-call, with a one-line
+> description and REST equivalent for each — see
+> [`references/mcp-tools.md`](./references/mcp-tools.md).**
 
 ### 4. Never Hardcode Field Names — Always Fetch from the Live Spec
 
@@ -150,128 +140,58 @@ Gas insufficient? Ask user to add funds, call again.
 
 ### 6. Never Kill a Port Without Asking
 
-When running the generated project locally (dev server, preview, etc.), you may hit a
-port conflict because the user already has something running on that port. **Do not
-automatically kill the process on that port.** The user may have another project,
-service, or tool intentionally bound to it — killing it without consent can disrupt
-their unrelated work.
+When a local process (dev server, preview, DB, mock) hits a port conflict, **never kill
+the occupying process automatically** — the user may have it intentionally bound.
 
-**Correct order of actions:**
-
-1. **Try the default port first** (e.g. `3000` for most Node apps, `5173` for Vite,
-   `8000` for Python). If it's free, use it.
-2. **If the default port is in use, try the next common free port** — `3001`, `3002`,
-   `5001`, `5173`, `8080`, `8081`, etc. Most frameworks accept a `PORT` env var or
-   `--port` flag (e.g. `PORT=3001 npm run dev`, `vite --port 5174`).
-3. **Only if no reasonable alternative port is available** (or the framework can't
-   easily be rebound), **ask the user first** before killing anything:
-   > "Port 3000 is in use by another process and I couldn't find a free alternative.
-   > Would you like me to stop the process on 3000, or do you want to free it yourself?"
-4. **Kill the port only after the user explicitly agrees.**
-
-This rule applies to every port-binding step: dev servers, preview tools, local
-databases, mock services, etc.
+1. **Try the default port** (`3000` Node, `5173` Vite, `8000` Python). If free, use it.
+2. **If taken, fall back to a nearby free port** via `PORT=` env var or `--port` flag.
+3. **Only as a last resort, ask the user** before killing anything — and kill only after
+   they explicitly agree.
 
 ### 7. Only Install Verified, Widely-Used Dependencies
 
-Every dependency you add to the user's project is a supply-chain risk. Malicious or
-typosquatted npm packages are a real attack vector — a single unverified `postinstall`
-script can exfiltrate the user's `YIELD_API_KEY`, RPC keys, or wallet seed.
-
-**Default to the smallest possible dependency set.** Before `npm install`-ing
-anything, apply this checklist:
-
-1. **Prefer the standard library / built-in APIs.** Modern Node and browsers cover
-   `fetch`, `crypto`, `URL`, `AbortController`, etc. — don't pull in `axios`,
-   `node-fetch`, `uuid`, etc. unless there's a concrete reason.
-2. **Prefer packages already implied by the stack.** If the user is on Next.js,
-   use what Next ships. If on Vite + React, use the canonical ecosystem picks
-   (`@tanstack/react-query`, `zod`, `viem`, `wagmi`, etc.).
-3. **Before installing any package the user hasn't mentioned, verify it on npm:**
-   - Published by a known, trusted maintainer or org (e.g. `@yieldxyz`, `wevm`,
-     `TanStack`, `solana-labs`, `cosmos`, `ethers`, `coinbase`, `metamask`, etc.)
-   - **High weekly download count** (rule of thumb: ≥ 100k/week for general-purpose
-     libs; lower is acceptable only for narrow niche packages with a clear maintainer)
-   - Recently maintained (release within the last 6–12 months)
-   - Has a GitHub repo, README, and no open security advisories
-   - Name matches exactly — watch for typosquats (`axois`, `requst`, `lodahs`, etc.)
-4. **Only widely-used, verified packages install silently.** If a package fails any
-   of the checks above — obscure, low downloads, unknown maintainer, recently
-   renamed, unfamiliar — **stop and ask the user before installing**:
-
-   > "The cleanest way to do X is the `foo-bar` package, but it only has ~2k
-   > weekly downloads and I'm not familiar with the maintainer. Want me to install
-   > it, pick a more popular alternative (`baz-qux`, 500k weekly downloads), or
-   > implement X inline without a dependency?"
-
-5. **Never install a package just because the user vaguely asked for functionality
-   it provides.** If a lightweight inline implementation (~30 lines) replaces a
-   sketchy dependency, write the inline version.
-
-This rule applies to both frontend and backend — `package.json`, `requirements.txt`,
-`go.mod`, `Cargo.toml`, and any other dependency manifest.
+Every dependency is a supply-chain risk — a single typosquatted package's `postinstall`
+can exfiltrate the user's `YIELD_API_KEY`, RPC keys, or wallet seed. Default to the
+smallest dependency set: prefer built-ins (`fetch`, `crypto`, …) and packages already
+implied by the stack (`viem`, `wagmi`, `@tanstack/react-query`, etc.). Before installing
+anything the user didn't name, verify it on npm (trusted maintainer, high weekly
+downloads, recent release, real repo, exact name — no typosquats). If a package fails
+those checks, **stop and ask** before installing (offer a popular alternative or a short
+inline implementation). Applies to every manifest — `package.json`, `requirements.txt`,
+`go.mod`, `Cargo.toml`.
 
 ### 8. Always Include Pagination When Listing Yields
 
-Yield.xyz exposes **2,900+ yields across 80+ networks**. Popular chains like
-Ethereum, Base, and Arbitrum each have hundreds of entries. A UI that renders the
-full list in one page is unusable — slow to load, painful to scroll, and expensive
-to re-render.
+Yield.xyz exposes **2,900+ yields across 80+ networks**, so pagination is a default, not
+a feature request. Every list view you generate — yields, balances, validators,
+transactions — must ship paginated from the start; **never render an unbounded list.**
 
-**Pagination is a default, not a feature request.** Do not wait for the user to
-ask. Every generated app that lists yields, balances, validators, or transactions
-must ship with pagination wired in from the start.
-
-**Baseline requirements for any list view:**
-
-1. **Page size** — default to 20–50 items per page; never render the full list at once.
-2. **Use the API's built-in pagination params** on `GET /v1/yields` (`limit`,
-   `offset` — the API is offset-only, max `limit` is 100; check `yield_get_api_spec`
-   for the current shape). Do **not** fetch everything client-side and slice — that
-   defeats the point.
-3. **Provide a way to change pages** — next/prev buttons, numbered pager, or an
-   infinite-scroll sentinel (whichever fits the UI).
-4. **Preserve filters across pages** — network, token, type, provider filters
-   must remain applied when paging.
-5. **Show total count** (e.g. "1-20 of 1,847 yields") when the API returns it, so
-   the user understands the scale.
-6. **Same rule for validators and balances** — validator lists (`yields_get_validators`)
-   and position lists (`yields_get_balances`) can also be long; paginate them too.
-7. **Prefer server-side sort, search, and filter.** Before writing any `.sort()`,
-   `.filter()`, or `.toLowerCase().includes(...)` on the client, check the live
-   OpenAPI spec (`yield_get_api_spec({ endpoint: "/v1/yields" })` or
-   `curl https://api.yield.xyz/docs.json | jq '.paths["/v1/yields"]'`) for
-   `sort`, `search`, and filter query params on the endpoint. The `/v1/yields`
-   endpoint in particular supports server-side sorting (by APY, TVL, etc.) and
-   text search via query params. Pass those params through — don't fetch-all
-   and sort locally. A client-side sort across 3,000 yields both defeats the
-   pagination rule above and produces wrong results across pages (page 2
-   sorted by APY on the client means two different sort contexts).
-   If a param you need really doesn't exist, fall back to client-side — but
-   that's a last resort, not a default.
-
-The user can always adjust page size or swap to infinite scroll later. The
-non-negotiable is that **the first version you deliver must not render an
-unbounded list**, and any sort / search / filter must go through the API
-whenever the API supports it.
+- Use the API's built-in params on `GET /v1/yields` (`offset`/`limit`, offset-only,
+  max `limit` 100; default ~20–50 per page). Don't fetch-all client-side and slice.
+- Provide page navigation, preserve active filters across pages, and show the total
+  count when the API returns it.
+- **Sort, search, and filter via API query params, not on the client** — a client-side
+  sort across thousands of yields produces wrong results across pages. Check the live
+  spec for the available params; fall back to client-side only if a needed param truly
+  doesn't exist.
 
 ---
 
 ## Workflow
 
-### Step 0 — Register the Yield.xyz MCP Server (do this FIRST, automatically)
+### Step 0 — Register the MCP Doc Tools if Available (optional, best-effort)
 
-**The very first action in every builder session** — before asking for an API key,
-before asking what the user is building — is to ensure the `yield-agentkit` MCP
-server is registered with the user's agent. This is **not optional**. The skill's
-live tools (`yield_get_api_spec`, `yield_lookup_docs`, `yield_fetch_doc`,
-`yield_troubleshoot_error`, `yield_list_repos`) come from that MCP server, and without
-them the skill will generate code from memory rather than from the live spec. (Static
-guidance — chains, transaction lifecycle, yield types, safety — lives in this skill's
-own `references/` files, not on the MCP.)
+If you can, register the `yield-agentkit` MCP server so its read-only **doc tools**
+(`yield_get_api_spec`, `yield_lookup_docs`, `yield_fetch_doc`,
+`yield_troubleshoot_error`, `yield_list_repos`) are available to you while you build.
+These help *you* (the builder) ground field names against the live spec and docs as you
+generate code. This is a **build-time convenience, not a prerequisite** — the integration
+you ship does not call the MCP, so don't block the build on it. If the MCP isn't
+registered, fetch `https://api.yield.xyz/docs.json` directly instead. (Static guidance —
+chains, transaction lifecycle, yield types, safety — lives in this skill's own
+`references/` files, not on the MCP.)
 
-**Do this automatically — do not ask the user to run the command themselves.**
-Run the appropriate registration command for their agent, then verify it connected.
+Registration command, for convenience —
 
 For Claude Code:
 ```bash
@@ -282,8 +202,11 @@ claude mcp list   # verify "yield-agentkit" shows "✓ Connected"
 For other agents (Codex, Gemini CLI, etc.), write the `yield-agentkit` entry into
 the appropriate MCP config file (`~/.mcp.json` or project-local `.mcp.json`).
 
-If registration fails, stop and surface the error to the user — do not attempt to
-build anything until the MCP is connected. Full details and config snippets are in
+**If the MCP isn't available, just continue.** The one thing the doc tools give you is
+easier live-spec lookup, and that's reachable without them: fetch
+`https://api.yield.xyz/docs.json` directly (the `yield_list_repos` content is a
+nice-to-have, not essential), so field-name grounding comes from `docs.json` + live
+responses. Full details and config snippets are in
 [`references/setup.md`](./references/setup.md).
 
 ### Step 1 — Understand the Use Case & Recommend an Approach
@@ -293,9 +216,26 @@ no product choice to make — go straight to understanding what the user is buil
 Ask what they're building; the answer determines the integration option, architecture,
 signing approach, and which reference files to load.
 
-Recommend Widget for the fastest drop-in path, the SDK for TypeScript/JS apps that
-want typed API access, or direct REST for everything else (other languages, custom
-backends). Then map their product type to the signing/architecture pattern below.
+**First, fork on existing app vs. new project — most clients have an existing app:**
+
+- **Existing app** (you're adding yield to a repo that already exists) → the deliverable
+  is a component/route or a few endpoints plus the install/wiring into *their* codebase.
+  **Do not scaffold a new project.** Match their stack, their conventions, their build.
+- **New project** (greenfield, nothing exists yet) → scaffold a fresh project end-to-end.
+
+**Pick the integration option (default is decisive and situational):**
+
+- **Greenfield / unspecified staking app → `@stakekit/widget`** — fastest path to a
+  running, clickable app.
+  *Already have a wallet / wagmi setup? The widget doesn't force its own connect flow —
+  pass `externalProviders` (your address + signer) plus `disableInjectedProviderDiscovery`.
+  See [`references/integration-patterns.md`](./references/integration-patterns.md) →
+  "Bring your own signing infra".*
+- **Existing React app needing custom UI → SDK or REST** — typed API access via
+  `@yieldxyz/sdk`, or call REST directly.
+- **Non-JS (Python, Go, …) → REST** — every endpoint is plain HTTP.
+
+Then map their product type to the signing/architecture pattern below.
 
 Map the product type to architecture and signing:
 
@@ -343,8 +283,15 @@ product type and wallet — see
 ### Step 4 — Run the Project Yourself and Report URLs
 
 **Do not tell the user "now run `npm run dev`" and walk away.** The skill's job
-isn't done until the project is actually running and you've handed the user the
-live URLs. Run every step yourself:
+isn't done until the integration is actually running and you've shown the user it works.
+
+**If you integrated into an EXISTING app:** run *their* dev server (use their existing
+`dev`/`start` script) and point the user at the specific route or endpoints you added —
+verify those work. Don't try to scaffold or boot a new multi-service project; the
+"Frontend / Backend / health URL" summary below is for greenfield new apps, not for a
+route you dropped into a running app.
+
+**If you scaffolded a NEW project (greenfield):** run every step yourself:
 
 1. **Install dependencies yourself** — `pnpm install` / `npm install` / `yarn install`
    based on the lockfile you generated. Surface install errors and fix them.
@@ -397,19 +344,20 @@ before generating code for that topic.**
 
 | File | When to Read |
 |---|---|
-| **[`references/mcp-tools.md`](./references/mcp-tools.md)** | **Before invoking any MCP tool** — which tools are safe (doc tools) vs. which must never be called (action tools) |
+| **[`references/setup.md`](./references/setup.md)** | First-time setup — prerequisites, optional MCP doc-tool registration |
+| **[`references/scaffold.md`](./references/scaffold.md)** | When starting a **new (greenfield) project** — recommended project layouts to scaffold |
 | **[`references/common-pitfalls.md`](./references/common-pitfalls.md)** | **Before generating any code** — known errors and how to avoid them |
 | **[`references/signing-patterns.md`](./references/signing-patterns.md)** | Before generating signing/wallet code — SDKs, libraries, chain-specific guidance |
 | **[`references/chains/<chain>.md`](./references/chains/)** | Before generating signing/decoding code for a specific chain (e.g. `evm.md`, `solana.md`, `cosmos.md`, `stellar.md`) — per-chain transaction signing and decoding |
-| **[`references/api-field-mapping.md`](./references/api-field-mapping.md)** | When wiring requests/responses — endpoint reference and the error envelope shape |
 | **[`references/integration-patterns.md`](./references/integration-patterns.md)** | When user describes their product type — architecture per use case |
 | **[`references/output-formats.md`](./references/output-formats.md)** | When generating UI code — display rules, number formatting |
-| **[`references/policies.md`](./references/policies.md)** | API usage limits, rate limiting, caching guidance |
-| **[`references/setup.md`](./references/setup.md)** | First-time setup — prerequisites |
+| **[`references/policies.md`](./references/policies.md)** | Safety rules & guardrails |
+| **[`references/api-limits.md`](./references/api-limits.md)** | Rate limits, pagination, and caching guidance |
 | **[`references/dashboard-and-api-keys.md`](./references/dashboard-and-api-keys.md)** | How the dashboard/API key controls which yields & features are enabled — read when a yield "isn't available" or returns `400 not enabled` |
 | **[`references/yield-types.md`](./references/yield-types.md)** | `GET /v1/yields` query params + the yield-type categories (high level; DTO is source of truth) |
-| **[`references/api-limits.md`](./references/api-limits.md)** | Rate limits, key tiers, throttling |
 | **[`references/transaction-lifecycle.md`](./references/transaction-lifecycle.md)** | End-to-end transaction flow: build → sign → broadcast → submit-hash → confirm. |
+| **[`references/api-field-mapping.md`](./references/api-field-mapping.md)** | When wiring requests/responses — endpoint reference and the error envelope shape |
+| **[`references/mcp-tools.md`](./references/mcp-tools.md)** | **Before invoking any MCP doc tool** — which tools are safe (doc tools) vs. which must never be called (action tools) |
 
 ---
 

@@ -5,7 +5,7 @@
 
 > **Build on Yield.xyz with AI agents.** This skill teaches any MCP-compatible AI agent how to generate production-ready code that integrates with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks.
 
-The skill works alongside the [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp), which provides live access to the OpenAPI spec and to public reference repos for looking up schemas, field definitions, and working code during generation.
+What you ship integrates with Yield.xyz through the [`@yieldxyz/sdk`](https://www.npmjs.com/package/@yieldxyz/sdk) or REST calls against `https://api.yield.xyz`. The [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp) is an optional build-time reference: its doc tools give the agent live access to the OpenAPI spec and public reference repos for grounding field names and schemas while generating code. Nothing in the shipped integration calls the MCP — it is not a runtime dependency.
 
 ---
 
@@ -36,14 +36,16 @@ names, proper transaction signing, and the full submit-hash lifecycle.
 | `yield-agentkit-rwakit-privy` | Enter RWA yields end-to-end via Privy | Signed & broadcast transactions |
 | **`yield-agentkit-builder`** | **Build apps that integrate Yield.xyz** | **Production-ready code** |
 
-The explore/execute skills use MCP tools directly. The builder skill uses MCP tools for research but generates code that calls the REST API with the user's own API key.
+The explore/execute skills use MCP tools directly at runtime. The builder skill is different: it generates code that calls the Yield.xyz SDK or REST API with the user's own API key, and only uses the MCP doc tools as a build-time reference while writing that code.
 
 ---
 
 ## Requirements
 
-- An MCP-compatible AI agent (Claude Code, Codex, Gemini CLI, etc.)
-- A Yield.xyz API key (get one at https://yield.xyz)
+- A Yield.xyz API key (get one at https://yield.xyz) — this is what your shipped
+  integration uses against `https://api.yield.xyz`
+- Optional: an MCP-compatible AI agent (Claude Code, Codex, Gemini CLI, etc.) if you
+  want the build-time doc tools while generating code
 
 ---
 
@@ -63,9 +65,11 @@ Open your agent and say:
 Set up the yield-agentkit-builder skill
 ```
 
-The agent will read `references/setup.md` and automatically:
-1. Check if the Yield.xyz AgentKit MCP is registered, and register it if not
-2. Confirm the skill is loaded and ready
+The agent will read `references/setup.md` and:
+1. Confirm you have a Yield.xyz API key and can reach `https://api.yield.xyz`
+2. Optionally register the Yield.xyz AgentKit MCP for build-time doc lookups (skippable —
+   the live spec is also available directly at `https://api.yield.xyz/docs.json`)
+3. Confirm the skill is loaded and ready
 
 ---
 
@@ -85,7 +89,7 @@ Build a React component that shows a user's yield portfolio
 How do I handle MetaMask transaction signing with Yield.xyz?
 ```
 
-The agent will look up the live API spec via MCP, then generate code using `https://api.yield.xyz` with correct field names.
+The agent grounds field names against the live API spec (via the MCP doc tools if registered, otherwise by fetching `https://api.yield.xyz/docs.json` directly), then generates code that calls `https://api.yield.xyz` through the SDK or REST.
 
 ---
 
@@ -100,14 +104,15 @@ yield-agentkit-builder/
     ├── mcp-tools.md                       # Yield.xyz AgentKit MCP tools reference
     ├── common-pitfalls.md                # Known errors and how to avoid them
     ├── api-field-mapping.md              # How to look up endpoints and schemas from docs.json
-    ├── api-limits.md                      # Rate limits, pagination, and error codes
+    ├── api-limits.md                      # Rate limits, pagination, and caching
     ├── signing-patterns.md               # Wallet SDKs and signing guidance per chain
     ├── transaction-lifecycle.md          # Action -> sign -> broadcast -> submit-hash flow
     ├── integration-patterns.md           # Architecture per product type (custody, wallet, neobank, etc.)
     ├── yield-types.md                     # Yield types and their argument shapes
     ├── output-formats.md                 # Display rules for generated UI code
+    ├── scaffold.md                        # Greenfield project skeletons
     ├── dashboard-and-api-keys.md          # Dashboard usage and API key management
-    ├── policies.md                       # API rate limits, caching, best practices
+    ├── policies.md                       # Safety rules, pre-execution checks, guardrails
     └── chains/                            # Per-chain signing guides (EVM, Cosmos, Solana, Tron, TON, …)
 ```
 
@@ -126,5 +131,5 @@ yield-agentkit-builder/
 ## Related
 
 - [Yield.xyz AgentKit Skill](../yield-agentkit/README.md) — explore yields conversationally
-- [Yield.xyz AgentKit MCP Server](https://mcp.yield.xyz/mcp) — the live tools
+- [Yield.xyz AgentKit MCP Server](https://mcp.yield.xyz/mcp) — optional build-time doc tools
 - [Yield.xyz Docs](https://docs.yield.xyz/docs/getting-started) — official documentation

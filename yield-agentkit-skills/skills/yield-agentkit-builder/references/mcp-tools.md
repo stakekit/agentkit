@@ -43,7 +43,7 @@ Fetches the **live** Yield OpenAPI spec (`https://api.yield.xyz/docs.json`, defa
 - **Use when:** user says "I'm getting a 422", "400 error", "rate limited", "transaction failed", "FAILED status", "why did this fail", or pastes any error code / message from the API.
 
 ### `yield_list_repos`
-- Lists the public StakeKit/Yield.xyz GitHub repos that serve as **working code references** for integrations — the staking/yield widget (and its Next.js / Vite reference apps), the TypeScript/JS SDKs, runnable `api-recipes`, the `signers` and `shield` transaction-security libraries, and an `assets` repo for token/provider logos. Returns each repo with a one-line description and the raw-file fetch pattern (`https://raw.githubusercontent.com/stakekit/<repo>/<branch>/<path>`).
+- Lists the public Yield.xyz GitHub repos that serve as **working code references** for integrations — the staking/yield widget (and its Next.js / Vite reference apps), the TypeScript/JS SDKs, runnable `api-recipes`, the `signers` and `shield` transaction-security libraries, and an `assets` repo for token/provider logos. Returns each repo with a one-line description and the raw-file fetch pattern (`https://raw.githubusercontent.com/stakekit/<repo>/<branch>/<path>`).
 
 - **Use when:** the other doc tools don't fully resolve an integration problem and you need to read real, working source code — e.g. "how does the widget wire wallet connect", "show me a runnable enter-position example", "how does Shield validate a transaction". It points at code; it never returns live data — use the REST API for that.
 
@@ -124,22 +124,9 @@ Hit an error?                       → yield_troubleshoot_error
 ```
 
 **Static "how-to-build" needs → read this skill's `references/` files (no tool call):**
-```
-Sort/search/filter params for /v1/yields,
-  or yield-type mechanics?          → references/yield-types.md
-Transaction lifecycle / signing /
-  stepIndex / submit-hash?          → references/transaction-lifecycle.md
-unsignedTransaction format & signing
-  SDK for a specific chain?         → references/signing-patterns.md
-                                       → references/chains/<chain>.md
-Safety rules / pre-execution checks /
-  guardrails / policies?            → references/policies.md
-Rate limits / 429 / key tiers?      → references/api-limits.md
-Which integration approach (widget /
-  SDK / REST / programmatic)?       → references/setup.md
-Integration architecture patterns?  → references/integration-patterns.md
-Field naming / common mistakes?     → references/api-field-mapping.md, references/common-pitfalls.md
-```
+For the full need → file mapping (yield types, transaction lifecycle, signing, safety,
+rate limits, integration approach, architecture, field naming), see the canonical router:
+**SKILL.md → Reference Files**.
 
 **Data / execution:**
 ```
@@ -157,17 +144,10 @@ User wants to actually run/test an
 
 ## Static Guidance — read from this skill's reference files
 
-These topics are **not** MCP tools. Read the file directly when you need the guidance.
-
-| Need | Read |
-|---|---|
-| `/v1/yields` query params + the 8 yield types & mechanics | `references/yield-types.md` |
-| End-to-end transaction flow (discover → sign → submit-hash → confirm) | `references/transaction-lifecycle.md` |
-| Per-chain `unsignedTransaction` format & signing SDK | `references/signing-patterns.md` + `references/chains/<chain>.md` |
-| Safety rules, pre-execution checks, guardrails | `references/policies.md` |
-| Rate limits, key tiers, throttling | `references/api-limits.md` |
-| Choosing an integration approach (widget / SDK / REST / programmatic) | `references/setup.md` |
-| Integration architecture patterns by product type | `references/integration-patterns.md` |
+Static "how-to-build" topics (yield types, transaction lifecycle, signing, safety,
+rate limits, integration approach, architecture patterns) are **not** MCP tools — they
+live in this skill's `references/*.md` files. For the full need → file mapping, use the
+canonical router: **SKILL.md → Reference Files**. Don't duplicate that table here.
 
 ---
 

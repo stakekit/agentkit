@@ -29,7 +29,7 @@ the action's `executionPattern` (synchronous / asynchronous / batch) decides seq
 Find available yield opportunities:
 
 ```typescript
-// REST API — filter + sort; paginate with limit/offset (max limit 100, see yield-types.md)
+// REST API — filter + sort; paginate with limit/offset (max limit 100, see api-limits.md)
 const response = await fetch(
   "https://api.yield.xyz/v1/yields?network=ethereum&token=USDC&type=staking&sort=rewardRateDesc&limit=100&offset=0",
   { headers: { "x-api-key": API_KEY } },
@@ -45,7 +45,7 @@ Filter / sort results by:
 - `token` — token symbol
 - `type` — yield type (e.g. `staking`, `lending`, `vault`)
 - `sort` — e.g. `rewardRateDesc`
-- `limit` / `offset` — pagination (max `limit` 100; see yield-types.md)
+- `limit` / `offset` — pagination (max `limit` 100; see api-limits.md)
 
 > There is **no `status.enter` / `status.exit` query filter** (sending `?status.enter=true`
 > returns **400** "property status.enter should not exist"). To find yields accepting new

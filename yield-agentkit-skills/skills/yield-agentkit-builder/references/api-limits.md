@@ -44,9 +44,19 @@ async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3)
 }
 ```
 
-### Cache Yield Metadata
+### Cache By Data Type
 
-Yield metadata (`GET /v1/yields/{id}`) changes infrequently. Cache it for 5-15 minutes to reduce API calls.
+Cache data that changes infrequently to reduce API calls. Recommended durations:
+
+| Data Type | Cache Duration | Notes |
+|---|---|---|
+| Yield list (`/v1/yields`) | 5-15 minutes | APYs update periodically |
+| Yield metadata (`/v1/yields/{id}`) | 5-15 minutes | Schema rarely changes |
+| Validators | 15-30 minutes | Validator set changes slowly |
+| Balances | Do not cache | Always fetch fresh |
+| Networks | 1 hour | Rarely changes |
+
+Yield metadata (`GET /v1/yields/{id}`) is the highest-value thing to cache:
 
 ```typescript
 const yieldCache = new Map<string, { data: any; expiry: number }>();
@@ -68,6 +78,13 @@ Use `GET /v1/yields` with filters instead of fetching individual yields:
 GET /v1/yields?network=ethereum&token=USDC
 ```
 
+### Fetch Only What You Need
+
+Use query parameters (`network`, `token`, `type`) to filter server-side rather than
+fetching everything and filtering client-side. Don't poll balances excessively — check
+after user actions, not on a tight loop. Set a **3-second timeout** on all API calls to
+avoid hanging requests.
+
 ### Poll for Status — There Are No Webhooks
 
 Yield.xyz has **no webhook, event, or callback endpoints**. To learn the status of an
@@ -75,6 +92,20 @@ in-flight action or transaction, poll `GET /v1/transactions/{id}` (and
 `GET /v1/actions/{id}`) until it reaches a terminal state. Use sensible polling
 intervals with backoff rather than a tight loop — see `transaction-lifecycle.md` for
 the recommended cadence and the full status flow.
+
+### Other Efficiency Tips
+
+- **Use the SDK for TypeScript.** `@yieldxyz/sdk` handles pagination, typing, and error handling for you.
+- **Log all submit-hash calls.** If a hash submission fails, positions won't update — you need to be able to retry.
+- **Handle 503 gracefully.** Upstream protocols can be temporarily unavailable; treat as retryable with backoff.
+
+## Pagination
+
+- Default `limit`: 20
+- Maximum `limit`: **100** — a `limit` greater than 100 returns **HTTP 400**
+- Use `offset` for pagination — pagination is **offset-only**, there is no cursor
+- The response envelope is `{ items, total, offset, limit }` — the array key is **`items`** (not `data`)
+- Do not attempt to fetch all yields in a single request
 
 ## Getting a Production Key
 
