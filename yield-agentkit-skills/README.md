@@ -12,9 +12,18 @@ Each skill is a self-contained directory with a `SKILL.md` and reference files �
 
 **Yield discovery and transaction building via the Yield.xyz AgentKit MCP.**
 
-Claude becomes an expert on the Yield.xyz API — finding yields, inspecting schemas, building enter/exit/manage transactions, checking balances, and guiding through the full position lifecycle across 80+ networks.
+AI agent becomes an expert on the Yield.xyz API — finding yields, inspecting schemas, building enter/exit/manage transactions, checking balances, and guiding through the full position lifecycle across 80+ networks.
 
 Requires: Yield.xyz AgentKit MCP
+
+---
+### [`yield-agentkit-builder`](./skills/yield-agentkit-builder/)
+
+**Build applications that integrate the Yield.xyz APIs.**
+
+Helps developers scaffold and build Yield.xyz integrations — generating code for DeFi yield (staking, lending, vaults, and real-world assets) across 80+ networks, and guiding architecture decisions across REST API integration, transaction signing, wallet connection, and fee monetization.
+
+Requires: Yield.xyz AgentKit MCP 
 
 ---
 ### [`yield-agentkit-privy`](./skills/yield-agentkit-privy/)
