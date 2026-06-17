@@ -190,6 +190,7 @@ interface TransactionDto {
 1. Execute in `stepIndex` order (0, then 1, then 2...)
 2. For `synchronous` actions, wait for CONFIRMED status before proceeding to next (see "Branch on executionPattern")
 3. NEVER modify `unsignedTransaction`
+4. **Skip any step that is already terminal.** Check `tx.status` before signing — a step can come back `SKIPPED` (e.g. an `APPROVAL` when the allowance already exists) or `CONFIRMED`. Do **not** sign or `submit-hash` a terminal step; signing it makes the user sign a redundant tx and `submit-hash` then returns **412** (`"is at terminal status SKIPPED; cannot resubmit a different hash"`). Only sign `CREATED` / `WAITING_FOR_SIGNATURE` steps. See `common-pitfalls.md` #17.
 
 ## Branch on `action.executionPattern`
 
@@ -393,6 +394,14 @@ status fetch is not enough: poll `GET /v1/transactions/{id}` every ~3–5s until
 is **terminal** (`CONFIRMED`, `FAILED`, or `SKIPPED`), bounded by an overall timeout
 (~2–5 min). For `synchronous` actions this is also your sequencing gate — only submit the
 next `stepIndex` once the prior tx reaches `CONFIRMED`.
+
+> **Make the poll loop tolerant, and give this endpoint room.** `GET /v1/transactions/{id}`
+> can spike under load — a short per-call timeout (e.g. 3s) will abort it and falsely fail a
+> tx that's already broadcast and confirming. Allow ~12s per status call, and treat a
+> failed/timed-out *fetch* as transient: count consecutive errors and give up only after
+> several in a row (e.g. 8), not on the first. A terminal non-`CONFIRMED` status, by
+> contrast, is a real failure and should fail fast. See `common-pitfalls.md` #18 and
+> `api-limits.md`.
 
 ```typescript
 const TERMINAL = new Set(["CONFIRMED", "FAILED", "SKIPPED"]);
