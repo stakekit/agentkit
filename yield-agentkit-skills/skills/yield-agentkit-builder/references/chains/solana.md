@@ -31,48 +31,43 @@ Solana is overwhelmingly **lending + vault** (~251 yields total, mostly lending/
 ## Signing
 
 ```typescript
-import { Connection, Transaction, Keypair } from "@solana/web3.js";
+import { Connection, Transaction, VersionedTransaction, Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
 
-const connection = new Connection("https://api.mainnet-beta.solana.com");
-const keypair = Keypair.fromSecretKey(/* your key */);
+const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+// PRIVATE_KEY is the base58-encoded secret key (the Phantom / CLI export format).
+const keypair = Keypair.fromSecretKey(bs58.decode(PRIVATE_KEY));
 
 for (const tx of action.transactions) {
-  // Decode the hex-encoded transaction
+  // Decode the hex-encoded transaction bytes.
   const txBytes = Buffer.from(tx.unsignedTransaction, "hex");
-  const transaction = Transaction.from(txBytes);
 
-  // Sign
-  transaction.sign(keypair);
+  // Some Solana yields return legacy transactions, others v0 VersionedTransactions.
+  // Detect which: try v0 first, fall back to legacy. ONLY the deserialize step is
+  // guarded — signing/broadcast errors must propagate, not be swallowed.
+  let serialized: Uint8Array;
+  let versioned: VersionedTransaction | undefined;
+  try {
+    versioned = VersionedTransaction.deserialize(txBytes);
+  } catch {
+    versioned = undefined;
+  }
 
-  // Broadcast
-  const signature = await connection.sendRawTransaction(transaction.serialize());
-  await connection.confirmTransaction(signature);
+  if (versioned) {
+    versioned.sign([keypair]);
+    serialized = versioned.serialize();
+  } else {
+    const legacy = Transaction.from(txBytes);
+    legacy.sign(keypair);
+    serialized = legacy.serialize();
+  }
+
+  // Broadcast — both branches converge here. The signature IS the tx hash on Solana.
+  const signature = await connection.sendRawTransaction(serialized);
+  await connection.confirmTransaction(signature, "confirmed");
 
   // Submit hash — MANDATORY
   await sdk.api.submitTransactionHash(tx.id, { hash: signature });
-}
-```
-
-### Versioned Transactions
-
-Some Solana yields use Versioned Transactions (v0). Handle both:
-
-```typescript
-import { VersionedTransaction } from "@solana/web3.js";
-
-const txBytes = Buffer.from(tx.unsignedTransaction, "hex");
-
-try {
-  // Try versioned first
-  const vtx = VersionedTransaction.deserialize(txBytes);
-  vtx.sign([keypair]);
-  const sig = await connection.sendRawTransaction(vtx.serialize());
-} catch {
-  // Fall back to legacy
-  const ltx = Transaction.from(txBytes);
-  ltx.sign(keypair);
-  const sig = await connection.sendRawTransaction(ltx.serialize());
 }
 ```
 

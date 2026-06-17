@@ -52,7 +52,19 @@ Type-specific notes:
 
 There is no `cosmosPubKey` equivalent on EVM, but the argument set is still per-yield. **Always confirm the exact fields in `mechanics.arguments.enter.fields[]` (and `.exit.fields[]`) from the yield DTO before building an action.**
 
+- **`executionMode`** (enter/exit): `individual` | `batched`. `batched` returns single-tx calldata for smart accounts (EIP-7702/4337), sidestepping the APPROVAL→SUPPLY two-step. Confirm support in `mechanics.arguments.enter.fields[]`.
+
 ## Signing
+
+> **Never modify `unsignedTransaction` — but understand what "modify" means.** The rule
+> forbids changing transaction **semantics**: `to`, `data`, `value`, amounts, gas **values**
+> (`gasLimit`/`maxFeePerGas`/`maxPriorityFeePerGas`), and `nonce`. Those must be signed
+> exactly as returned. It does **not** forbid library-required **key-shape adaptation** —
+> dropping the informational `from` key or renaming `gasLimit` → `gas` so a signer accepts
+> the object. Re-keying a field is not the same as changing its value, and some signers
+> (eth-account, viem) require it. Adapt the shape; never touch the values.
+
+### EVM signing — TypeScript (ethers.js v6)
 
 ```typescript
 // Using ethers.js v6
@@ -64,7 +76,7 @@ const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 for (const tx of action.transactions) {
   const parsed = JSON.parse(tx.unsignedTransaction);
 
-  // Sign and send — DO NOT MODIFY any field
+  // Sign and send — DO NOT MODIFY any value (ethers maps gasLimit automatically)
   const txResponse = await wallet.sendTransaction(parsed);
   const receipt = await txResponse.wait();
 
@@ -75,8 +87,56 @@ for (const tx of action.transactions) {
 }
 ```
 
+### EVM signing — Python (server-side, eth-account)
+
+`eth-account` will **not** accept the raw parsed object. Two key-shape adaptations are
+required (neither changes a value): (a) **drop the `from` key** — eth-account rejects it
+and derives the sender from the private key; (b) **rename `gasLimit` → `gas`** — eth-account
+uses `gas`. Hex-string gas values and integer `nonce`/`chainId`/`type` are accepted as-is.
+
+```python
+from eth_account import Account
+tx = json.loads(unsigned_transaction)
+tx.pop("from", None)            # eth-account derives sender from the key
+tx["gas"] = tx.pop("gasLimit")  # eth-account uses `gas`
+signed = Account.from_key(PRIVATE_KEY).sign_transaction(tx)
+# broadcast signed.raw_transaction via web3.py eth_send_raw_transaction or any RPC
+```
+
+After broadcasting, submit the hash — MANDATORY — via `PUT /v1/transactions/{txId}/submit-hash`.
+
+### EVM signing — viem / wagmi (browser)
+
+**viem renames `gasLimit` → `gas`** (unlike ethers, which does it automatically). Map the
+parsed fields explicitly: `to`/`data` pass through; `value` is **omitted** (not `"0x0"`)
+for token operations; gas values become `BigInt`.
+
 ```typescript
-// Using viem
+import { useWaitForTransactionReceipt, useWalletClient } from "wagmi";
+
+const parsed = JSON.parse(tx.unsignedTransaction);
+const { data: walletClient } = useWalletClient();
+
+const hash = await walletClient.sendTransaction({
+  to: parsed.to,
+  data: parsed.data,
+  // value omitted for token ops; pass BigInt(parsed.value) only for native transfers
+  gas: BigInt(parsed.gasLimit),                       // viem uses `gas`, not `gasLimit`
+  maxFeePerGas: BigInt(parsed.maxFeePerGas),
+  maxPriorityFeePerGas: BigInt(parsed.maxPriorityFeePerGas),
+});
+
+// Confirm receipt with wagmi — works with injected providers,
+// unlike ethers `waitForTransaction` which hangs in the browser
+const { data: receipt } = useWaitForTransactionReceipt({ hash });
+
+await sdk.api.submitTransactionHash(tx.id, { hash });
+```
+
+### EVM signing — viem (server-side)
+
+```typescript
+// Using viem with a local account (server-side)
 import { createWalletClient, http } from "viem";
 import { base } from "viem/chains";
 
@@ -84,7 +144,11 @@ const client = createWalletClient({ chain: base, transport: http() });
 
 for (const tx of action.transactions) {
   const parsed = JSON.parse(tx.unsignedTransaction);
-  const hash = await client.sendTransaction(parsed);
+  // viem uses `gas`, not `gasLimit` — re-key when passing the parsed object
+  const hash = await client.sendTransaction({
+    ...parsed,
+    gas: BigInt(parsed.gasLimit),
+  });
 
   await sdk.api.submitTransactionHash(tx.id, { hash });
 }

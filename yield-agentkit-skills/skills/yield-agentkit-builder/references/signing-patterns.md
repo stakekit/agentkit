@@ -16,7 +16,7 @@ This covers the `unsignedTransaction` format returned by the Yield.xyz API for e
 
 | Family | `category` in API | Signing SDK | Networks (examples) |
 |--------|-------------------|-------------|---------------------|
-| EVM | `evm` | ethers.js, viem | ethereum, base, arbitrum, optimism, polygon, binance, avalanche-c, linea, zksync, sonic, gnosis, celo, fantom, core, monad, unichain + all other EVM chains |
+| EVM | `evm` | ethers.js, viem (TS); eth-account + web3.py (Python) | ethereum, base, arbitrum, optimism, polygon, binance, avalanche-c, linea, zksync, sonic, gnosis, celo, fantom, core, monad, unichain + all other EVM chains |
 | Cosmos | `cosmos` | @cosmjs/stargate | cosmos, osmosis, celestia, dydx, injective, sei, axelar, kava + 40 more |
 | Substrate | `substrate` | @polkadot/api | polkadot, bittensor (Bittensor requires `subnetId`) |
 | Solana | `misc` (id=solana) | @solana/web3.js | solana, solana-devnet |
@@ -103,12 +103,18 @@ For backends, custody platforms, and any environment where you control the priva
 | **ethers.js v6** | General-purpose EVM signing | https://docs.ethers.org/v6/ |
 | **viem** | Type-safe, lightweight alternative to ethers | https://viem.sh |
 | **web3.js v4** | Legacy projects, broad ecosystem | https://docs.web3js.org |
+| **eth-account + web3.py** | Python backends | https://eth-account.readthedocs.io / https://web3py.readthedocs.io |
 
 ### Approach
 - Create a `Wallet` (ethers) or `WalletClient` (viem) with the private key and RPC provider
 - `JSON.parse()` the `unsignedTransaction`
 - Pass the parsed object directly to `sendTransaction()` — no modifications
 - `receipt.wait()` (ethers) or `waitForTransactionReceipt()` (viem) works correctly server-side
+
+**Python (`eth-account` + `web3.py`):** `eth-account` requires two key-shape adaptations
+before signing — drop the `from` key and rename `gasLimit` → `gas` (neither changes a
+value). Sign with `Account.from_key(...).sign_transaction(tx)`, then broadcast
+`signed.raw_transaction`. Full example: `references/chains/evm.md` ("EVM signing — Python").
 
 ---
 
@@ -144,10 +150,12 @@ When signing with any browser wallet, these adjustments are required:
 1. **`JSON.parse()` the `unsignedTransaction`** — it's a JSON string on EVM
 2. **Strip `nonce`, `type`, and `chainId`** — the wallet manages these. Keeping the
    API-returned values causes stale simulation and triggers "likely to fail" warnings
-3. **On L2 chains (Base, Arbitrum, Optimism, Polygon, etc.):** omit gas fields entirely
-   (`gasLimit`, `maxFeePerGas`, `maxPriorityFeePerGas`). Let the wallet estimate gas —
-   L2 gas changes rapidly and API values go stale
-4. **On Ethereum mainnet:** you can optionally pass gas fields for a better fee estimate UX
+3. **On L2 chains (Base, Arbitrum, Optimism, Polygon, etc.):** strip the gas fields
+   entirely — `gasLimit` (or its `gas` rename), `maxFeePerGas`, `maxPriorityFeePerGas`.
+   Let the wallet estimate gas; L2 gas changes rapidly and API values go stale. This
+   applies to **both the ethers and viem paths** (see `transaction-lifecycle.md`)
+4. **On Ethereum mainnet:** keep the gas fields — pass them through for a better fee
+   estimate UX (don't strip on mainnet)
 5. **Use manual receipt polling** — `waitForTransaction()` hangs with injected providers
 6. **Extract errors defensively** — browser wallets throw plain `{code, message}` objects,
    not `Error` instances

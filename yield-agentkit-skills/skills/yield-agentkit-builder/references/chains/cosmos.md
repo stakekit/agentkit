@@ -33,15 +33,22 @@ When calling `POST /v1/actions/enter` for any Cosmos yield, the schema (`mechani
 ### Getting cosmosPubKey
 
 ```typescript
-// Using @cosmjs/proto-signing
+// Using @cosmjs/proto-signing + @cosmjs/amino
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { encodeSecp256k1Pubkey, pubkeyToAddress } from "@cosmjs/amino";
+import { toBech32, fromBech32 } from "@cosmjs/encoding";
 
 const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: "cosmos" });
 const [account] = await wallet.getAccounts();
+
+// account.pubkey is the raw 33-byte compressed secp256k1 key (Uint8Array).
 // The API expects the bech32-encoded public key (cosmospub1...), not hex/base64.
-const cosmosPubKey = wallet.encodePubkey
-  ? wallet.encodePubkey(account.pubkey)
-  : /* bech32-encode account.pubkey with the "cosmospub" prefix */ undefined;
+// Derive it by Amino-encoding the pubkey, then bech32-encoding the raw key bytes
+// with the chain's "<prefix>pub" HRP.
+const aminoPubkey = encodeSecp256k1Pubkey(account.pubkey); // { type, value: base64 }
+const cosmosPubKey = toBech32("cosmospub", account.pubkey);
+
+const address = account.address; // cosmos1... (used as the `address` field on the action)
 ```
 
 ```typescript
@@ -59,18 +66,43 @@ const action = await sdk.api.enterYield({
 
 ## Signing
 
+> **Sign the API's SignDoc VERBATIM.** The `SignDoc` returned by Yield.xyz already
+> embeds `accountNumber`, the account `sequence`, the fee, and the gas. Do **NOT**
+> re-fetch the account from the chain or rebuild the tx — decode the bytes, sign them
+> as-is, and re-assemble. Rebuilding will produce a signature over different bytes and
+> the broadcast will fail with a signature-verification error.
+
 ```typescript
-import { SigningStargateClient } from "@cosmjs/stargate";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { StargateClient } from "@cosmjs/stargate";
+import { fromHex, fromBase64 } from "@cosmjs/encoding";
+import { SignDoc, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+
+// OfflineDirectSigner — DirectSecp256k1HdWallet implements signDirect()
+const signer = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: "cosmos" });
+const [account] = await signer.getAccounts();
+const address = account.address; // cosmos1...
+
+const client = await StargateClient.connect("https://rpc.cosmos.network:443");
 
 for (const tx of action.transactions) {
-  // tx.unsignedTransaction is hex-encoded SignDoc bytes
-  const signDocBytes = Buffer.from(tx.unsignedTransaction, "hex");
+  // tx.unsignedTransaction is hex-encoded Protobuf SignDoc bytes.
+  // Decode VERBATIM — do not rebuild from chain state.
+  const signDoc = SignDoc.decode(fromHex(tx.unsignedTransaction));
 
-  // Sign with your Cosmos signer
-  const signed = await signer.signDirect(address, decodeSignDoc(signDocBytes));
+  // Sign the SignDoc as-is with the OfflineDirectSigner.
+  const { signed, signature } = await signer.signDirect(address, signDoc);
+
+  // Assemble the broadcastable TxRaw from the SIGNED doc the signer returned
+  // (signed.bodyBytes / signed.authInfoBytes are what was actually signed).
+  const txRawBytes = TxRaw.encode({
+    bodyBytes: signed.bodyBytes,
+    authInfoBytes: signed.authInfoBytes,
+    signatures: [fromBase64(signature.signature)],
+  }).finish();
 
   // Broadcast
-  const result = await client.broadcastTx(signed);
+  const result = await client.broadcastTx(txRawBytes);
 
   // Submit hash back to Yield.xyz — MANDATORY
   await fetch(`https://api.yield.xyz/v1/transactions/${tx.id}/submit-hash`, {

@@ -109,14 +109,14 @@ Your App -> Your Backend -> Yield.xyz API (per-tenant API keys)
 - **Common pitfalls:** See `common-pitfalls.md` — especially entries #1, #2, #6
 
 ### Fee Setup
-```
-POST /v1/programmatic/projects/{id}/fee-config
-{
-  "depositFeePercent": 0.5,
-  "performanceFeePercent": 15,
-  "managementFeePercent": 2
-}
-```
+
+Fees (deposit / performance / management) are configured **per-project in the dashboard**
+(or via the separate Programmatic Access API — a different base URL; confirm the exact
+shape with the Yield team) and applied **server-side** to the actions built for your key.
+There is **no public `fee-config` REST body to POST** on `api.yield.xyz`. See
+`dashboard-and-api-keys.md`. Once configured, the fee transactions show up automatically
+in the `transactions[]` returned by `POST /v1/actions/enter` — you don't pass fee
+percentages in the request.
 
 ---
 
@@ -176,7 +176,7 @@ Here `kycStatus !== "approved"`, so gate Enter and send the user to
 Enterprise integrations need reliability, monitoring, and compliance controls.
 
 ### Key Considerations
-- **Idempotency:** The API is idempotent for read operations. For actions, use unique request IDs
+- **Idempotency:** Read operations are naturally idempotent. **`POST /v1/actions/enter` is NOT** — it has no idempotency-key parameter and `CreateActionDto` has no `referenceId`, so each call mints a *new* action. Dedupe client-side (e.g. a local key on yieldId + address + amount) before calling, and recover from a crash by listing existing actions with `GET /v1/actions?address=` rather than blindly re-calling enter
 - **Monitoring:** Track API latency, error rates, and transaction success rates
 - **Disaster recovery:** Cache unsigned transactions and implement retry logic
 - **Compliance:** Implement configurable guardrails for allowed networks and risk thresholds

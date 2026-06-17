@@ -85,6 +85,20 @@ If you get a JSON response with yield data, you're ready to build.
 
 ---
 
+## Testing without real funds
+
+You can smoke-test an integration on a testnet before touching mainnet. Yield.xyz
+exposes testnet networks in `GET /v1/networks` — currently `base-sepolia`,
+`ethereum-sepolia`, and `stellar-testnet`. **There is no `isTestnet` flag on network
+objects**, so identify testnets by matching the network **id** (the `-sepolia` /
+`-testnet` suffix), not a boolean field.
+
+Recommended: run a full enter flow (discover → build action → sign → broadcast →
+submit-hash → confirm) against a testnet first, fund the wallet from a public faucet,
+and only switch the network id to mainnet once the flow works end-to-end.
+
+---
+
 ## Step 4 — Install SDK (optional)
 
 For TypeScript/JavaScript projects, the SDK provides typed wrappers:

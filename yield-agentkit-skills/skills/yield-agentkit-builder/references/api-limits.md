@@ -2,15 +2,21 @@
 
 ## Rate Limit Tiers
 
-| Tier | Requests/min | Requests/day | Use Case |
-|------|-------------|-------------|----------|
-| Free/Test | 30 | 1,000 | Development, testing, prototyping |
-| Production | 300 | 50,000 | Production applications |
-| Enterprise | Custom | Custom | High-volume integrations |
+> **Illustrative only — not authoritative.** The numbers below are rough examples,
+> not your key's real limits. Observed production keys have allowed far higher limits
+> (e.g. `x-ratelimit-limit` ~120,000). **Confirm your key's actual limit via the
+> `x-ratelimit-limit` response header** rather than relying on this table.
+
+| Tier | Requests/min (illustrative) | Use Case |
+|------|-------------|----------|
+| Free/Test | ~30 | Development, testing, prototyping |
+| Production | ~300 | Production applications |
+| Enterprise | Custom | High-volume integrations |
 
 ## How Rate Limits Work
 
 - Limits are applied per API key
+- The `x-ratelimit-limit` header shows your key's actual limit — treat it as the source of truth
 - The `x-ratelimit-remaining` header shows remaining requests
 - The `x-ratelimit-reset` header shows when the limit resets (Unix timestamp)
 - When exceeded, the API returns `429 Too Many Requests`
@@ -62,9 +68,13 @@ Use `GET /v1/yields` with filters instead of fetching individual yields:
 GET /v1/yields?network=ethereum&token=USDC
 ```
 
-### Use Webhooks for Status Updates
+### Poll for Status — There Are No Webhooks
 
-Instead of polling transaction status, configure webhooks to receive status change notifications.
+Yield.xyz has **no webhook, event, or callback endpoints**. To learn the status of an
+in-flight action or transaction, poll `GET /v1/transactions/{id}` (and
+`GET /v1/actions/{id}`) until it reaches a terminal state. Use sensible polling
+intervals with backoff rather than a tight loop — see `transaction-lifecycle.md` for
+the recommended cadence and the full status flow.
 
 ## Getting a Production Key
 

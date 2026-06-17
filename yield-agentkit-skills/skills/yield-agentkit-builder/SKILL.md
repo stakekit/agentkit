@@ -25,6 +25,35 @@ Perps/Borrow, lean on the live spec and keep those two differences in mind.
 
 ---
 
+## Quickstart — minimal end-to-end (Yield)
+
+The shortest happy path from nothing to a confirmed position. Language-agnostic REST;
+swap `curl` for `fetch`/`requests`/etc. Always confirm exact field names against the
+live spec (`yield_get_api_spec` or `https://api.yield.xyz/docs.json`) before generating
+code — the shapes below are a map, not a contract.
+
+1. **Discover** — `GET /v1/yields?network=<network>&token=<token>` to find a yield id.
+2. **Read the schema** — `GET /v1/yields/{id}` and read
+   `mechanics.arguments.enter.fields[]` to learn exactly which arguments the enter
+   action requires (e.g. `amount`, sometimes a validator address).
+3. **Build the action** — `POST /v1/actions/enter` with `{ yieldId, address, arguments }`
+   (amounts are human-readable strings, not wei). **Returns HTTP 201** with a
+   `transactions[]` array.
+4. **Sign + broadcast each transaction** — iterate `transactions[]` in **`stepIndex`
+   order**; for each, parse and sign its `unsignedTransaction` with the wallet for that
+   chain, then broadcast. Never modify `unsignedTransaction` (Critical Rule #5).
+5. **Report the hash** — `PUT /v1/transactions/{id}/submit-hash` with the broadcast
+   hash so Yield.xyz can track it.
+6. **Poll to confirm** — `GET /v1/transactions/{id}` until status is `CONFIRMED`
+   (there are no webhooks — poll with backoff).
+
+For the full lifecycle (status states, error/retry handling, exit/manage) see
+[`references/transaction-lifecycle.md`](./references/transaction-lifecycle.md); for
+per-chain signing and transaction decoding see
+[`references/chains/<chain>.md`](./references/chains/).
+
+---
+
 ## When This Skill Activates
 
 This skill is for **building apps** — not for exploring yields conversationally.
@@ -441,6 +470,8 @@ before generating code for that topic.**
 | **[`references/mcp-tools.md`](./references/mcp-tools.md)** | **Before invoking any MCP tool** — which tools are safe (doc tools) vs. which must never be called (action tools) |
 | **[`references/common-pitfalls.md`](./references/common-pitfalls.md)** | **Before generating any code** — known errors and how to avoid them |
 | **[`references/signing-patterns.md`](./references/signing-patterns.md)** | Before generating signing/wallet code — SDKs, libraries, chain-specific guidance |
+| **[`references/chains/<chain>.md`](./references/chains/)** | Before generating signing/decoding code for a specific chain (e.g. `evm.md`, `solana.md`, `cosmos.md`, `stellar.md`) — per-chain transaction signing and decoding |
+| **[`references/api-field-mapping.md`](./references/api-field-mapping.md)** | When wiring requests/responses — endpoint reference and the error envelope shape |
 | **[`references/integration-patterns.md`](./references/integration-patterns.md)** | When user describes their product type — architecture per use case |
 | **[`references/output-formats.md`](./references/output-formats.md)** | When generating UI code — display rules, number formatting |
 | **[`references/policies.md`](./references/policies.md)** | API usage limits, rate limiting, caching guidance |
