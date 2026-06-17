@@ -164,7 +164,7 @@ Perform a management action on an existing position (claim rewards, restake, cha
 | `status` | `{ enter: boolean, exit: boolean }` |
 | `mechanics` | Lockup, cooldown, fees, validator requirement, entry limits |
 | `statistics` | TVL, unique users |
-| `risk` | Exponential.fi / Credora ratings |
+| `risk` | Staking Rewards / Credora ratings |
 | `metadata` | Name, logo, description, documentation URL |
 
 ### `TransactionDto` — a transaction to execute
