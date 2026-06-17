@@ -157,6 +157,18 @@ For supporting multiple wallets with a single integration:
 | **RainbowKit** | Polished wallet connection UI for React apps | https://www.rainbowkit.com/docs/introduction |
 | **ConnectKit** | Wallet connection modal by Family | https://docs.family.co/connectkit |
 
+> **WalletConnect needs a Cloud `projectId` — without it the connector is a dead button.**
+> wagmi's (and RainbowKit/Web3Modal's) WalletConnect connector throws / no-ops unless you
+> pass a `projectId` from https://cloud.reown.com. If you add "WalletConnect support" and
+> skip that step, the button renders but never connects. Either provision the `projectId` as
+> part of setup, or fall back to the **injected** connector (MetaMask, etc.) when one isn't
+> configured.
+
+> **`useWalletClient()` (wagmi) returns `undefined` on a non-configured chain.** It only
+> yields a client for a chain in your wagmi config that the wallet is currently on — switch
+> to the tx's `chainId` first, then `getWalletClient(config, { chainId })`. See
+> `chains/evm.md` → "viem / wagmi (browser)".
+
 ### Browser Wallet Signing Rules
 
 When signing with any browser wallet, these adjustments are required:

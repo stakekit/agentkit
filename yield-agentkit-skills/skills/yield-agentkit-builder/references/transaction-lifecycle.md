@@ -487,6 +487,12 @@ After entering, the position shows up in balances. This is also where follow-up 
 - Each query is `{ network, address, yieldId? }`. `network` and `address` are **required**; `yieldId` is optional (omit to get all of an address's positions on that network).
 - **Max 25 queries** per request.
 
+> **Omitting `yieldId` (chain scan) is best-effort and eventually-consistent.** The same
+> `{ network, address }` query can return 0 results one moment and the position the next —
+> don't treat a single empty scan as "no positions." For a **deterministic** read of a known
+> position, pass its `yieldId` explicitly. Chain scans are also slower (they sweep a whole
+> network) — give the call ~20s, not a 3s timeout (see `api-limits.md`).
+
 **Single yield** — `POST /v1/yields/{yieldId}/balances`, body `{ address }`.
 
 The batch response is `{ items, errors }`, where each `items[]` entry is

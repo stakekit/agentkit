@@ -116,6 +116,19 @@ After broadcasting, submit the hash — MANDATORY — via `PUT /v1/transactions/
 parsed fields explicitly: `to`/`data` pass through; `value` is **omitted** (not `"0x0"`)
 for token operations; gas values become `BigInt`.
 
+> **`useWalletClient()` returns `undefined` when the wallet is on a chain that isn't in your
+> wagmi config** — wagmi only produces a wallet client for a configured chain the wallet is
+> currently on. Calling `walletClient.sendTransaction(...)` on the result then throws a
+> "Wallet not ready"-style error. The tx's `chainId` comes from the yield's network, which
+> the user may not be on. **Switch first, then fetch the client for that chain**:
+> ```typescript
+> import { switchChain, getWalletClient } from "@wagmi/core";
+> const chainId = Number(JSON.parse(tx.unsignedTransaction).chainId);
+> await switchChain(config, { chainId });               // prompt the wallet to switch
+> const walletClient = await getWalletClient(config, { chainId }); // now defined
+> ```
+> Make sure `chainId` is also present in your wagmi `config.chains`, or the switch itself fails.
+
 ```typescript
 import { useWaitForTransactionReceipt, useWalletClient } from "wagmi";
 
