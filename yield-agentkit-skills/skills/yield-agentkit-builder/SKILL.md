@@ -60,25 +60,47 @@ Once you have the key:
 - Never hardcode the demo key into the user's codebase
 - Recommend storing it in an environment variable (e.g., `YIELD_API_KEY`)
 
-### 3. Never Use MCP Action Tools — Always Use the REST API Directly
+### 3. Never Call MCP Action Tools in a Builder Session — and Never Advise the User to
 
-**Do NOT call MCP action tools** (`yields_get_all`, `yields_get`, `yields_get_validators`,
-`yields_get_balances`, `actions_enter`, `actions_exit`, `actions_manage`) to look up data
-during a build session. The MCP returns trimmed/slimmed responses that omit fields present
-in the full API. If you build code based on MCP responses, it will be wrong.
+The MCP server exposes **17 action tools** (e.g. `yields_get_all`, `yields_get`,
+`yields_get_balances`, `yields_get_kyc_status`, `actions_enter`, `actions_exit`,
+`actions_manage`, `submit_hash` — the full list with descriptions is in
+[`references/mcp-tools.md`](./references/mcp-tools.md)).
 
-**Instead:** Use the user's API key to call the REST API directly
-(`https://api.yield.xyz/v1/...`) via `curl`, `fetch`, or any HTTP client. This gives you
-the full, unmodified response — use that as the reference for building the integration.
+**In a builder session you must never call any of them, and never advise the user
+to call them as part of their integration.** They return trimmed/reshaped responses
+that omit fields present in the full API, so code built against them will be wrong —
+and execution/signing belongs to the dedicated skills below, not to a code-generation
+session.
 
-**The one exception:** The `yield_get_api_spec` doc tool is safe to use. It fetches
-the live OpenAPI spec from `https://api.yield.xyz/docs.json`, which is always complete
-and up-to-date. Use it to look up endpoint schemas, field names, and constraints.
+**For building, get data from the REST API instead.** Use the user's API key to call
+the live REST endpoint directly (`https://api.yield.xyz/v1/...`, or the perps/borrow
+base) via `curl`, `fetch`, or any HTTP client — that gives the full, unmodified
+response to build against. The only MCP tools you use are the read-only **doc tools**
+(`yield_get_api_spec`, `yield_list_repos`, etc.).
 
-> 📖 **For the full list of MCP tools — which are safe to use in builder sessions
-> (doc tools) and which must NOT be called (action tools) — see
-> [`references/mcp-tools.md`](./references/mcp-tools.md).** Consult that file any
-> time you're unsure whether a given MCP tool is appropriate for a build task.
+**Two things you _may_ do with action tools:**
+
+1. **Explain what an action tool does, if the user asks.** Describing a tool is fine —
+   the one-line descriptions are in [`references/mcp-tools.md`](./references/mcp-tools.md).
+   Explaining ≠ calling.
+2. **If the user actually wants to run or test action tools** (enter a position, check
+   live balances, manage rewards), that is out of scope for this skill. Point them to
+   the dedicated skill that fits — each carries the wallet, signing, and security
+   guidance that action-tool execution requires:
+
+   | If the user wants to… | Use this skill | What it provides |
+   |---|---|---|
+   | Explore yields / see what tools & yields exist, no wallet needed | **`yield-agentkit`** | Conversational discovery + action-tool reference; no signing |
+   | Execute (enter/exit/manage) with an privy agentic wallet | **`yield-agentkit-privy`** | Privy wallet — policy, signing, broadcast (requires Privy) |
+   | Execute with a MoonPay wallet | **`yield-agentkit-moonpay`** | MoonPay wallet auth + signing (requires MoonPay + MCP) |
+   | Execute tokenized RWA yields (KYC/accreditation gated) | **`yield-agentkit-rwakit-privy`** | RWA access gating on top of Privy execution |
+
+   Don't reproduce execution/signing steps here — they live in those skills by design.
+
+> 📖 **For the full MCP tool list — which are safe in builder sessions (doc tools)
+> and which must never be called (action tools), plus a one-line description and REST
+> equivalent for each — see [`references/mcp-tools.md`](./references/mcp-tools.md).**
 
 ### 4. Never Hardcode Field Names — Always Fetch from the Live Spec
 

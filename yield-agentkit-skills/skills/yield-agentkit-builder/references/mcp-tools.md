@@ -22,20 +22,24 @@ The **one purpose** of action tools is to let an end-user execute yield flows vi
 All doc tools are read-only and safe. Prefer them over web searches or guessing.
 
 ### `yield_get_overview`
-Full tool index and routing guide for the Yield.xyz MCP. Covers action tools vs. doc tools, verification rules, and common flows.
-**Use when:** "where do I start", "which tool", "overview", "how does this work", "getting started".
+- Full tool index and routing guide for the Yield.xyz MCP. Covers action tools vs. doc tools, verification rules, and common flows.
+ 
+- **Use when:** "where do I start", "which tool", "overview", "how does this work", "getting started".
 
 ### `yield_list_doc_topics`
-Structured map of all Yield.xyz documentation, organized by category. Accepts optional `category` filter.
-**Use when:** "what docs exist", "show me all topics", "what can I read about", "documentation overview".
+- Structured map of all Yield.xyz documentation, organized by category. Accepts optional `category` filter.
+
+- **Use when:** "what docs exist", "show me all topics", "what can I read about", "documentation overview".
 
 ### `yield_lookup_docs`
-Full-text search across 209 Yield.xyz documentation pages. Returns ranked results (title, excerpt, `.md` URL). Follow up with `yield_fetch_doc` to read the full page.
-**Use when:** "how does X work", "find docs on balances", "Solana signing format", "what fields does actions/enter accept".
+- Full-text search across 209 Yield.xyz documentation pages. Returns ranked results (title, excerpt, `.md` URL). Follow up with `yield_fetch_doc` to read the full page.
+
+- **Use when:** "how does X work", "find docs on balances", "Solana signing format", "what fields does actions/enter accept".
 
 ### `yield_fetch_doc`
-Fetches the full markdown content of any `docs.yield.xyz` page. Use after `yield_lookup_docs` returns a URL. Only accepts `docs.yield.xyz` URLs.
-**Use when:** You have a doc URL and need the authoritative spec content with exact field names, types, and examples.
+- Fetches the full markdown content of any `docs.yield.xyz` page. Use after `yield_lookup_docs` returns a URL. Only accepts `docs.yield.xyz` URLs.
+
+- **Use when:** You have a doc URL and need the authoritative spec content with exact field names, types, and examples.
 
 ### `yield_get_api_spec`
 Fetches the **live** OpenAPI spec for whichever Yield.xyz product you're integrating. This is the **source of truth** for request bodies, field constraints (min/max/enum), error response shapes, and operationIds. Accepts a `product` arg, an optional `endpoint` filter (e.g. `/v1/actions/enter`, `/v1/markets/{marketId}`), an optional `query` keyword search across paths, and `method`/`section` filters.
@@ -51,71 +55,106 @@ The `product` arg selects which spec to fetch:
 **Use when:** Before generating any integration code, for any of the three products. Always verify current field names against this tool — don't trust memory.
 
 ### `yield_get_api_limits`
-Rate limits, API key tiers, throttling behavior, retry guidance.
-**Use when:** "rate limits", "429", "how many requests", "production key", "throttling".
+- Rate limits, API key tiers, throttling behavior, retry guidance.
+
+- **Use when:** "rate limits", "429", "how many requests", "production key", "throttling".
 
 ### `yield_get_chain_guide`
-How to handle Yield.xyz transactions on a specific blockchain. Covers `unsignedTransaction` format, encoding, parsing, which signing SDK to use, required chain-specific arguments (e.g. `cosmosPubKey`, `tezosPubKey`, `tronResource`), common gotchas, and example API flow. Resolves chain family live from `GET /v1/networks` — supports all 90+ networks.
-**Use when:** "how do transactions work on Cosmos/Solana/Base", "what format is unsignedTransaction on [chain]", "what signing SDK for [chain]".
+- How to handle Yield.xyz transactions on a specific blockchain. Covers `unsignedTransaction` format, encoding, parsing, which signing SDK to use, required chain-specific arguments (e.g. `cosmosPubKey`, `tezosPubKey`, `tronResource`), common gotchas, and example API flow. Resolves chain family live from `GET /v1/networks` — supports all 90+ networks.
+
+- **Use when:** "how do transactions work on Cosmos/Solana/Base", "what format is unsignedTransaction on [chain]", "what signing SDK for [chain]".
 
 ### `yield_get_safety_rules`
-Safety guardrails and pre-execution checks. Risk levels, 6 pre-execution checks, 7 safety rules, configurable guardrails.
-**Use when:** "safety checks", "guardrails", "pre-action checklist", "risk controls".
+- Safety guardrails and pre-execution checks. Risk levels, 6 pre-execution checks, 7 safety rules, configurable guardrails.
+
+- **Use when:** "safety checks", "guardrails", "pre-action checklist", "risk controls".
 
 ### `yield_get_tool_reference`
-Complete reference for the 7 core Yield.xyz action tools (`yields_get_all`, `yields_get`, `yields_get_validators`, `yields_get_balances`, `actions_enter`, `actions_exit`, `actions_manage`). Explains inputs, outputs, example prompts, transaction format, and execution rules.
-**Use when:** Explaining to the user what the MCP action tools do (e.g. "what tools are available", "how does actions_enter work"). **Do not use as justification to actually call those action tools in a builder session.**
+- Reference for the Yield.xyz action tools — inputs, outputs, example prompts, transaction format, and execution rules. (The MCP exposes **17 action tools** in total; the full list with one-line descriptions and REST equivalents is in the [Action Tools](#-action-tools--do-not-call-during-builder-sessions) section below.)
+
+- **Use when:** Explaining to the user what the MCP action tools do (e.g. "what tools are available", "how does actions_enter work"). **Do not use as justification to actually call those action tools in a builder session.**
 
 ### `yield_get_transaction_guide`
-Step-by-step guide through the entire transaction flow: discover → read schema → call action → handle unsigned transactions → sign → broadcast → submit hash → confirm. Includes server-side and browser wallet (MetaMask, Phantom EVM) signing examples. Accepts optional `chain` parameter for chain-specific examples.
-**Use when:** "how do transactions work", "full flow", "end to end", "what's stepIndex", "submit hash", "how to sign", "transaction lifecycle", "MetaMask", "browser wallet", "waitForTransaction", "invalid params".
+- Step-by-step guide through the entire transaction flow: discover → read schema → call action → handle unsigned transactions → sign → broadcast → submit hash → confirm. Includes server-side and browser wallet (MetaMask, Phantom EVM) signing examples. Accepts optional `chain` parameter for chain-specific examples.
+
+- **Use when:** "how do transactions work", "full flow", "end to end", "what's stepIndex", "submit hash", "how to sign", "transaction lifecycle", "MetaMask", "browser wallet", "waitForTransaction", "invalid params".
 
 ### `yield_get_yields_endpoint_guide`
-Complete reference for `GET /v1/yields` — the single most-used Yield.xyz endpoint. Covers every query param (filters: `network`/`networks`, `token`/`inputToken`/`inputTokens`, `provider`/`providers`, `type`/`types`, `yieldId`/`yieldIds` up to 100, `chainId`, `hasCooldownPeriod`, `hasWarmupPeriod`), **server-side `search`**, **server-side `sort`** (`YieldSortingOption` enum — `rewardRateDesc` = APY desc), pagination (`limit`/`offset`), response shape, and one-call query patterns that replace client-side fan-out. Also covers all 8 `YieldType` values (staking, liquid-staking, restaking, lending, vault, liquidity-pool, concentrated-liquidity-pool, real-world-asset) with mechanics, lock periods, required arguments, typical APY. Accepts optional `yieldType` filter for a single type's section.
-**Use when:** "how do I filter yields", "how do I sort by APY", "can I query multiple chains at once", "what params does /v1/yields take", "server-side sort", "search yields", "yields_get_all options", "staking vs lending", "lock periods", "what yield types exist", "which type needs validators", "receipt tokens", "concentrated liquidity vs regular liquidity pool", "real-world asset yields".
-**Backwards-compat:** the old tool name `yield_get_yield_types_guide` is kept as an alias — both names work, same content.
+- Complete reference for `GET /v1/yields` — the single most-used Yield.xyz endpoint. Covers every query param (filters: `network`/`networks`, `token`/`inputToken`/`inputTokens`, `provider`/`providers`, `type`/`types`, `yieldId`/`yieldIds` up to 100, `chainId`, `hasCooldownPeriod`, `hasWarmupPeriod`), **server-side `search`**, **server-side `sort`** (`YieldSortingOption` enum — `rewardRateDesc` = APY desc), pagination (`limit`/`offset`), response shape, and one-call query patterns that replace client-side fan-out. Also covers all 8 `YieldType` values (staking, liquid-staking, restaking, lending, vault, liquidity-pool, concentrated-liquidity-pool, real-world-asset) with mechanics, lock periods, required arguments, typical APY. Accepts optional `yieldType` filter for a single type's section.
+
+- **Use when:** "how do I filter yields", "how do I sort by APY", "can I query multiple chains at once", "what params does /v1/yields take", "server-side sort", "search yields", "yields_get_all options", "staking vs lending", "lock periods", "what yield types exist", "which type needs validators", "receipt tokens", "concentrated liquidity vs regular liquidity pool", "real-world asset yields".
+
+- **Backwards-compat:** the old tool name `yield_get_yield_types_guide` is kept as an alias — both names work, same content.
 
 ### `yield_troubleshoot_error`
-Diagnoses API errors, HTTP status codes, or unexpected responses. For unrecognized errors, automatically looks up the live OpenAPI spec for the authoritative error shape.
-**Use when:** user says "I'm getting a 422", "400 error", "rate limited", "transaction failed", "FAILED status", "why did this fail", or pastes any error code / message from the API.
+- Diagnoses API errors, HTTP status codes, or unexpected responses. For unrecognized errors, automatically looks up the live OpenAPI spec for the authoritative error shape.
+
+- **Use when:** user says "I'm getting a 422", "400 error", "rate limited", "transaction failed", "FAILED status", "why did this fail", or pastes any error code / message from the API.
 
 ### `yield_list_repos`
-Lists the public StakeKit/Yield.xyz GitHub repos that serve as **working code references** for integrations — the staking/yield widget (and its Next.js / Vite reference apps), the **perps widget** (`perps-widget`), the TypeScript/JS SDKs, runnable `api-recipes`, the `signers` and `shield` transaction-security libraries, and an `assets` repo for token/provider logos. Returns each repo with a one-line description and the raw-file fetch pattern (`https://raw.githubusercontent.com/stakekit/<repo>/<branch>/<path>`).
-**Use when:** the other doc tools don't fully resolve an integration problem and you need to read real, working source code — e.g. "how does the widget wire wallet connect", "show me a runnable enter-position example", "how do I integrate the perps widget", "how does Shield validate a transaction". It points at code; it never returns live data — use the action tools / REST API for that.
+- Lists the public StakeKit/Yield.xyz GitHub repos that serve as **working code references** for integrations — the staking/yield widget (and its Next.js / Vite reference apps), the **perps widget** (`perps-widget`), the TypeScript/JS SDKs, runnable `api-recipes`, the `signers` and `shield` transaction-security libraries, and an `assets` repo for token/provider logos. Returns each repo with a one-line description and the raw-file fetch pattern (`https://raw.githubusercontent.com/stakekit/<repo>/<branch>/<path>`).
+
+- **Use when:** the other doc tools don't fully resolve an integration problem and you need to read real, working source code — e.g. "how does the widget wire wallet connect", "show me a runnable enter-position example", "how do I integrate the perps widget", "how does Shield validate a transaction". It points at code; it never returns live data — use the REST API for that.
 
 ---
 
-## ❌ Action Tools — **DO NOT USE** During Builder Sessions
+## ❌ Action Tools — **DO NOT CALL** During Builder Sessions
 
-These tools exist to let end-users execute yield flows via an agent. They are **not** a reliable reference for generating integration code because:
+The MCP exposes **17 action tools** (listed below). They exist to let an end-user
+execute yield flows via an agent — not to let a builder inspect schemas or run flows.
 
-1. **Responses are trimmed** — the MCP strips fields to keep context small. Full REST responses have more.
-2. **Responses may be reshaped** — field names / nesting can differ from the raw API.
-3. **Code built against MCP responses will be wrong** — users will hit missing fields in production.
+**In a builder session: never call any of them, and never advise the user to call
+them as part of their integration.** Two reasons:
 
-Instead, for **any** data lookup during a build session, use the user's API key against `https://api.yield.xyz` directly (`curl`, `fetch`, `axios`, etc.).
+1. **They're the wrong reference surface for code.** Responses are trimmed/reshaped to
+   keep agent context small — field names and nesting can differ from the raw API, so
+   code built against them will be wrong in production.
+2. **Execution belongs elsewhere.** Actually running these (entering positions, signing,
+   broadcasting) carries wallet/security guidance that lives in dedicated skills, not in
+   a code-generation session.
 
-| Tool | REST equivalent to call instead |
-|---|---|
-| `yields_get_all` | `GET https://api.yield.xyz/v1/yields?network=&token=&type=&provider=` |
-| `yields_get` | `GET https://api.yield.xyz/v1/yields/{yieldId}` |
-| `yields_get_validators` | `GET https://api.yield.xyz/v1/yields/{yieldId}/validators` |
-| `yields_get_balances` | `POST https://api.yield.xyz/v1/yields/balances` |
-| `yields_get_risk` | `GET https://api.yield.xyz/v1/yields/{yieldId}/risk` |
-| `yields_get_tvl_history` | `GET https://api.yield.xyz/v1/yields/{yieldId}/tvl/history` |
-| `yields_get_reward_rate_history` | `GET https://api.yield.xyz/v1/yields/{yieldId}/reward-rate/history` |
-| `actions_enter` | `POST https://api.yield.xyz/v1/actions/enter` |
-| `actions_exit` | `POST https://api.yield.xyz/v1/actions/exit` |
-| `actions_manage` | `POST https://api.yield.xyz/v1/actions/manage` |
-| `actions_get` | `GET https://api.yield.xyz/v1/actions/{actionId}` |
-| `actions_get_all` | `GET https://api.yield.xyz/v1/actions` |
-| `get_transaction` | `GET https://api.yield.xyz/v1/transactions/{transactionId}` |
-| `submit_hash` | `PUT https://api.yield.xyz/v1/transactions/{transactionId}/submit-hash` |
-| `networks_get_all` | `GET https://api.yield.xyz/v1/networks` |
-| `providers_get_all` | `GET https://api.yield.xyz/v1/providers` |
-| `yields_get_kyc_status` | `GET https://api.yield.xyz/v1/yields/{yieldId}/kyc/status` |
+**What you _may_ do:**
 
-**Exception — the `yields_get` tool for self-documenting schema.** Even here, prefer `yield_get_api_spec` + a live REST call. The REST response carries the full `mechanics.arguments` schema; the MCP response may not.
+- **Explain what a tool does** if the user asks — use the descriptions in the table below.
+  Explaining ≠ calling.
+- **If the user wants to actually run / test action tools**, redirect them to the
+  dedicated skill (see the redirect table in **SKILL.md → Critical Rule #3**:
+  `yield-agentkit` for no-wallet exploration, `yield-agentkit-privy` /
+  `yield-agentkit-moonpay` for execution).
+
+**For building, get the data from REST instead** — call the live endpoint with the
+user's API key (`curl`, `fetch`, `axios`, …) and inspect the full JSON.
+
+| Tool | What it does | REST equivalent to call instead |
+|---|---|---|
+| **Discovery** | | |
+| `yields_get_all` | Search/filter available yields (paginated summaries) | `GET /v1/yields?network=&token=&type=&provider=` |
+| `yields_get` | Full metadata for one yield (mechanics, requirements, arguments schema) | `GET /v1/yields/{yieldId}` |
+| `yields_get_validators` | Validator options for delegation-based yields (commission, performance) | `GET /v1/yields/{yieldId}/validators` |
+| `networks_get_all` | List all supported networks | `GET /v1/networks` |
+| `providers_get_all` | List all yield protocols and validator providers | `GET /v1/providers` |
+| **Diligence** | | |
+| `yields_get_risk` | Aggregate risk rating for a yield (letter grade + numeric score) | `GET /v1/yields/{yieldId}/risk` |
+| `yields_get_reward_rate_history` | Historical APY/reward-rate snapshots over time | `GET /v1/yields/{yieldId}/reward-rate/history` |
+| `yields_get_tvl_history` | Historical TVL snapshots over time | `GET /v1/yields/{yieldId}/tvl/history` |
+| `yields_get_balances` | Active positions, pending actions, and claimable rewards for a wallet | `POST /v1/yields/balances` |
+| `yields_get_kyc_status` | KYC / eligibility status for a wallet against a gated (RWA/permissioned) yield | `GET /v1/yields/{yieldId}/kyc/status` |
+| **Execution** | | |
+| `actions_enter` | Build unsigned deposit/stake transactions (with gas estimates) | `POST /v1/actions/enter` |
+| `actions_exit` | Build unsigned withdraw/unstake transactions (in execution order) | `POST /v1/actions/exit` |
+| `actions_manage` | Build unsigned txs for claim, restake, vote, unlock, migrate, etc. | `POST /v1/actions/manage` |
+| **Tracking** | | |
+| `actions_get` | Status + transaction details for a single action | `GET /v1/actions/{actionId}` |
+| `actions_get_all` | List past and pending actions for a wallet (filterable) | `GET /v1/actions` |
+| `get_transaction` | Poll a transaction's status (hash, broadcast timestamp) | `GET /v1/transactions/{transactionId}` |
+| `submit_hash` | Register a broadcast hash against unsigned transactions for status tracking | `PUT /v1/transactions/{transactionId}/submit-hash` |
+
+> REST paths are shown relative to the product base URL (`https://api.yield.xyz` for
+> Yield). Prepend the base for the product you're integrating.
+
+**Even for self-documenting schema** (e.g. `yields_get`), prefer `yield_get_api_spec` +
+a live REST call. The REST response carries the full `mechanics.arguments` schema; the
+MCP response may not.
 
 ---
 
@@ -142,9 +181,13 @@ Need to explore docs broadly?       → yield_list_doc_topics → yield_lookup_d
 Hit an error?                       → yield_troubleshoot_error
 
 Need real yield / balance / action data?
-                                    → DO NOT use MCP action tools.
+                                    → DO NOT call MCP action tools.
                                     → Use the user's API key to call the REST endpoint at
                                       https://api.yield.xyz directly and inspect the raw JSON.
+User wants to actually run/test an
+  action tool (enter/exit/manage)?  → Out of scope for the builder skill. Redirect to a
+                                       dedicated skill (yield-agentkit / -privy / -moonpay)
+                                       — see SKILL.md → Critical Rule #3.
 ```
 
 ---

@@ -37,6 +37,7 @@ signing, and the full submit-hash lifecycle.
 | `yield-agentkit` | Explore yields conversationally | Tables, summaries, portfolio views |
 | `yield-agentkit-moonpay` | Enter yields end-to-end via MoonPay | Signed & broadcast transactions |
 | `yield-agentkit-privy` | Enter yields end-to-end via Privy | Signed & broadcast transactions |
+| `yield-agentkit-rwakit-privy` | Enter RWA yields end-to-end via Privy | Signed & broadcast transactions |
 | **`yield-agentkit-builder`** | **Build apps that integrate Yield.xyz** | **Production-ready code** |
 
 The explore/execute skills use MCP tools directly. The builder skill uses MCP tools for research but generates code that calls the REST API with the user's own API key.
@@ -114,7 +115,7 @@ yield-agentkit-builder/
 
 | Reference | What's in it |
 |---|---|
-| `common-pitfalls.md` | 12 real errors from builder sessions — wrong URLs, field names, gas issues, etc. |
+| `common-pitfalls.md` | 12 real errors/common pitfalls — wrong URLs, field names, gas issues, etc. |
 | `signing-patterns.md` | Recommended SDKs for MetaMask, Phantom, WalletConnect, Rainbow, Coinbase, Solana, Cosmos |
 | `integration-patterns.md` | Architecture for custody, wallet, neobank, aggregator, enterprise, mobile |
 
