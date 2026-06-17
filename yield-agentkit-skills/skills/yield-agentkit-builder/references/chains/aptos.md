@@ -1,7 +1,5 @@
 # Aptos Integration Guide
 
-> **Aptos yields may not be enabled on your API key.** `GET /v1/yields?network=aptos` can return 0 results and a direct yield id may return `400 "not enabled for this project"` — that's a per-key enablement state (see `dashboard-and-api-keys.md`), not "Aptos is unsupported." Aptos yields exist and can be enabled on a key; confirm availability for the user's key (or enable it in the dashboard) before building.
-
 ## unsignedTransaction Format
 
 **Encoding:** JSON object with transaction payload
@@ -49,4 +47,5 @@ curl "https://api.yield.xyz/v1/yields?network=aptos" \
   -H "x-api-key: YOUR_KEY"
 ```
 
-If `network=aptos` returns no results or a yield id returns `400 "not enabled for this project"`, the yield isn't enabled on your key — enable it in the dashboard or confirm availability, rather than assuming Aptos is unsupported.
+Common yieldIds:
+- `aptos-apt-native-staking`
