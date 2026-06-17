@@ -128,10 +128,13 @@ transaction signing, and position tracking.
 
 - **Best for:** Consumer wallets, quick prototypes, MVPs, and any product that wants
   yield functionality without custom UI.
-- **Tradeoffs:** Less customization. You get the StakeKit UI. Good for speed, less
-  control over look and feel.
+- **Tradeoffs:** Less control over look and feel — you get the StakeKit UI. But you do
+  NOT have to use its connect-wallet flow: pass the **`externalProviders`** prop to plug
+  in your **own address + signing infra** (custody/HSM, embedded or agent wallet, host-app
+  wallet) and skip the connection step. See "Bring your own signing infra" in
+  `integration-patterns.md`.
 - **Match signals:** widget, drop-in, component, React component, quick start, fastest,
-  prototype, MVP.
+  prototype, MVP, embed yield UI with my own wallet/signer.
 - **Get started:**
 
 ```tsx

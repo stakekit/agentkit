@@ -74,6 +74,63 @@ The React component is `SKApp` (requires React 19+). For non-React apps use the 
 build (`renderSKWidget` from `@stakekit/widget/bundle`). Refer to the widget docs and the
 [widget repo](https://github.com/stakekit/widget) for installation and configuration.
 
+#### Bring your own signing infra (skip connect-wallet)
+
+By default `SKApp` renders its own connect-wallet UI (wagmi/RainbowKit connectors).
+**If you already have the user's address and your own signer** — a custody/HSM backend,
+an embedded or agent wallet (Privy/MoonPay/etc.), or a host app that manages the wallet —
+pass the **`externalProviders`** prop. This **skips the connection step entirely**: the
+widget uses the address and signer you supply instead of asking the user to connect.
+
+```tsx
+import "@stakekit/widget/package/css";
+import { SKApp, darkTheme } from "@stakekit/widget";
+
+<SKApp
+  apiKey="YOUR_KEY"
+  theme={darkTheme}
+  externalProviders={{
+    type: "generic",
+    currentAddress: userAddress,        // the address YOU already have
+    currentChain: 1,                    // optional initial chain (SupportedSKChainIds)
+    supportedChainIds: [1, 8453],       // optional allow-list
+    provider: {
+      // YOUR signer/infra implements this — the widget never sees keys.
+      signMessage: (message) => mySigner.signMessage(message),       // -> signature string
+      switchChain: async (chainId) => { /* point your signer at chainId */ },
+      // optional: let the widget poll for a receipt
+      getTransactionReceipt: async (txHash) => ({ transactionHash: txHash }),
+      // the widget hands you a DECODED tx + metadata; you sign AND broadcast,
+      // then return the on-chain hash.
+      sendTransaction: async (skTx, txMeta) => {
+        // skTx is a discriminated union by chain: { type: "evm" | "solana" | "ton" | "tron", tx }
+        // txMeta carries { txId, txType, actionId, actionType, amount, inputToken, providersDetails }
+        const txHash = await myInfra.signAndBroadcast(skTx);
+        return { type: "success", txHash };   // or { type: "error", error } or just the hash string
+      },
+    },
+  }}
+/>;
+```
+
+Key points for this path:
+- `externalProviders.provider` is the `SKWallet` interface: `signMessage`, `switchChain`,
+  optional `getTransactionReceipt`, and `sendTransaction(skTx, txMeta)`. **Your code does the
+  signing and broadcasting** inside `sendTransaction` and returns the hash — the widget then
+  handles the submit-hash/tracking for you. You never hand keys to the widget.
+- `currentAddress` is the address the widget operates on; update it (re-render with a new
+  value) when your wallet switches accounts.
+- `skTx` is already decoded per chain (`evm`/`solana`/`ton`/`tron`) — sign it as-is; don't
+  mutate it (same rule as raw `unsignedTransaction`).
+- Related props: `disableInjectedProviderDiscovery` (stop the widget probing for injected
+  wallets when you supply your own), `validatorsConfig` (allow/block/prefer validators per
+  chain), and `mapWalletListFn`/`mapWalletFn` (customize the connector list *if* you do use
+  the built-in connect flow).
+- **React Native / WebView host:** use `@stakekit/use-inject-provider` — pass your
+  wallet's EIP-1193 provider + the WebView ref to `useInjectProvider`, and it returns
+  `injectedJavaScript` + `onMessage` for the `react-native-webview` `WebView`. This also
+  skips the connection step.
+
 ### SDK Integration (More Control)
 ```typescript
 const yields = await sdk.api.getYields({ network: "ethereum", token: "ETH" });
