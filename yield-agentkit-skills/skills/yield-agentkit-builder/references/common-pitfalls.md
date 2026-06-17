@@ -8,10 +8,8 @@ Real errors encountered during builder sessions. Read this before generating any
 
 **Error:** Using `api.stakek.it` or `api.stakekit.io` instead of `api.yield.xyz`.
 
-**What happens:** The legacy API uses completely different field names (`integrationId`
-instead of `yieldId`, `addresses` instead of `address`, `args` instead of `arguments`).
-Code built against the legacy API will fail silently or return 400 errors on the
-correct API.
+**What happens:** Requests go to the wrong host — they fail, or return field names and
+shapes that don't match `api.yield.xyz`, so the integration breaks.
 
 **Fix:** Always use `https://api.yield.xyz`. No exceptions. If you see `stakek.it` or
 `stakekit.io` in any documentation, URL, or code — it's outdated. Replace it.
@@ -20,9 +18,10 @@ correct API.
 
 ## 2. Wrong Field Names in Action Requests
 
-**Error:** Using legacy field names in request bodies.
+**Error:** Using the wrong field names in request bodies. These incorrect names are a
+common mistake — they show up in stale examples and model memory. Use the correct ones:
 
-| Wrong (legacy) | Correct (`api.yield.xyz`) |
+| Don't use | Use |
 |---|---|
 | `integrationId` | `yieldId` |
 | `addresses` | `address` |
