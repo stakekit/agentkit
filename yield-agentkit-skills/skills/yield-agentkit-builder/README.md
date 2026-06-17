@@ -3,9 +3,9 @@
 [![AI Agent Skill](https://img.shields.io/badge/AI%20Agent-Skill-orange)](https://yield.xyz)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
-> **Build on Yield.xyz with AI agents.** This skill teaches any MCP-compatible AI agent how to generate production-ready code that integrates with the Yield.xyz APIs across all three products: **Yield** (staking, lending, vaults, RWA across 80+ networks), **Perps** (perpetual futures on Hyperliquid), and **Borrow** (lending/borrowing markets).
+> **Build on Yield.xyz with AI agents.** This skill teaches any MCP-compatible AI agent how to generate production-ready code that integrates with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks.
 
-The skill works alongside the [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp), which provides live access to each product's OpenAPI spec and to public reference repos for looking up schemas, field definitions, and working code during generation.
+The skill works alongside the [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp), which provides live access to the OpenAPI spec and to public reference repos for looking up schemas, field definitions, and working code during generation.
 
 ---
 
@@ -17,16 +17,12 @@ Once installed, the agent activates this skill when you ask to build something:
 - "Integrate USDC lending into my app"
 - "Generate a backend service that enters yield positions"
 - "Set up a neobank with DeFi yield features"
-- "Integrate the Perps API for perpetual futures trading"
-- "Add the perps widget to my site"
-- "Wire the Borrow API into my backend"
 - "How do I sign Yield.xyz transactions with MetaMask?"
 
-It starts by asking which product you're building on — **Yield**, **Perps**, or
-**Borrow** — then recommends the best integration option (widget, SDK, or direct
-REST API) for what you're building. From there it generates code that calls the
-right product's REST API directly, using correct field names, proper transaction
-signing, and the full submit-hash lifecycle.
+It starts by understanding what you're building, then recommends the best
+integration option (widget, SDK, or direct REST API) for it. From there it
+generates code that calls the Yield.xyz REST API directly, using correct field
+names, proper transaction signing, and the full submit-hash lifecycle.
 
 ---
 

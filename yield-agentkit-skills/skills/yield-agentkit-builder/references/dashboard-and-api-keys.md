@@ -8,7 +8,7 @@ A large part of how the Yield.xyz API behaves for a given integration is **not**
 - The dashboard controls, per project/key:
   - **Which yields are enabled** — you turn individual yields (and whole networks/providers) on or off.
   - **Fees** — deposit, performance, and management fees are configured here, not passed in code. They're applied server-side to the actions the API builds for your key.
-  - **Which products/features are enabled** — Yield, Perps, Borrow, and specific capabilities can be toggled per key.
+  - **Which features are enabled** — specific Yield capabilities can be toggled per key.
   - **Rate-limit tier** and other account-level limits.
 
 ## The consequence builders must internalize

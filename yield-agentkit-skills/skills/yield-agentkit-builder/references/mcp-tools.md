@@ -35,17 +35,9 @@ The MCP exposes **five** live doc tools, all read-only and safe. Prefer them ove
 - **Use when:** You have a doc URL and need the authoritative spec content with exact field names, types, and examples.
 
 ### `yield_get_api_spec`
-Fetches the **live** OpenAPI spec for whichever Yield.xyz product you're integrating. This is the **source of truth** for request bodies, field constraints (min/max/enum), error response shapes, and operationIds. Accepts a `product` arg, an optional `endpoint` filter (e.g. `/v1/actions/enter`, `/v1/markets/{marketId}`), an optional `query` keyword search across paths, and `method`/`section` filters.
+Fetches the **live** Yield OpenAPI spec (`https://api.yield.xyz/docs.json`, default `product` `yield`) — covering staking, liquid/restaking, lending, vaults, and RWA. This is the **source of truth** for request bodies, field constraints (min/max/enum), error response shapes, and operationIds. Accepts an optional `endpoint` filter (e.g. `/v1/actions/enter`), an optional `query` keyword search across paths, and `method`/`section` filters.
 
-The `product` arg selects which spec to fetch:
-
-| `product` | Spec URL | Covers |
-|---|---|---|
-| `yield` (default) | `https://api.yield.xyz/docs.json` | Staking, liquid/restaking, lending, vaults, RWA |
-| `perps` | `https://perps.yield.xyz/docs.json` | Perpetual futures (Hyperliquid) |
-| `borrow` | `https://borrow.yield.xyz/docs.json` | Lending/borrowing markets |
-
-**Use when:** Before generating any integration code, for any of the three products. Always verify current field names against this tool — don't trust memory.
+**Use when:** Before generating any integration code. Always verify current field names against this tool — don't trust memory.
 
 > **Chain formats, transaction lifecycle, yield types, safety rules, and API limits used to be MCP doc tools (`yield_get_chain_guide`, `yield_get_transaction_guide`, `yield_get_yields_endpoint_guide`, `yield_get_safety_rules`, `yield_get_api_limits`).** They are no longer on the MCP — that guidance now lives in this skill's `references/` files. See [Static Guidance](#static-guidance--read-from-this-skills-reference-files).
 
@@ -55,9 +47,9 @@ The `product` arg selects which spec to fetch:
 - **Use when:** user says "I'm getting a 422", "400 error", "rate limited", "transaction failed", "FAILED status", "why did this fail", or pastes any error code / message from the API.
 
 ### `yield_list_repos`
-- Lists the public StakeKit/Yield.xyz GitHub repos that serve as **working code references** for integrations — the staking/yield widget (and its Next.js / Vite reference apps), the **perps widget** (`perps-widget`), the TypeScript/JS SDKs, runnable `api-recipes`, the `signers` and `shield` transaction-security libraries, and an `assets` repo for token/provider logos. Returns each repo with a one-line description and the raw-file fetch pattern (`https://raw.githubusercontent.com/stakekit/<repo>/<branch>/<path>`).
+- Lists the public StakeKit/Yield.xyz GitHub repos that serve as **working code references** for integrations — the staking/yield widget (and its Next.js / Vite reference apps), the TypeScript/JS SDKs, runnable `api-recipes`, the `signers` and `shield` transaction-security libraries, and an `assets` repo for token/provider logos. Returns each repo with a one-line description and the raw-file fetch pattern (`https://raw.githubusercontent.com/stakekit/<repo>/<branch>/<path>`).
 
-- **Use when:** the other doc tools don't fully resolve an integration problem and you need to read real, working source code — e.g. "how does the widget wire wallet connect", "show me a runnable enter-position example", "how do I integrate the perps widget", "how does Shield validate a transaction". It points at code; it never returns live data — use the REST API for that.
+- **Use when:** the other doc tools don't fully resolve an integration problem and you need to read real, working source code — e.g. "how does the widget wire wallet connect", "show me a runnable enter-position example", "how does Shield validate a transaction". It points at code; it never returns live data — use the REST API for that.
 
 ---
 
@@ -112,8 +104,8 @@ user's API key (`curl`, `fetch`, `axios`, …) and inspect the full JSON.
 | `get_transaction` | Poll a transaction's status (hash, broadcast timestamp) | `GET /v1/transactions/{transactionId}` |
 | `submit_hash` | Register a broadcast hash against unsigned transactions for status tracking | `PUT /v1/transactions/{transactionId}/submit-hash` |
 
-> REST paths are shown relative to the product base URL (`https://api.yield.xyz` for
-> Yield). Prepend the base for the product you're integrating.
+> REST paths are shown relative to the base URL `https://api.yield.xyz`. Prepend the
+> base when calling them.
 
 **Even for self-documenting schema** (e.g. `yields_get`), prefer `yield_get_api_spec` +
 a live REST call. The REST response carries the full `mechanics.arguments` schema; the
@@ -128,9 +120,6 @@ When you need information during a builder session:
 **Live needs → MCP doc tools:**
 ```
 Need API reference / schema?        → yield_get_api_spec
-  (pass product: "perps" or "borrow"
-   when integrating those products;
-   default product is "yield")
 Need other endpoint schemas?        → yield_get_api_spec({ endpoint: "..." })
 Need a working code example /
   stuck implementing something?       → yield_list_repos, then read the raw source
