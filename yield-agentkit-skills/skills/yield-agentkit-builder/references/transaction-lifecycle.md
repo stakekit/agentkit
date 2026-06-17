@@ -46,7 +46,11 @@ Filter / sort results by:
 - `type` — yield type (e.g. `staking`, `lending`, `vault`)
 - `sort` — e.g. `rewardRateDesc`
 - `limit` / `offset` — pagination (max `limit` 100; see yield-types.md)
-- `status.enter` — only yields accepting new deposits
+
+> There is **no `status.enter` / `status.exit` query filter** (sending `?status.enter=true`
+> returns **400** "property status.enter should not exist"). To find yields accepting new
+> deposits, read `status.enter` / `status.exit` on each returned item, or sort with
+> `sort=statusEnterDesc` / `sort=statusExitDesc` (those sort values are real).
 
 This `GET /v1/yields` discovery query is the opening of the lifecycle — pick a yield `id`
 from the results, then read its schema (Step 2) before building any action.
@@ -89,6 +93,11 @@ for (const field of enterFields) {
 console.log(yield_.mechanics.entryLimits);
 // { minimum: "0", maximum: null, subsequentMinimum: null }  — or null entirely
 ```
+
+> **`mechanics.arguments.exit` (and `.enter`) can be `null`.** Some yields (e.g. some
+> restaking) have no exit schema at all — exit surfaces only as a per-balance `pendingAction`
+> (Step 9). Gate exit on **both** `status.exit` AND `mechanics.arguments.exit != null` before
+> reading `.exit.fields`; don't blindly iterate `mechanics.arguments.exit.fields`.
 
 ## Step 3: Call Action Endpoint
 
@@ -472,8 +481,9 @@ After entering, the position shows up in balances. This is also where follow-up 
 **Single yield** — `POST /v1/yields/{yieldId}/balances`, body `{ address }`.
 
 The batch response is `{ items, errors }`, where each `items[]` entry is
-`{ yieldId, balances, rewardRate, outputTokenBalance }`. `pendingActions` is nested
-**per-balance** inside `items[].balances[]` — not at the top level.
+`{ yieldId, balances, rewardRate, outputTokenBalance? }`. `outputTokenBalance` is
+**optional** — present only for share-token / ERC-4626 yields, so use optional chaining.
+`pendingActions` is nested **per-balance** inside `items[].balances[]` — not at the top level.
 
 ```typescript
 // REST API — batch (max 25 queries; network + address required per query)
@@ -492,7 +502,7 @@ const res = await fetch("https://api.yield.xyz/v1/yields/balances", {
 //       yieldId: "base-usdc-aave-v3-lending",
 //       balances: [{ /* ...BalanceDto fields... */, pendingActions: [...] }],
 //       rewardRate: { /* ... */ },
-//       outputTokenBalance: { /* ... */ },
+//       outputTokenBalance: { /* ... */ }, // optional — share-token / ERC-4626 yields only
 //     },
 //   ],
 //   errors: [],
@@ -535,9 +545,11 @@ a withdrawal, restake. Each is a `PendingActionDto`:
 ```typescript
 interface PendingActionDto {
   intent: string;                 // "manage"
-  type: string;                   // the action to run — e.g. CLAIM_UNSTAKED, WITHDRAW, RESTAKE_REWARDS, REDELEGATE
+  type: string;                   // the action to run — e.g. CLAIM_UNSTAKED, WITHDRAW, RESTAKE_REWARDS, DELEGATE.
+                                  // Real PendingActionDto.type members include STAKE, UNSTAKE, CLAIM_REWARDS,
+                                  // RESTAKE_REWARDS, WITHDRAW, CLAIM_UNSTAKED, RESTAKE, DELEGATE, REVOTE, REBOND, MIGRATE, …
   passthrough: string;            // opaque server blob — pass back VERBATIM, never construct or edit it
-  arguments?: FieldsSchema | null; // present only when the action needs extra input (e.g. REDELEGATE → validatorAddress)
+  arguments?: FieldsSchema | null; // present only when the action needs extra input (e.g. DELEGATE → validatorAddress)
   amount?: string;
 }
 ```
@@ -561,7 +573,7 @@ for (const item of res.items) {
         passthrough: pending.passthrough, // opaque blob — pass VERBATIM
       };
       // Only send `arguments` if the pending action defines a non-null fields schema
-      // (e.g. REDELEGATE needs a validatorAddress). Read pending.arguments.fields the
+      // (e.g. DELEGATE needs a validatorAddress). Read pending.arguments.fields the
       // same way as enter fields (Step 2) to know what to supply.
       if (pending.arguments != null) {
         body.arguments = { /* values for pending.arguments.fields */ };
@@ -588,3 +600,7 @@ manage action returns its own `transactions[]` → branch on its `executionPatte
 submit-hash, and poll transaction status to terminal. Exiting a position is the same flow via
 `POST /v1/actions/exit`. A complete runnable example is in the
 [api-recipes repo](https://github.com/stakekit/api-recipes).
+
+> **`concentrated_liquidity_pool` exit needs a `tokenId`.** For CLP exits, the required
+> `tokenId` (and the `priceRange` for display) come from the position's `BalanceDto.tokenId`
+> in the balances response (Step 8) — read it off the balance row, don't synthesize it.

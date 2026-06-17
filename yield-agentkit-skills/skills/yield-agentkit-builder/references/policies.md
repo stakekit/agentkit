@@ -48,17 +48,32 @@ Guidelines for efficient API usage in Yield.xyz integrations.
 
 ## Safety rules & pre-execution checks
 
-### Risk Levels
+### Risk Profiles
 
-Every yield opportunity in the Yield.xyz API has an associated risk profile. Note there is
-**no top-level `risk` field on the yield object** — fetch the risk profile from
-`GET /v1/yields/{id}/risk`. Before executing any action, evaluate the risk:
+There is **no top-level `risk` field on the yield object** — fetch the risk profile from
+`GET /v1/yields/{id}/risk`. The response shape is:
 
-| Risk Level | Description | Example |
-|------------|-------------|---------|
-| Low | Blue-chip protocols, audited, large TVL | Lido ETH staking, Aave USDC lending |
-| Medium | Established protocols, moderate TVL | Smaller liquid staking providers |
-| High | Newer protocols, smaller TVL, complex strategies | New vault strategies, leveraged positions |
+```json
+{
+  "updatedAt": "2026-06-17T00:00:00.000Z",
+  "stakingRewards": {
+    "rating": "A-",
+    "score": 87,
+    "potentialRating": "A",
+    "potentialScore": 90,
+    "type": "...",
+    "riskMetrics": { }
+  }
+}
+```
+
+`stakingRewards` is a [StakingRewards](https://www.stakingrewards.com) assessment: a
+**letter `rating`** (e.g. `"A-"`, `"B+"`) plus a numeric `score`. There is **no
+`level` field and no low/medium/high scale.**
+
+`stakingRewards` is **often absent entirely** — many yields return just `{ "updatedAt": ... }`.
+Always treat `stakingRewards` (and therefore `.rating` / `.score`) as possibly `undefined`
+and decide your own policy for yields with no rating (e.g. block, or require manual review).
 
 ### 6 Pre-Execution Checks
 
@@ -88,7 +103,8 @@ You can implement additional guardrails in your application:
 ```json
 {
   "maxSingleTransactionUsd": 10000,
-  "allowedRiskLevels": ["low", "medium"],
+  "minStakingRewardsScore": 70,
+  "allowYieldsWithoutRating": false,
   "requireShieldValidation": true,
   "allowedNetworks": ["ethereum", "base", "arbitrum"],
   "requireUserConfirmation": true,
@@ -107,10 +123,19 @@ async function executeWithGuardrails(params: {
 }) {
   const yield_ = await sdk.api.getYield(params.yieldId);
 
-  // Risk is NOT a field on the yield object — fetch it from GET /v1/yields/{id}/risk
+  // Risk is NOT a field on the yield object — fetch it from GET /v1/yields/{id}/risk.
+  // The shape is { updatedAt, stakingRewards?: { rating, score, ... } }; there is no
+  // `level` field, and `stakingRewards` is often absent. Handle the missing case.
   const risk = await sdk.api.getYieldRisk(params.yieldId);
-  if (!params.guardrails.allowedRiskLevels.includes(risk.level)) {
-    throw new Error(`Risk level ${risk.level} not allowed`);
+  const score = risk.stakingRewards?.score;
+  if (score === undefined) {
+    if (!params.guardrails.allowYieldsWithoutRating) {
+      throw new Error(`Yield ${params.yieldId} has no risk rating`);
+    }
+  } else if (score < params.guardrails.minStakingRewardsScore) {
+    throw new Error(
+      `Risk score ${score} (${risk.stakingRewards?.rating}) below minimum ${params.guardrails.minStakingRewardsScore}`,
+    );
   }
 
   if (!params.guardrails.allowedNetworks.includes(yield_.network)) {

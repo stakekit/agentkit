@@ -10,7 +10,7 @@ do not hardcode signing logic from snippets.
 
 This covers the `unsignedTransaction` format returned by the Yield.xyz API for each **chain family**.
 
-> **All 90+ networks collapse into one of these families for signing purposes.**
+> **All 80+ networks collapse into one of these families for signing purposes.**
 > Every network has a `category` field in `GET /v1/networks` — use that to determine which family's signing guide applies.
 > For the full per-chain signing example, see `references/chains/<chain>.md`.
 

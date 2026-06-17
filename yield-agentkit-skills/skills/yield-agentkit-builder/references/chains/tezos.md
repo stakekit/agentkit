@@ -39,7 +39,7 @@ for (const tx of action.transactions) {
 
 ## Common Gotchas
 
-1. **tezosPubKey required**: Always include the flat `tezosPubKey` field (inside `arguments`, not under any `additionalAddresses` wrapper) or you'll get a 422 error.
+1. **tezosPubKey required**: Always include the flat `tezosPubKey` field (inside `arguments`, not under any `additionalAddresses` wrapper) or you'll get a `400 Bad Request` with a `validation.message[]`.
 
 2. **Delegation vs staking**: Tezos uses "delegation" (baking) rather than direct staking. Delegated funds remain liquid.
 

@@ -67,7 +67,7 @@ for (const tx of action.transactions) {
 
 ## Common Gotchas
 
-1. **tronResource required**: Always include `tronResource: "BANDWIDTH"` or `"ENERGY"`. Missing this causes a 422 error.
+1. **tronResource required**: Always include `tronResource: "BANDWIDTH"` or `"ENERGY"`. Missing this causes a `400 Bad Request` with a `validation.message[]`.
 
 2. **Resource model**: Tron uses BANDWIDTH and ENERGY resources instead of gas. Staking TRX gives you these resources.
 

@@ -46,6 +46,11 @@ Arguments vary by yield **type** — do not assume every yield takes only `amoun
 | `liquidity_pool` | `amounts` — an **ARRAY** (one entry per pool token, e.g. `["1.0", "1000"]`), not `amount` | — |
 | `concentrated_liquidity_pool` | `amount` + optional `rangeMin`/`rangeMax` (decimal-string price bounds — omit both for a full-range position) + optional `inputToken`/`inputTokenNetwork` | `percentage` (0–100) **and** `tokenId` (position NFT id) — **both required, NO `amount`** |
 
+For a CLP **exit**, `tokenId` is **not** something you compute — it's the position NFT id
+from the user's balances. Fetch `GET /v1/yields/{id}/balances` (or `POST /v1/yields/balances`)
+and read `BalanceDto.tokenId` off the position you want to exit. The same balance entry also
+carries `priceRange` (the position's price bounds) for display.
+
 Type-specific notes:
 - **vault enter:** optional `receiverAddress`, `useMaxAllowance` (bool). **vault exit:** optional `useMaxAmount` (bool); `amount` optional.
 - **restaking enter:** may expose `inputToken` (with an options list) and `minimum`.

@@ -17,8 +17,14 @@ For `ton-ton-tston-staking`, `requiresValidatorSelection=false` and enter requir
 
 ## Signing
 
+> **This is an outline, not a drop-in snippet.** TON's BOC handling and message
+> construction are non-trivial, and the exact deserialization depends on the payload the
+> API returns. Use the `@ton/ton` library ([docs](https://docs.ton.org/develop/dapps/ts-sdk/overview),
+> [repo](https://github.com/ton-org/ton)) and follow the reference signer in the
+> Yield.xyz signers repo: https://github.com/stakekit/signers
+
 ```typescript
-import { TonClient, WalletContractV4 } from "@ton/ton";
+import { TonClient, WalletContractV4, internal, external, Cell, beginCell } from "@ton/ton";
 import { mnemonicToPrivateKey } from "@ton/crypto";
 
 const client = new TonClient({ endpoint: "https://toncenter.com/api/v2/jsonRPC" });
@@ -26,20 +32,33 @@ const keyPair = await mnemonicToPrivateKey(mnemonic.split(" "));
 const wallet = WalletContractV4.create({ publicKey: keyPair.publicKey, workchain: 0 });
 
 for (const tx of action.transactions) {
+  // unsignedTransaction is a JSON string carrying the message BOC (base64 cell data).
   const txData = JSON.parse(tx.unsignedTransaction);
 
-  // Create and sign the transfer
+  // Deserialize the message cell(s) from the BOC the API returned, e.g.
+  //   const messageCell = Cell.fromBase64(txData.boc);
+  // then build the internal/external message(s) to send. The precise field names and
+  // how to turn the BOC into a `SendMode`/message list depend on the payload — consult
+  // the @ton/ton docs and the stakekit/signers reference implementation linked above.
+
   const contract = client.open(wallet);
   const seqno = await contract.getSeqno();
 
+  // sendTransfer signs and broadcasts. `messages` must be constructed from the BOC above;
+  // see the signers repo for the exact construction for Yield.xyz TON payloads.
   await contract.sendTransfer({
     seqno,
     secretKey: keyPair.secretKey,
-    messages: [/* construct from txData */],
+    messages: [/* internal(...) message(s) built from the parsed BOC */],
   });
 
+  // Obtain the tx hash from the result of the send. TON does not return a hash from
+  // sendTransfer directly — derive it from the external message you sent, or poll the
+  // wallet's transactions (client.getTransactions) for the just-broadcast message and
+  // read its hash. See the signers repo for the canonical approach.
+  const txHash = "<hash derived from the sent external message / polled transaction>";
+
   // Submit hash — MANDATORY
-  // TON uses a different hash format — get it from the transaction result
   await sdk.api.submitTransactionHash(tx.id, { hash: txHash });
 }
 ```

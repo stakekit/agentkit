@@ -97,12 +97,18 @@ yield-agentkit-builder/
 ├── README.md                             # This file
 └── references/
     ├── setup.md                          # Prerequisites and API key setup
+    ├── mcp-tools.md                       # Yield.xyz AgentKit MCP tools reference
     ├── common-pitfalls.md                # Known errors and how to avoid them
     ├── api-field-mapping.md              # How to look up endpoints and schemas from docs.json
+    ├── api-limits.md                      # Rate limits, pagination, and error codes
     ├── signing-patterns.md               # Wallet SDKs and signing guidance per chain
+    ├── transaction-lifecycle.md          # Action -> sign -> broadcast -> submit-hash flow
     ├── integration-patterns.md           # Architecture per product type (custody, wallet, neobank, etc.)
+    ├── yield-types.md                     # Yield types and their argument shapes
     ├── output-formats.md                 # Display rules for generated UI code
-    └── policies.md                       # API rate limits, caching, best practices
+    ├── dashboard-and-api-keys.md          # Dashboard usage and API key management
+    ├── policies.md                       # API rate limits, caching, best practices
+    └── chains/                            # Per-chain signing guides (EVM, Cosmos, Solana, Tron, TON, …)
 ```
 
 ---
@@ -111,8 +117,8 @@ yield-agentkit-builder/
 
 | Reference | What's in it |
 |---|---|
-| `common-pitfalls.md` | 12 real errors/common pitfalls — wrong URLs, field names, gas issues, etc. |
-| `signing-patterns.md` | Recommended SDKs for MetaMask, Phantom, WalletConnect, Rainbow, Coinbase, Solana, Cosmos |
+| `common-pitfalls.md` | 16 real errors/common pitfalls — wrong URLs, field names, gas issues, etc. |
+| `signing-patterns.md` | Recommended SDKs for MetaMask, Phantom, WalletConnect, Rainbow, Coinbase, Solana, Cosmos, Tron |
 | `integration-patterns.md` | Architecture for custody, wallet, neobank, aggregator, enterprise, mobile |
 
 ---

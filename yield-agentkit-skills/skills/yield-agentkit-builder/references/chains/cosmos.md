@@ -117,7 +117,7 @@ for (const tx of action.transactions) {
 
 ## Common Gotchas
 
-1. **cosmosPubKey missing → 422 error**: The most common Cosmos error. Always include the flat `cosmosPubKey` field (bech32 `cosmospub1...`) — there is no `additionalAddresses` wrapper.
+1. **cosmosPubKey missing → 400 error**: The most common Cosmos error. A missing or misplaced `cosmosPubKey` returns `400 Bad Request` with a `validation.message[]`. Always include the flat `cosmosPubKey` field (bech32 `cosmospub1...`) — there is no `additionalAddresses` wrapper.
 
 2. **21-day unbonding period**: Native ATOM staking has a 21-day unbonding. After `actions_exit`, the balance shows `type: "exiting"` for 21 days before becoming `type: "withdrawable"`.
 

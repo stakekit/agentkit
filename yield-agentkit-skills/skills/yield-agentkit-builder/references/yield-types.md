@@ -25,14 +25,20 @@ This is the single most important endpoint in the Yield.xyz API. It's the discov
 | `token` | string | `USDC` or token address | Filter by deposit/input token (symbol or address) |
 | `inputToken` | string | `USDC` | Alias/alternative to `token` |
 | `inputTokens` | comma-separated | `USDC,USDT,DAI` | **Multi-token query in one call** |
-| `provider` | string | `aave-v3` | Filter by a single protocol |
-| `providers` | comma-separated | `aave-v3,morpho,compound-v3` | **Multi-provider query in one call** |
+| `provider` | string | `aave` | Filter by a single protocol (matches `providerId`, see note below) |
+| `providers` | comma-separated | `aave,morpho,compound` | **Multi-provider query in one call** |
+| `prime` | boolean | `true` / `false` | Filter to prime / curated yields |
 | `hasCooldownPeriod` | boolean | `true` / `false` | Only yields with (or without) an unbonding cooldown |
 | `hasWarmupPeriod` | boolean | `true` / `false` | Only yields with (or without) a warmup period |
 | `search` | string | `aave` | **Server-side name search** — don't `.filter()` on the client |
 | `sort` | enum (see below) | `rewardRateDesc` | **Server-side sort** — don't `.sort()` on the client |
 | `limit` | integer | `20` | Page size |
 | `offset` | integer | `0` | Paging cursor |
+
+> **`provider` matches `providerId`, not the yield-id version slug.** The filter matches the
+> yield's `providerId` field (`aave`, `compound`, `morpho`) — **not** the version slug in the
+> yield id (`aave-v3`, `compound-v3`). `?provider=aave-v3` returns total 0; `?provider=aave`
+> returns results.
 
 ### Sort options (`YieldSortingOption` enum)
 
@@ -65,7 +71,7 @@ This is the single most important endpoint in the Yield.xyz API. It's the discov
         "entryLimits": { ... },
         "arguments": { "enter": { "fields": [ ... ] }, "exit": { "fields": [ ... ] } }
       },
-      "providerId": "aave-v3",
+      "providerId": "aave",
       "metadata": { "name": "...", "logoURI": "...", "deprecated": false }
     }
   ]
