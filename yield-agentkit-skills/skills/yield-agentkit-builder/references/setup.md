@@ -128,7 +128,7 @@ transaction signing, and position tracking.
 
 - **Best for:** Consumer wallets, quick prototypes, MVPs, and any product that wants
   yield functionality without custom UI.
-- **Tradeoffs:** Less control over look and feel — you get the StakeKit UI. But you do
+- **Tradeoffs:** Less control over look and feel — you get the prebuilt Yield.xyz UI. But you do
   NOT have to use its connect-wallet flow: pass the **`externalProviders`** prop to plug
   in your **own address + signing infra** (custody/HSM, embedded or agent wallet, host-app
   wallet) and skip the connection step. See "Bring your own signing infra" in
