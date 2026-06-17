@@ -5,33 +5,51 @@ Complete step-by-step guide for executing transactions through the Yield.xyz API
 ## Overview
 
 ```
-Discover → Schema → Action → Sign → Broadcast → Submit Hash → Poll until Confirmed
+Discover → Schema → Action → Sign → Broadcast → Submit Hash → Poll → Balances → Pending Action → Manage (→ Exit)
 ```
 
-Every Yield.xyz transaction follows this lifecycle. Here's each step in detail. Two things
-shape how you drive it: the action's `executionPattern` (synchronous / asynchronous / batch)
-decides sequencing, and **polling is the only way to learn completion — there are no webhooks.**
+This is the **end-to-end loop**, and it closes: you enter a position, it appears in balances,
+a follow-up surfaces as a per-balance `pendingAction`, you complete it via `POST /v1/actions/manage`,
+and that manage action runs the *same* sign → submit → poll loop. Exiting works the same way
+via `POST /v1/actions/exit`. Here's each step in detail. Two things shape how you drive it:
+the action's `executionPattern` (synchronous / asynchronous / batch) decides sequencing, and
+**polling is the only way to learn completion — there are no webhooks.**
+
+> **Action status vs. transaction status are two different enums — don't conflate them.**
+> You poll **transaction** status (`GET /v1/transactions/{id}`) to a terminal
+> `CONFIRMED`/`FAILED`/`SKIPPED` — that is the per-tx sequencing gate. The **action**
+> (the wrapper) completes at `SUCCESS` or `FAILED` — an action never reaches "CONFIRMED".
+> See "Step 4" and "Step 7".
+
+> **A full runnable end-to-end example** (discover → enter → balances → pending-action manage
+> → exit) lives in the **api-recipes repo**: https://github.com/stakekit/api-recipes
 
 ## Step 1: Discover Yields
 
 Find available yield opportunities:
 
 ```typescript
-// REST API
-const response = await fetch("https://api.yield.xyz/v1/yields?network=ethereum&token=USDC", {
-  headers: { "x-api-key": API_KEY },
-});
+// REST API — filter + sort; paginate with limit/offset (max limit 100, see yield-types.md)
+const response = await fetch(
+  "https://api.yield.xyz/v1/yields?network=ethereum&token=USDC&type=staking&sort=rewardRateDesc&limit=100&offset=0",
+  { headers: { "x-api-key": API_KEY } },
+);
 const yields = await response.json();
 
 // SDK
 const yields = await sdk.api.getYields({ network: "ethereum", token: "USDC" });
 ```
 
-Filter results by:
+Filter / sort results by:
 - `network` — blockchain network
 - `token` — token symbol
+- `type` — yield type (e.g. `staking`, `lending`, `vault`)
+- `sort` — e.g. `rewardRateDesc`
+- `limit` / `offset` — pagination (max `limit` 100; see yield-types.md)
 - `status.enter` — only yields accepting new deposits
-- `apy` — annual percentage yield
+
+This `GET /v1/yields` discovery query is the opening of the lifecycle — pick a yield `id`
+from the results, then read its schema (Step 2) before building any action.
 
 ## Step 2: Read the Schema
 
@@ -123,11 +141,19 @@ interface ActionDto {
   type: string;                // "STAKE" for enter, "UNSTAKE" for exit —
                                // applies even to lending/vault yields (surprising naming)
   executionPattern: string;    // "synchronous" | "asynchronous" | "batch" — see "Branch on executionPattern"
-  status: string;              // "CREATED" initially
+  status: string;              // ActionDto.status — NOT the transaction enum. One of:
+                               // CANCELED, CREATED, WAITING_FOR_NEXT, PROCESSING, FAILED, SUCCESS, STALE.
+                               // "CREATED" initially; completes at SUCCESS (or FAILED). Never "CONFIRMED".
   transactions: TransactionDto[];
   // ...plus yieldId, address, amount, amountRaw, amountUsd, rawArguments, createdAt, completedAt
 }
 ```
+
+> **Action status ≠ transaction status.** The `ActionDto.status` enum is
+> `CANCELED, CREATED, WAITING_FOR_NEXT, PROCESSING, FAILED, SUCCESS, STALE`. The
+> `TransactionDto.status` enum (below) is a separate set ending in `CONFIRMED`/`FAILED`/`SKIPPED`.
+> You poll **transaction** status to gate per-tx sequencing; the **action** is done when it
+> reaches `SUCCESS` (or `FAILED`). An action never reaches "CONFIRMED".
 
 Each entry of `action.transactions` is a `TransactionDto`:
 
@@ -435,21 +461,27 @@ Yield.xyz has **no idempotency keys.** Plan retries accordingly:
   - `GET /v1/actions/{actionId}` — the action and its transactions (statuses, hashes).
   - `GET /v1/actions?address=<addr>` — list recent actions for an address to reconcile.
 
-## Pending Actions
+## Step 8: Read Balances
 
-After entering a position, check for pending actions (follow-up transactions).
+After entering, the position shows up in balances. This is also where follow-up actions surface.
 
-Query balances via `POST /v1/yields/balances` with a `queries` array. The response is
-`{ items, errors }`, where each `items[]` entry is `{ yieldId, balances, rewardRate }`.
-`pendingActions` is nested **per-balance** inside `items[].balances[]` — not at the top level.
+**Batch (recommended)** — `POST /v1/yields/balances`, body `{ queries: [...] }`:
+- Each query is `{ network, address, yieldId? }`. `network` and `address` are **required**; `yieldId` is optional (omit to get all of an address's positions on that network).
+- **Max 25 queries** per request.
+
+**Single yield** — `POST /v1/yields/{yieldId}/balances`, body `{ address }`.
+
+The batch response is `{ items, errors }`, where each `items[]` entry is
+`{ yieldId, balances, rewardRate, outputTokenBalance }`. `pendingActions` is nested
+**per-balance** inside `items[].balances[]` — not at the top level.
 
 ```typescript
-// REST API
+// REST API — batch (max 25 queries; network + address required per query)
 const res = await fetch("https://api.yield.xyz/v1/yields/balances", {
   method: "POST",
   headers: { "x-api-key": API_KEY, "Content-Type": "application/json" },
   body: JSON.stringify({
-    queries: [{ network: "base", address: walletAddress }],
+    queries: [{ network: "base", address: walletAddress }], // optional: yieldId
   }),
 }).then(r => r.json());
 
@@ -458,21 +490,101 @@ const res = await fetch("https://api.yield.xyz/v1/yields/balances", {
 //   items: [
 //     {
 //       yieldId: "base-usdc-aave-v3-lending",
-//       balances: [{ /* ...balance fields... */, pendingActions: [...] }],
+//       balances: [{ /* ...BalanceDto fields... */, pendingActions: [...] }],
 //       rewardRate: { /* ... */ },
+//       outputTokenBalance: { /* ... */ },
 //     },
 //   ],
 //   errors: [],
 // }
+```
 
+### `BalanceDto` and `BalanceType`
+
+Each `item.balances[]` entry is a `BalanceDto`. A position is split into multiple balance
+rows by **type** (`BalanceType` enum):
+
+`active`, `entering`, `exiting`, `withdrawable`, `claimable`, `locked`.
+
+Only `active` earns — check the `isEarning` flag rather than assuming.
+
+```typescript
+interface BalanceDto {
+  address: string;
+  type: string;                  // BalanceType — active | entering | exiting | withdrawable | claimable | locked
+  amount: string;                // human-readable
+  amountRaw: string;             // base units
+  amountUsd: string;
+  token: TokenDto;
+  pendingActions: PendingActionDto[];  // per-balance follow-ups (see Step 9)
+  isEarning: boolean;            // true only for the earning portion (typically `active`)
+  // staking yields: one of these is present
+  validator?: ValidatorDto;
+  validators?: ValidatorDto[];
+  // ERC-4626 vaults: share accounting
+  shareAmount?: string;
+  shareToken?: TokenDto;
+}
+```
+
+## Step 9: Pending Actions → Manage (closing the loop)
+
+A `pendingAction` is a follow-up the position requires — e.g. claim matured rewards, complete
+a withdrawal, restake. Each is a `PendingActionDto`:
+
+```typescript
+interface PendingActionDto {
+  intent: string;                 // "manage"
+  type: string;                   // the action to run — e.g. CLAIM_UNSTAKED, WITHDRAW, RESTAKE_REWARDS, REDELEGATE
+  passthrough: string;            // opaque server blob — pass back VERBATIM, never construct or edit it
+  arguments?: FieldsSchema | null; // present only when the action needs extra input (e.g. REDELEGATE → validatorAddress)
+  amount?: string;
+}
+```
+
+There is **no `description` field** on a pending action (that lives on `TransactionDto`).
+Print `pending.type` / `pending.amount`, not `pending.description`.
+
+**Execute a pending action** by posting it to `/v1/actions/manage` — map the pending action's
+own fields straight across:
+
+```typescript
 for (const item of res.items) {
   for (const balance of item.balances) {
-    if (balance.pendingActions?.length > 0) {
-      // User needs to complete these (e.g., claim rewards)
-      for (const pending of balance.pendingActions) {
-        console.log(`Pending: ${pending.type} — ${pending.description}`);
+    for (const pending of balance.pendingActions ?? []) {
+      console.log(`Pending: ${pending.type}${pending.amount ? ` (${pending.amount})` : ""}`);
+
+      const body: Record<string, unknown> = {
+        yieldId: item.yieldId,
+        address: walletAddress,
+        action: pending.type,            // e.g. CLAIM_UNSTAKED, WITHDRAW, RESTAKE_REWARDS
+        passthrough: pending.passthrough, // opaque blob — pass VERBATIM
+      };
+      // Only send `arguments` if the pending action defines a non-null fields schema
+      // (e.g. REDELEGATE needs a validatorAddress). Read pending.arguments.fields the
+      // same way as enter fields (Step 2) to know what to supply.
+      if (pending.arguments != null) {
+        body.arguments = { /* values for pending.arguments.fields */ };
       }
+
+      const manageAction = await fetch("https://api.yield.xyz/v1/actions/manage", {
+        method: "POST",
+        headers: { "x-api-key": API_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }).then(r => r.json());
+
+      // manageAction.transactions[] → run the SAME loop as enter:
+      // branch on manageAction.executionPattern → sign → submit-hash → poll transaction status.
+      // (See "Branch on action.executionPattern", Step 5, Step 6, Step 7.)
     }
   }
 }
 ```
+
+**The full lifecycle, stated once:** enter → position appears in balances → a `pendingAction`
+surfaces per-balance → `POST /v1/actions/manage` (with `action: pending.type` + verbatim
+`pending.passthrough`, plus `arguments` only when `pending.arguments` is non-null) → that
+manage action returns its own `transactions[]` → branch on its `executionPattern`, sign,
+submit-hash, and poll transaction status to terminal. Exiting a position is the same flow via
+`POST /v1/actions/exit`. A complete runnable example is in the
+[api-recipes repo](https://github.com/stakekit/api-recipes).
