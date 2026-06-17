@@ -71,8 +71,14 @@ Activate when the user says things like:
 - "Set up a neobank with yield features"
 - "Add yield to my wallet app"
 
-If the user is just exploring yields ("What's the best USDC yield on Base?"), that's
-the `yield-agentkit` skill — not this one.
+**Route to a different skill when:**
+- **Exploring yields conversationally** ("What's the best USDC yield on Base?") → `yield-agentkit`.
+- **Building an autonomous agent** — an agent with its own wallet that *discovers **and executes*** yield strategies itself (autonomous or policy-gated signing/broadcasting) → the agentic-execution skills, which carry the wallet, policy, and signing an agent needs:
+  - `yield-agentkit-privy` — Privy agentic wallets; autonomous & semi-autonomous (approval) strategies; policy enforcement.
+  - `yield-agentkit-moonpay` — MoonPay wallet auth + signing.
+  - `yield-agentkit-rwakit-privy` — RWA / permissioned yields on top of Privy.
+
+This skill builds the **integration surface** — discovery, transaction construction, and wiring *your own* signing infra. Use it for the API/app layer; use the agentic skills for an agent's wallet + autonomous execution. (For one-off execution the user wants to run, see Critical Rule #3.)
 
 ---
 
