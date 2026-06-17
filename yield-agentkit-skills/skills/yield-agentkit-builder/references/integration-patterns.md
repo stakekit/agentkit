@@ -71,7 +71,8 @@ function YieldPage() {
 ```
 
 The React component is `SKApp` (requires React 19+). For non-React apps use the bundled
-build (`renderSKWidget` from `@stakekit/widget/bundle`). Refer to the widget docs and the
+build (`renderSKWidget` from `@stakekit/widget/bundle`). Refer to the widget docs, the
+[widget on npm](https://www.npmjs.com/package/@stakekit/widget), and the
 [widget repo](https://github.com/stakekit/widget) for installation and configuration.
 
 #### Bring your own signing infra (skip connect-wallet)
@@ -126,7 +127,7 @@ Key points for this path:
   wallets when you supply your own), `validatorsConfig` (allow/block/prefer validators per
   chain), and `mapWalletListFn`/`mapWalletFn` (customize the connector list *if* you do use
   the built-in connect flow).
-- **React Native / WebView host:** use `@stakekit/use-inject-provider` — pass your
+- **React Native / WebView host:** use [`@stakekit/use-inject-provider`](https://www.npmjs.com/package/@stakekit/use-inject-provider) — pass your
   wallet's EIP-1193 provider + the WebView ref to `useInjectProvider`, and it returns
   `injectedJavaScript` + `onMessage` for the `react-native-webview` `WebView`. This also
   skips the connection step.

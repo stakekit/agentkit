@@ -152,8 +152,9 @@ The React component is `SKApp`. For a non-React app, use the bundled build:
 `import { renderSKWidget } from "@stakekit/widget/bundle"`.
 
 - **Resources:**
-  - [Widget Documentation](https://docs.yield.xyz/docs/widget)
+  - [Widget on npm](https://www.npmjs.com/package/@stakekit/widget)
   - [widget repo](https://github.com/stakekit/widget)
+  - [Widget Documentation](https://docs.yield.xyz/docs/widget)
 
 ### TypeScript SDK (`@yieldxyz/sdk`) — Recommended Default
 
@@ -254,3 +255,27 @@ configuration. Combined with the REST API for transactions.
   - [Programmatic Access Guide](https://docs.yield.xyz/docs/programmatic-access-guide)
   - [Fees Overview](https://docs.yield.xyz/docs/fees)
   - [Allocator Vaults](https://docs.yield.xyz/docs/allocator-vaults-oavs-introduction)
+
+---
+
+## Packages & resources
+
+A single index of everything this skill recommends, with links.
+
+**npm packages**
+- `@yieldxyz/sdk` — [npm](https://www.npmjs.com/package/@yieldxyz/sdk)
+- `@stakekit/widget` — [npm](https://www.npmjs.com/package/@stakekit/widget)
+- `@stakekit/use-inject-provider` (React Native / WebView host) — [npm](https://www.npmjs.com/package/@stakekit/use-inject-provider)
+
+**Repos**
+- SDK — [github.com/stakekit/sdk](https://github.com/stakekit/sdk)
+- Widget — [github.com/stakekit/widget](https://github.com/stakekit/widget)
+- API recipes (runnable REST + ethers.js examples) — [github.com/stakekit/api-recipes](https://github.com/stakekit/api-recipes)
+- Shield (transaction-security validation) — [github.com/stakekit/shield](https://github.com/stakekit/shield)
+- Signers (signing helpers) — [github.com/stakekit/signers](https://github.com/stakekit/signers)
+
+**Docs & tooling**
+- Documentation — [docs.yield.xyz](https://docs.yield.xyz)
+- API reference — [getting started](https://docs.yield.xyz/reference/getting-started-with-your-api)
+- Dashboard (get an API key) — [dashboard.yield.xyz](https://dashboard.yield.xyz)
+- Live OpenAPI spec — [api.yield.xyz/docs.json](https://api.yield.xyz/docs.json)

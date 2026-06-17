@@ -447,7 +447,8 @@ sdk.configure({ apiKey: process.env.YIELD_API_KEY });
 const yields = await sdk.api.getYields({ network: "ethereum" });
 ```
 
-Source: [github.com/stakekit/sdk](https://github.com/stakekit/sdk) (published as `@yieldxyz/sdk`).
+Source: [github.com/stakekit/sdk](https://github.com/stakekit/sdk) (published on
+[npm as `@yieldxyz/sdk`](https://www.npmjs.com/package/@yieldxyz/sdk)).
 
 For other languages (Python, Go, Rust), or any non-TypeScript agent, skip the SDK and
 call the REST API directly — every endpoint is plain HTTP. Refer to

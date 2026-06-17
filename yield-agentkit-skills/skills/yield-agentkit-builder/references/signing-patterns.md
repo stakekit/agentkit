@@ -170,7 +170,7 @@ See `common-pitfalls.md` entries #4, #5, #11 for detailed explanations of each i
 
 | Library | Use Case | Docs |
 |---|---|---|
-| **@solana/web3.js v2** | General-purpose Solana (new version) | https://solana.com/docs/clients/javascript |
+| **@solana/web3.js v2** | General-purpose Solana (new version) | https://www.npmjs.com/package/@solana/web3.js |
 | **@solana/web3.js v1** | Legacy projects | https://solana-labs.github.io/solana-web3.js/ |
 | **Phantom** | Browser wallet (most popular Solana wallet) | https://docs.phantom.app/solana/integrating/extension |
 | **Backpack** | Browser wallet (multi-chain, popular in Solana) | https://docs.backpack.app |
