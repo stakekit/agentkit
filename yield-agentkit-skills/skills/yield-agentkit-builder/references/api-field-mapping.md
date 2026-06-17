@@ -57,6 +57,12 @@ These are the API paths. For exact request/response schemas, always check `docs.
 | `/v1/yields/balances` | POST | Positions and pending actions for a wallet |
 | `/v1/networks` | GET | List all supported networks |
 
+> **Yield object shape.** A yield item's real top-level keys are:
+> `id, network, chainId, inputTokens, token, tokens, rewardRate, status, metadata,
+> mechanics, providerId, prime, outputToken, tags, state`.
+> There is **no top-level `apy`** — the reward rate lives in `rewardRate`. There is
+> **no top-level `risk`** field — risk comes from `GET /v1/yields/{id}/risk`.
+
 ### Actions
 
 | Endpoint | Method | Purpose |
@@ -64,8 +70,35 @@ These are the API paths. For exact request/response schemas, always check `docs.
 | `/v1/actions/enter` | POST | Build enter (deposit/stake) transactions |
 | `/v1/actions/exit` | POST | Build exit (withdraw/unstake) transactions |
 | `/v1/actions/manage` | POST | Build manage (claim/restake) transactions |
-| `/v1/transactions/{txId}/submit-hash` | PUT | Report broadcast hash (mandatory after every tx) |
+| `/v1/actions` | GET | List actions (requires `address`) |
+| `/v1/actions/{actionId}` | GET | Single action by id (UUID) |
+
+### Transactions
+
+| Endpoint | Method | Purpose |
+|---|---|---|
 | `/v1/transactions/{txId}` | GET | Check transaction status |
+| `/v1/transactions/{txId}/submit-hash` | PUT | Report the on-chain broadcast hash. Body: `{ "hash": "…" }`. Use this when **you** broadcast the signed tx yourself. Mandatory after every self-broadcast |
+| `/v1/transactions/{txId}/submit` | POST | **Distinct from submit-hash.** Hand the **signed transaction** to Yield.xyz and let *it* broadcast. Body: `{ "signedTransaction": "…" }`. Do not call both for the same tx |
+
+### Discovery & History (reference)
+
+Additional live endpoints, useful for discovery and analytics. History endpoints return
+`404` for yields that aren't indexed.
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/v1/tokens` | GET | List supported tokens |
+| `/v1/providers` | GET | List protocol/validator providers |
+| `/v1/providers/{id}` | GET | Single provider metadata |
+| `/v1/yields/{id}/campaigns` | GET | Reward campaigns for a yield |
+| `/v1/yields/{id}/balances` | GET | Balances for a single yield (query: `address`) |
+| `/v1/yields/{id}/balances/history` | GET | Balance history (indexed yields only) |
+| `/v1/yields/{id}/rewards/history` | GET | Reward history (indexed yields only) |
+| `/v1/yields/{id}/reward-rate/history` | GET | Reward-rate history |
+| `/v1/yields/{id}/tvl/history` | GET | TVL history |
+| `/v1/yields/{id}/risk` | GET | Risk profile for the yield (risk is **not** a field on the yield object) |
+| `/v1/yields/{id}/kyc/status` | GET | KYC requirement/status for the yield |
 
 ---
 
@@ -106,11 +139,36 @@ x-api-key: YOUR_API_KEY
 
 ## Common Error Status Codes
 
+The set of status codes the **application** returns is `400, 401, 403, 404, 412, 422, 429, 500`.
+A transient `502`/`503` can still reach you from the edge/infra layer (CDN, load balancer)
+rather than the application — treat those as retryable with backoff (see `policies.md`).
+
 | Code | Meaning |
 |---|---|
-| `400` | Bad input — check field names, required fields, amount format |
+| `400` | Bad input — failed validation, bad field names, bad amount format. **Also returned for an unknown or disabled `yieldId`** (`"… is not enabled for this project"`) — *not* `404` |
 | `401` | Missing or invalid API key |
-| `404` | Yield or transaction not found |
-| `412` | Precondition failed — yield not available, below minimum, etc. |
+| `403` | Forbidden — key lacks access to the requested resource |
+| `404` | Resource not found (e.g. history endpoints for a yield that isn't indexed) |
+| `412` | **Precondition failed — the action is blocked right now**, not malformed: yield closed for deposits (`status.enter:false`) or withdrawals (`status.exit:false`), yield blocked, or resubmitting a different hash to a terminal transaction. Check `status.enter`/`status.exit` from the yield DTO before building an action |
+| `422` | Unprocessable entity |
 | `429` | Rate limited — respect `retry-after` header |
-| `503` | Upstream service unavailable — retry with backoff |
+| `500` | Internal server error |
+
+### Error Envelope
+
+Every error response uses this shape:
+
+```json
+{
+  "statusCode": 400,
+  "timestamp": "2026-06-17T08:38:47.236Z",
+  "path": "/v1/actions/enter",
+  "message": "Bad Request Exception",
+  "validation": { "message": ["yieldId must be a string"] },
+  "details": { "error": "Bad Request" }
+}
+```
+
+There is **no top-level `error` field.** `validation` (with a `message[]` array) and
+`details` are optional and present only when relevant. Validation failures are `400`
+with `validation.message[]`, not `422`.

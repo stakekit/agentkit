@@ -24,8 +24,13 @@ When generating code that displays yield data, use these formats:
 ## Yield Listing
 
 When generating a yield discovery UI, display results in a table sorted by APY descending.
+Use the API sort parameter `sort=rewardRateDesc` (there is no `sort=apy:desc`).
 
-Recommended columns: Protocol, Name/Vault, APY, TVL, Type, Network, Status.
+There is **no top-level `apy` field** on a yield. APY lives at `rewardRate.total`, and
+`rewardRate.rateType` tells you the rate kind (e.g. `"APY"`). Read APY from `rewardRate.total`
+(and check `rewardRate.rateType === "APY"`), not a top-level `apy`.
+
+Recommended columns: Protocol, Name/Vault, APY (`rewardRate.total`), TVL, Type, Network, Status.
 
 ### TVL Filtering
 
@@ -54,8 +59,8 @@ between each.
 
 ## Reward Rate Breakdown
 
-When showing a single yield's APY, expand the components array to show where the
-yield comes from (base lending rate, incentive rewards, etc.).
+When showing a single yield's APY (`rewardRate.total`), expand the `rewardRate.components`
+array to show where the yield comes from (base lending rate, incentive rewards, etc.).
 
 Flag any incentive/bonus component as potentially temporary.
 

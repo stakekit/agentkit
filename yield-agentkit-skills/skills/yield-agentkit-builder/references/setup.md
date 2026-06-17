@@ -10,12 +10,13 @@
 
 ## Step 1 — Register the Yield.xyz MCP Server (REQUIRED — do this first)
 
-**This step is mandatory, not optional.** The builder skill depends on the doc tools
-exposed by the `yield-agentkit` MCP server (`yield_get_api_spec`,
-`yield_get_chain_guide`, `yield_get_transaction_guide`, `yield_troubleshoot_error`,
-etc.). Without the MCP registered, the skill cannot fetch the live OpenAPI spec,
-look up chain-specific signing guidance, or diagnose API errors — so code generation
-will fall back on stale/hallucinated information.
+**This step is mandatory, not optional.** The builder skill depends on the live tools
+exposed by the `yield-agentkit` MCP server (`yield_get_api_spec`, `yield_lookup_docs`,
+`yield_fetch_doc`, `yield_troubleshoot_error`, `yield_list_repos`). Without the MCP
+registered, the skill cannot fetch the live OpenAPI spec, search/read the live docs, or
+diagnose API errors against the live spec — so code generation will fall back on
+stale/hallucinated information. (Chain-specific signing, transaction lifecycle, yield
+types, and safety guidance live in this skill's own `references/` files.)
 
 **The skill MUST auto-configure the MCP for the user as the very first action** when
 the skill is invoked (before asking for an API key, before anything else).
@@ -98,3 +99,141 @@ yarn add @yieldxyz/sdk
 
 For other languages, use the REST API directly — no SDK needed.
 The full OpenAPI spec is at `https://api.yield.xyz/docs.json`.
+
+---
+
+## Choosing your integration approach
+
+Pick the integration approach that matches the use case. When in doubt, default to the
+TypeScript SDK.
+
+### Widget Component (`@stakekit/widget`)
+
+Drop-in React component that handles the entire yield flow — discovery, selection,
+transaction signing, and position tracking.
+
+- **Best for:** Consumer wallets, quick prototypes, MVPs, and any product that wants
+  yield functionality without custom UI.
+- **Tradeoffs:** Less customization. You get the StakeKit UI. Good for speed, less
+  control over look and feel.
+- **Match signals:** widget, drop-in, component, React component, quick start, fastest,
+  prototype, MVP.
+- **Get started:**
+
+```tsx
+npm install @stakekit/widget   // requires React 19+ — see common-pitfalls.md #14
+
+import "@stakekit/widget/package/css";
+import { SKApp, darkTheme } from "@stakekit/widget";
+
+function YieldPage() {
+  return <SKApp apiKey="YOUR_KEY" theme={darkTheme} />;
+}
+```
+
+The React component is `SKApp`. For a non-React app, use the bundled build:
+`import { renderSKWidget } from "@stakekit/widget/bundle"`.
+
+- **Resources:**
+  - [Widget Documentation](https://docs.yield.xyz/docs/widget)
+  - [widget repo](https://github.com/stakekit/widget)
+
+### TypeScript SDK (`@yieldxyz/sdk`) — Recommended Default
+
+Typed SDK with methods for all API endpoints. Handles auth, request formatting, and
+type safety. The best developer experience for most use cases.
+
+- **Best for:** Consumer wallets, frontend apps, mobile apps, and any
+  TypeScript/JavaScript project that wants typed access. Start here unless you have a
+  specific reason to use something else.
+- **Tradeoffs:** TypeScript/JavaScript only. Covers all endpoints. Good balance of
+  control and convenience. For other languages, use the REST API directly.
+- **Match signals:** sdk, typescript, npm, typed, client, frontend, wallet, consumer,
+  mobile, app.
+- **Get started:**
+
+```typescript
+npm install @yieldxyz/sdk
+
+import { sdk } from "@yieldxyz/sdk";
+
+// The SDK is a configured singleton — call configure() once at startup.
+sdk.configure({ apiKey: "YOUR_KEY" });
+
+// Discover yields
+const yields = await sdk.api.getYields({ network: "ethereum" });
+
+// Enter a position (amounts are human-readable strings, not wei)
+const action = await sdk.api.enterYield({
+  yieldId: "ethereum-eth-lido-staking",
+  address: "0x...",
+  arguments: { amount: "1.0" },
+});
+```
+
+- **Resources:**
+  - [SDK on npm](https://www.npmjs.com/package/@yieldxyz/sdk)
+  - [sdk repo](https://github.com/stakekit/sdk)
+  - [Getting Started](https://docs.yield.xyz/docs/getting-started)
+  - [Core Concepts](https://docs.yield.xyz/docs/core-concepts)
+  - [API Recipes](https://github.com/stakekit/api-recipes)
+
+### Direct REST API
+
+Full REST API access. Works with any language. Maximum control over every request and
+response.
+
+- **Best for:** Custody platforms, enterprise backends, non-JavaScript projects, and any
+  product needing maximum control.
+- **Tradeoffs:** More code to write. No type safety unless you generate clients. Full
+  control over everything.
+- **Match signals:** custody, institutional, server, backend, enterprise, api, rest,
+  python, go, java, ruby, rust, non-JS.
+- **Get started:**
+
+No SDK required — every endpoint is plain HTTP, so this is the right path when the
+agent isn't writing TypeScript (Python, Go, Rust, Ruby, shell, …).
+
+```bash
+# 1. Discover yields
+curl -X GET "https://api.yield.xyz/v1/yields?network=ethereum" \
+  -H "x-api-key: YOUR_KEY" \
+  -H "Accept: application/json"
+
+# 2. Build an enter action (returns unsigned transactions to sign + broadcast yourself).
+#    Amounts are human-readable strings, not wei.
+curl -X POST "https://api.yield.xyz/v1/actions/enter" \
+  -H "x-api-key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "yieldId": "ethereum-eth-lido-staking",
+    "address": "0x...",
+    "arguments": { "amount": "1.0" }
+  }'
+```
+
+> Confirm exact field names per endpoint with `yield_get_api_spec` — the request body
+> above is illustrative, and the spec is the source of truth.
+
+- **Resources:**
+  - [API Reference](https://docs.yield.xyz/reference/getting-started-with-your-api)
+  - [Core Concepts](https://docs.yield.xyz/docs/core-concepts)
+  - [API Recipes](https://github.com/stakekit/api-recipes) — runnable REST + ethers.js examples (no SDK)
+
+### Programmatic Access API + REST API
+
+Admin API for project provisioning, API key lifecycle, yield enablement, and fee
+configuration. Combined with the REST API for transactions.
+
+- **Best for:** Neobanks, fintechs, multi-tenant platforms, and any product that needs
+  to manage multiple API keys or configure fees programmatically.
+- **Tradeoffs:** Most complex setup. Requires understanding of project hierarchy and fee
+  structures.
+- **Match signals:** neobank, fintech, multi-tenant, white-label, SaaS, platform,
+  provision, manage keys, fee monetization.
+- **Get started:** Start with the Programmatic Access Guide to set up your project
+  hierarchy, then use the REST API for yield operations.
+- **Resources:**
+  - [Programmatic Access Guide](https://docs.yield.xyz/docs/programmatic-access-guide)
+  - [Fees Overview](https://docs.yield.xyz/docs/fees)
+  - [Allocator Vaults](https://docs.yield.xyz/docs/allocator-vaults-oavs-introduction)

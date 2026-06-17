@@ -1,6 +1,6 @@
 ---
 name: yield-agentkit-builder
-description: Build applications that integrate with the Yield.xyz APIs across all three products — Yield (staking, lending, vaults, RWA across 80+ networks), Perps (perpetual futures on Hyperliquid), and Borrow (lending/borrowing markets). Generates production-ready code covering REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield/perps/borrow, generate code, or set up a project using Yield.xyz.
+description: Build applications that integrate with the Yield.xyz APIs. Detailed builder guidance in this skill is Yield-only — staking, lending, vaults, and RWA across 80+ networks. Perps (perpetual futures on Hyperliquid) and Borrow (lending/borrowing markets) are supported via the live spec (`yield_get_api_spec({ product })`) but use a different action model. Generates production-ready code covering REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield/perps/borrow, generate code, or set up a project using Yield.xyz.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -12,6 +12,16 @@ metadata:
 This skill helps developers build applications that integrate with the Yield.xyz API.
 It generates production-ready code, guides architecture decisions, and ensures correct
 API usage across all supported chains and protocols.
+
+**Scope: this skill's detailed builder guidance is Yield-only** — staking, lending,
+vaults, and RWA across 80+ networks. Perps and Borrow are still supported, but you
+build them straight off the live spec — `yield_get_api_spec({ product: "perps" | "borrow" })` —
+rather than from the worked patterns here, because they use a **different action model**:
+a single `POST /v1/actions` with a `type` discriminator (not the Yield
+`enter` / `exit` / `manage` endpoints), and they submit the signed transaction with
+`POST /v1/transactions/{id}/submit` — **not** `submit-hash`. Everywhere below, the
+detailed flows, reference files, and submit-hash lifecycle describe **Yield**; for
+Perps/Borrow, lean on the live spec and keep those two differences in mind.
 
 ---
 
@@ -203,8 +213,9 @@ must ship with pagination wired in from the start.
 
 1. **Page size** — default to 20–50 items per page; never render the full list at once.
 2. **Use the API's built-in pagination params** on `GET /v1/yields` (`limit`,
-   `offset` or cursor — check `yield_get_api_spec` for the current shape). Do
-   **not** fetch everything client-side and slice — that defeats the point.
+   `offset` — the API is offset-only, max `limit` is 100; check `yield_get_api_spec`
+   for the current shape). Do **not** fetch everything client-side and slice — that
+   defeats the point.
 3. **Provide a way to change pages** — next/prev buttons, numbered pager, or an
    infinite-scroll sentinel (whichever fits the UI).
 4. **Preserve filters across pages** — network, token, type, provider filters
@@ -240,9 +251,11 @@ whenever the API supports it.
 **The very first action in every builder session** — before asking for an API key,
 before asking what the user is building — is to ensure the `yield-agentkit` MCP
 server is registered with the user's agent. This is **not optional**. The skill's
-doc tools (`yield_get_api_spec`, `yield_get_chain_guide`,
-`yield_get_transaction_guide`, etc.) come from that MCP server, and without them the
-skill will generate code from memory rather than from the live spec.
+live tools (`yield_get_api_spec`, `yield_lookup_docs`, `yield_fetch_doc`,
+`yield_troubleshoot_error`, `yield_list_repos`) come from that MCP server, and without
+them the skill will generate code from memory rather than from the live spec. (Static
+guidance — chains, transaction lifecycle, yield types, safety — lives in this skill's
+own `references/` files, not on the MCP.)
 
 **Do this automatically — do not ask the user to run the command themselves.**
 Run the appropriate registration command for their agent, then verify it connected.
@@ -359,7 +372,10 @@ Generate code that:
 1. Uses the chosen product's base URL (`api.yield.xyz`, `perps.yield.xyz`, or `borrow.yield.xyz`)
 2. Passes the user's API key via `x-api-key` header
 3. Uses field names exactly as seen in the live spec and API responses
-4. Handles the full transaction lifecycle (action -> sign -> broadcast -> submit-hash)
+4. Handles the full transaction lifecycle. **For Yield, always report the hash after
+   broadcasting** via `PUT /v1/transactions/{txId}/submit-hash` (action -> sign ->
+   broadcast -> submit-hash). **Perps and Borrow do not use `submit-hash`** — they
+   submit the signed transaction with `POST /v1/transactions/{id}/submit` instead.
 5. Follows the signing pattern appropriate for the user's product type and wallet choice
 
 See **[`references/signing-patterns.md`](./references/signing-patterns.md)** for
@@ -429,17 +445,29 @@ before generating code for that topic.**
 | **[`references/output-formats.md`](./references/output-formats.md)** | When generating UI code — display rules, number formatting |
 | **[`references/policies.md`](./references/policies.md)** | API usage limits, rate limiting, caching guidance |
 | **[`references/setup.md`](./references/setup.md)** | First-time setup — prerequisites |
+| **[`references/dashboard-and-api-keys.md`](./references/dashboard-and-api-keys.md)** | How the dashboard/API key controls which yields & features are enabled — read when a yield "isn't available" or returns `400 not enabled` |
+| **[`references/yield-types.md`](./references/yield-types.md)** | `GET /v1/yields` query params + the yield-type categories (high level; DTO is source of truth) |
+| **[`references/api-limits.md`](./references/api-limits.md)** | Rate limits, key tiers, throttling |
+| **[`references/transaction-lifecycle.md`](./references/transaction-lifecycle.md)** | End-to-end **Yield** transaction flow: build → sign → broadcast → submit-hash → confirm. (Perps/Borrow use `POST /v1/transactions/{id}/submit` instead of `submit-hash`.) |
 
 ---
 
 ## SDK Option
 
-For TypeScript/JavaScript projects, the `@yieldxyz/sdk` package wraps the REST API:
+For TypeScript/JavaScript projects, the `@yieldxyz/sdk` package wraps the REST API.
+It's a configured singleton — `configure()` once, then call `sdk.api.*`:
 
 ```typescript
-import { Sdk } from "@yieldxyz/sdk";
-const sdk = new Sdk({ apiKey: process.env.YIELD_API_KEY });
+import { sdk } from "@yieldxyz/sdk";
+sdk.configure({ apiKey: process.env.YIELD_API_KEY });
+
+const yields = await sdk.api.getYields({ network: "ethereum" });
 ```
 
-For other languages (Python, Go, Rust), generate REST API calls directly.
-Refer to `https://api.yield.xyz/docs.json` for the complete OpenAPI spec.
+Source: [github.com/stakekit/sdk](https://github.com/stakekit/sdk) (published as `@yieldxyz/sdk`).
+
+For other languages (Python, Go, Rust), or any non-TypeScript agent, skip the SDK and
+call the REST API directly — every endpoint is plain HTTP. Refer to
+`https://api.yield.xyz/docs.json` for the complete OpenAPI spec (or the `yield_get_api_spec`
+tool), and see [github.com/stakekit/api-recipes](https://github.com/stakekit/api-recipes)
+for runnable REST examples.

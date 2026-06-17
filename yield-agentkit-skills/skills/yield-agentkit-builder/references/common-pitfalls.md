@@ -193,19 +193,35 @@ confirmation of each transaction before starting the next.
 
 ## 13. Assuming an HTTP Status Is From `api.yield.xyz` When It Isn't
 
-**Error:** Debugging an unexpected HTTP status (e.g. `412 Precondition Failed`,
-`502`, `520`, `530`) as if it came from the Yield.xyz API, when the code isn't
-documented for the endpoint you called.
+**Error:** Debugging an unexpected HTTP status (e.g. `502`, `504`, `520`, `530`)
+as if it came from the Yield.xyz API, when it was actually injected by an edge
+layer between your app and our API.
 
 **What happens:** You waste time looking for a Yield.xyz-side cause that doesn't
 exist. The status almost certainly came from something *between* your app and
 our API — a CDN, reverse proxy, HTTP middleware, or service worker — not from
 `api.yield.xyz`.
 
-Documented Yield.xyz error codes per endpoint: `400`, `401`, `403`, `404`, `422`,
-`429`, `500`. Anything else is suspect. `412` in particular is never returned by
-any Yield.xyz endpoint — it's commonly injected by edge layers for
-`If-Match` / `If-Unmodified-Since` preconditions.
+Yield.xyz application error codes: `400`, `401`, `403`, `404`, `412`, `422`, `429`,
+`500`. **`412` IS a real Yield.xyz response** — it means a precondition failed (the
+action is blocked *right now*: yield closed for deposits/withdrawals per
+`status.enter`/`status.exit`, a blocked yield, or resubmitting a different hash to a
+terminal transaction), **not** a malformed request and **not** an edge artifact. Codes
+that are NOT ours and signal an intermediary: `502`, `504`, `520`/`521`/`530`
+(Cloudflare), or any HTML response body.
+
+The real Yield.xyz error envelope is:
+
+```json
+{ "statusCode": 400, "timestamp": "…", "path": "/v1/…", "message": "…", "validation": { "message": ["…"] }, "details": { "error": "…" } }
+```
+
+There is **no top-level `error` field.** `validation` and `details` are optional.
+**Validation failures return `400`** (not `422`) with a `validation.message[]` array
+of human-readable messages. A bad or disabled `yieldId` returns **`400`** with
+`message: "Yield \"…\" is not enabled for this project"` — **not `404`.** (`YieldErrorDto`
+`{ yieldId, error }` is a different thing: a per-yield partial-failure embed that appears
+*inside a successful list response*, not the HTTP error envelope.)
 
 **Fix:** Before treating an unusual status as an API bug:
 
@@ -213,12 +229,14 @@ any Yield.xyz endpoint — it's commonly injected by edge layers for
    or `yield_troubleshoot_error({ error, context })` — the troubleshoot tool
    will confirm whether the code is documented for that endpoint.
 2. **Inspect the raw response body.** If it's HTML or not our standard JSON
-   error shape `{ message, error, statusCode }`, the response is from an
-   intermediary, not us.
+   error shape `{ statusCode, timestamp, path, message, validation?, details? }`,
+   the response is from an intermediary, not us.
 3. **Check your own stack:** HTTP client middleware, CDN (Cloudflare, Fastly),
    reverse proxy (nginx, AWS ALB), or service worker rewriting responses.
-4. **Double-check the actual status code.** `422` can be misread as `412` in
-   logs — verify from the network tab or a fresh `curl`.
+4. **Double-check the actual status code and what it means.** `400` (bad request),
+   `412` (action blocked — check `status.enter`/`status.exit`), and `422`
+   (unprocessable) are distinct, real codes — don't conflate them; verify from the
+   network tab or a fresh `curl`.
 
 Only contact `hello@yield.xyz` once you've confirmed the response is from
 `api.yield.xyz` directly with our JSON error shape.
@@ -301,3 +319,32 @@ import { MiscChainIds, SKApp } from '@stakekit/widget';
 the widget defaults to ETH/Lido even when `initialChain` is set to a non-EVM
 network. Always pass both. For ERC-20 / SPL tokens with a real contract address,
 use `<network>-<lowercased-address>` as the key instead.
+
+---
+
+## 16. Wrong Shape for Chain-Specific Action Arguments
+
+**Error:** Nesting chain-specific arguments under an `additionalAddresses` wrapper
+(e.g. `arguments.additionalAddresses.cosmosPubKey`), or guessing array vs. scalar
+for pool arguments.
+
+**What happens:** `400 Bad Request` with a `validation.message[]` like
+`["cosmosPubKey should not be empty"]` — the API never sees the value because it's
+in the wrong place.
+
+**Fix:** Chain-specific arguments are **flat keys directly inside `arguments`** — there
+is no `additionalAddresses` wrapper:
+
+- Cosmos: `arguments.cosmosPubKey`
+- Tezos: `arguments.tezosPubKey`
+- Tron: `arguments.validatorAddresses` (a plural **array**) + `arguments.tronResource`
+- Bittensor: `arguments.subnetId`
+
+Pool argument shapes also trip people up:
+
+- `liquidity_pool` **enter** uses `arguments.amounts` (an **array**, one per pool token)
+- `concentrated_liquidity_pool` **exit** needs `arguments.percentage` + `arguments.tokenId`
+  (there is **no `amount`** on this exit)
+
+Always read the yield's `mechanics.arguments.enter` / `.exit` schema — each field's
+`name`, `isArray`, and `required` are the contract.

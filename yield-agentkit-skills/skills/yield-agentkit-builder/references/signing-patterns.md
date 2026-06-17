@@ -6,6 +6,80 @@ do not hardcode signing logic from snippets.
 
 ---
 
+## Chain family overview (transaction formats)
+
+This covers the `unsignedTransaction` format returned by the Yield.xyz API for each **chain family**.
+
+> **All 90+ networks collapse into one of these families for signing purposes.**
+> Every network has a `category` field in `GET /v1/networks` — use that to determine which family's signing guide applies.
+> For the full per-chain signing example, see `references/chains/<chain>.md`.
+
+| Family | `category` in API | Signing SDK | Networks (examples) |
+|--------|-------------------|-------------|---------------------|
+| EVM | `evm` | ethers.js, viem | ethereum, base, arbitrum, optimism, polygon, binance, avalanche-c, linea, zksync, sonic, gnosis, celo, fantom, core, monad, unichain + all other EVM chains |
+| Cosmos | `cosmos` | @cosmjs/stargate | cosmos, osmosis, celestia, dydx, injective, sei, axelar, kava + 40 more |
+| Substrate | `substrate` | @polkadot/api | polkadot, bittensor (Bittensor requires `subnetId`) |
+| Solana | `misc` (id=solana) | @solana/web3.js | solana, solana-devnet |
+| Tezos | `misc` (id=tezos) | @taquito/taquito | tezos |
+| TON | `misc` (id=ton) | @ton/ton | ton, ton-testnet |
+| Near | `misc` (id=near) | near-api-js | near |
+| Sui | `misc` (id=sui) | @mysten/sui.js | sui |
+| Aptos | `misc` (id=aptos) | aptos (official SDK) | aptos |
+| Cardano | `misc` (id=cardano) | @emurgo/cardano-serialization-lib | cardano |
+| Stellar | `misc` (id=stellar) | stellar-sdk | stellar, stellar-testnet |
+| Tron | `misc` (id=tron) | tronweb | tron |
+
+### Transaction format per family
+
+> **Chain-specific arguments are FLAT keys inside `arguments`** — e.g. `arguments.cosmosPubKey`,
+> `arguments.tezosPubKey`, `arguments.validatorAddresses`, `arguments.tronResource`,
+> `arguments.subnetId`. There is **no `additionalAddresses` wrapper.** Always confirm
+> the exact required fields from the yield's `mechanics.arguments.enter` schema.
+
+| Family | `unsignedTransaction` encoding | Parse before signing | Chain-specific arguments |
+|--------|--------------------------------|----------------------|--------------------------|
+| EVM | JSON string | Yes — `JSON.parse()` | None for per-wallet signing. **But** `liquidity_pool`, `concentrated_liquidity_pool`, and ERC-4626 `vault` yields have TYPE-specific arguments — see `references/chains/evm.md` |
+| Cosmos | Hex-encoded Protobuf SignDoc bytes | No — hex decode, pass to signing SDK | `cosmosPubKey` (required, flat key in `arguments`) |
+| Substrate | JSON object with call data | Yes — `JSON.parse()` if string | Bittensor: `subnetId` (required, flat key in `arguments`) |
+| Solana | Hex or base64 encoded serialized transaction | No — decode, pass to signing SDK | None |
+| Tezos | Hex-encoded forged operation bytes | No — hex decode, pass to signing SDK | `tezosPubKey` (required, flat key in `arguments`) |
+| TON | JSON string with BOC (Bag of Cells) data | Yes — `JSON.parse()` | None |
+| Near | JSON string with transaction object | Yes — `JSON.parse()` | None |
+| Sui | Base64-encoded BCS transaction bytes | No — base64 decode | None |
+| Aptos | JSON object with transaction payload | Yes — `JSON.parse()` if string | None |
+| Cardano | Hex-encoded CBOR transaction bytes | No — hex decode | None |
+| Stellar | Base64-encoded XDR transaction envelope | No — base64 decode | None |
+| Tron | JSON string with transaction object | Yes — `JSON.parse()` | `validatorAddresses` (array) + `tronResource` (`"BANDWIDTH"` or `"ENERGY"`), flat keys in `arguments` |
+
+### Per-chain signing & transaction format
+
+For the full signing example, required arguments, and common gotchas for each chain,
+see the per-chain guides:
+
+- EVM (Ethereum, Base, Arbitrum, Optimism, Polygon, …) — `references/chains/evm.md`
+- Cosmos (ATOM, Osmosis, Celestia, dYdX, Injective, Sei, …) — `references/chains/cosmos.md`
+- Substrate (Polkadot, Bittensor) — `references/chains/substrate.md`
+- Solana — `references/chains/solana.md`
+- Tezos — `references/chains/tezos.md`
+- TON — `references/chains/ton.md`
+- Near — `references/chains/near.md`
+- Sui — `references/chains/sui.md`
+- Aptos — `references/chains/aptos.md`
+- Cardano — `references/chains/cardano.md`
+- Stellar — `references/chains/stellar.md`
+- Tron — `references/chains/tron.md`
+
+### Unknown network?
+
+If you encounter a network not listed above:
+1. Call `GET /v1/networks` and check its `category` field
+2. `category: "evm"` → use the EVM guide
+3. `category: "cosmos"` → use the Cosmos guide
+4. `category: "substrate"` → use the Substrate guide
+5. `category: "misc"` → match by network `id` to the relevant chain guide
+
+---
+
 ## General Principles
 
 Regardless of wallet or chain:
@@ -115,8 +189,9 @@ See `common-pitfalls.md` entries #4, #5, #11 for detailed explanations of each i
 | **CosmosKit** | Multi-wallet abstraction for React | https://cosmoskit.com |
 
 ### Cosmos-Specific Requirement
-Cosmos yields require the user's **public key** as an additional argument when calling the
-action endpoint. Include `additionalAddresses.cosmosPubKey` in the request body.
+Cosmos yields require the user's **public key** as an argument when calling the action
+endpoint. Include `cosmosPubKey` as a **flat key inside `arguments`** in the request body
+(`arguments.cosmosPubKey`) — there is **no `additionalAddresses` wrapper.**
 Fetch the current schema from the API spec to confirm the exact field name.
 
 ---
@@ -131,8 +206,31 @@ Fetch the current schema from the API spec to confirm the exact field name.
 | **TronLink** | Browser wallet (most popular Tron wallet) | https://docs.tronlink.org |
 
 ### Tron-Specific Requirement
-Tron staking requires specifying the resource type (`"BANDWIDTH"` or `"ENERGY"`) in the
-action arguments. Check the yield schema to confirm.
+Tron staking requires `validatorAddresses` (a plural **array**) and the resource type
+`tronResource` (`"BANDWIDTH"` or `"ENERGY"`) as flat keys inside `arguments`.
+Check the yield schema to confirm.
+
+---
+
+## Validator Object Shape (All Chains)
+
+`GET /v1/yields/{yieldId}/validators` returns an array of validator objects. The
+stable fields, identical across every staking chain, are:
+
+| Field | Type | Notes |
+|---|---|---|
+| `address` | string | Validator address (chain-specific format) |
+| `name` | string | Display name |
+| `preferred` | boolean | Curated/recommended validator |
+| `commission` | number | **Decimal fraction** — `0.08` means 8% |
+| `votingPower` | number | Decimal fraction of total stake |
+| `status` | string | `"active"`, `"not_found"`, … |
+| `providerId` | string | Validator provider id |
+| `rewardRate` | object | `{ total, rateType: "APR", components }` |
+
+> **There is no `apr` field.** The validator's APR is `rewardRate.total` (a decimal
+> fraction; `rateType` is `"APR"`). Per-chain additions: **Polkadot** adds `nominatorCount`;
+> **Bittensor** adds a `subnet {}` object.
 
 ---
 

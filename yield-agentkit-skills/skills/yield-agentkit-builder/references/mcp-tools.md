@@ -10,26 +10,19 @@ Consult this file whenever you're unsure if a given MCP tool is safe to invoke d
 
 | Category | Use during builder sessions? | Why |
 |---|---|---|
-| **Doc tools** (`yield_*` prefixed with `get_`, `lookup`, `fetch`, `list`, `troubleshoot`) | ✅ Yes — freely | Read-only references pulled from live docs / OpenAPI spec. Authoritative and always current. |
+| **Doc tools** (`yield_get_api_spec`, `yield_lookup_docs`, `yield_fetch_doc`, `yield_troubleshoot_error`, `yield_list_repos`) | ✅ Yes — freely | Read-only, and all **live**: they pull the current OpenAPI spec, search/read the live docs, diagnose errors against the live spec, or point at real source repos. Authoritative and always current. |
+| **Static guidance** (this skill's `references/*.md`) | ✅ Yes — read directly | Chains, transaction lifecycle, yield types, safety, limits, integration patterns. Curated and bundled with the skill — no tool call needed. |
 | **Action tools** (`yields_get*`, `actions_*`) | ❌ **No — never** | Return trimmed/slimmed responses that omit fields present in the full REST API. Code built from their responses will be wrong. Use `curl`/`fetch` against `https://api.yield.xyz` with the user's API key instead. |
 
 The **one purpose** of action tools is to let an end-user execute yield flows via an AI agent — not to let a builder inspect schemas. For building, always go through the live REST API.
+
+> **Note:** The MCP used to also expose ~10 static doc tools (`yield_get_overview`, `yield_get_chain_guide`, `yield_get_transaction_guide`, `yield_get_yields_endpoint_guide`, `yield_get_safety_rules`, `yield_get_api_limits`, `yield_get_tool_reference`, `yield_list_doc_topics`, `yield_recommend_stack`, `yield_get_integration_guide`). Those have been removed — their content now lives in this skill's `references/` files. If you see them referenced anywhere, read the corresponding skill file instead (mapping below).
 
 ---
 
 ## ✅ Doc Tools — Use These
 
-All doc tools are read-only and safe. Prefer them over web searches or guessing.
-
-### `yield_get_overview`
-- Full tool index and routing guide for the Yield.xyz MCP. Covers action tools vs. doc tools, verification rules, and common flows.
- 
-- **Use when:** "where do I start", "which tool", "overview", "how does this work", "getting started".
-
-### `yield_list_doc_topics`
-- Structured map of all Yield.xyz documentation, organized by category. Accepts optional `category` filter.
-
-- **Use when:** "what docs exist", "show me all topics", "what can I read about", "documentation overview".
+The MCP exposes **five** live doc tools, all read-only and safe. Prefer them over web searches or guessing. (Static "how-to-build" guidance — chains, transaction lifecycle, yield types, safety, limits — is **not** on the MCP; it lives in this skill's own `references/` files, listed under [Static Guidance](#static-guidance--read-from-this-skills-reference-files) below.)
 
 ### `yield_lookup_docs`
 - Full-text search across 209 Yield.xyz documentation pages. Returns ranked results (title, excerpt, `.md` URL). Follow up with `yield_fetch_doc` to read the full page.
@@ -54,37 +47,7 @@ The `product` arg selects which spec to fetch:
 
 **Use when:** Before generating any integration code, for any of the three products. Always verify current field names against this tool — don't trust memory.
 
-### `yield_get_api_limits`
-- Rate limits, API key tiers, throttling behavior, retry guidance.
-
-- **Use when:** "rate limits", "429", "how many requests", "production key", "throttling".
-
-### `yield_get_chain_guide`
-- How to handle Yield.xyz transactions on a specific blockchain. Covers `unsignedTransaction` format, encoding, parsing, which signing SDK to use, required chain-specific arguments (e.g. `cosmosPubKey`, `tezosPubKey`, `tronResource`), common gotchas, and example API flow. Resolves chain family live from `GET /v1/networks` — supports all 90+ networks.
-
-- **Use when:** "how do transactions work on Cosmos/Solana/Base", "what format is unsignedTransaction on [chain]", "what signing SDK for [chain]".
-
-### `yield_get_safety_rules`
-- Safety guardrails and pre-execution checks. Risk levels, 6 pre-execution checks, 7 safety rules, configurable guardrails.
-
-- **Use when:** "safety checks", "guardrails", "pre-action checklist", "risk controls".
-
-### `yield_get_tool_reference`
-- Reference for the Yield.xyz action tools — inputs, outputs, example prompts, transaction format, and execution rules. (The MCP exposes **17 action tools** in total; the full list with one-line descriptions and REST equivalents is in the [Action Tools](#-action-tools--do-not-call-during-builder-sessions) section below.)
-
-- **Use when:** Explaining to the user what the MCP action tools do (e.g. "what tools are available", "how does actions_enter work"). **Do not use as justification to actually call those action tools in a builder session.**
-
-### `yield_get_transaction_guide`
-- Step-by-step guide through the entire transaction flow: discover → read schema → call action → handle unsigned transactions → sign → broadcast → submit hash → confirm. Includes server-side and browser wallet (MetaMask, Phantom EVM) signing examples. Accepts optional `chain` parameter for chain-specific examples.
-
-- **Use when:** "how do transactions work", "full flow", "end to end", "what's stepIndex", "submit hash", "how to sign", "transaction lifecycle", "MetaMask", "browser wallet", "waitForTransaction", "invalid params".
-
-### `yield_get_yields_endpoint_guide`
-- Complete reference for `GET /v1/yields` — the single most-used Yield.xyz endpoint. Covers every query param (filters: `network`/`networks`, `token`/`inputToken`/`inputTokens`, `provider`/`providers`, `type`/`types`, `yieldId`/`yieldIds` up to 100, `chainId`, `hasCooldownPeriod`, `hasWarmupPeriod`), **server-side `search`**, **server-side `sort`** (`YieldSortingOption` enum — `rewardRateDesc` = APY desc), pagination (`limit`/`offset`), response shape, and one-call query patterns that replace client-side fan-out. Also covers all 8 `YieldType` values (staking, liquid-staking, restaking, lending, vault, liquidity-pool, concentrated-liquidity-pool, real-world-asset) with mechanics, lock periods, required arguments, typical APY. Accepts optional `yieldType` filter for a single type's section.
-
-- **Use when:** "how do I filter yields", "how do I sort by APY", "can I query multiple chains at once", "what params does /v1/yields take", "server-side sort", "search yields", "yields_get_all options", "staking vs lending", "lock periods", "what yield types exist", "which type needs validators", "receipt tokens", "concentrated liquidity vs regular liquidity pool", "real-world asset yields".
-
-- **Backwards-compat:** the old tool name `yield_get_yield_types_guide` is kept as an alias — both names work, same content.
+> **Chain formats, transaction lifecycle, yield types, safety rules, and API limits used to be MCP doc tools (`yield_get_chain_guide`, `yield_get_transaction_guide`, `yield_get_yields_endpoint_guide`, `yield_get_safety_rules`, `yield_get_api_limits`).** They are no longer on the MCP — that guidance now lives in this skill's `references/` files. See [Static Guidance](#static-guidance--read-from-this-skills-reference-files).
 
 ### `yield_troubleshoot_error`
 - Diagnoses API errors, HTTP status codes, or unexpected responses. For unrecognized errors, automatically looks up the live OpenAPI spec for the authoritative error shape.
@@ -162,24 +125,39 @@ MCP response may not.
 
 When you need information during a builder session:
 
+**Live needs → MCP doc tools:**
 ```
 Need API reference / schema?        → yield_get_api_spec
   (pass product: "perps" or "borrow"
    when integrating those products;
    default product is "yield")
+Need other endpoint schemas?        → yield_get_api_spec({ endpoint: "..." })
 Need a working code example /
   stuck implementing something?       → yield_list_repos, then read the raw source
-Need sort/search/filter params for
-  /v1/yields specifically?          → yield_get_yields_endpoint_guide — covers every
-                                       filter, multi-value syntax, sort enum, and
-                                       one-call patterns (replaces client-side fan-out)
-Need other endpoint schemas?        → yield_get_api_spec({ endpoint: "..." })
-Need transaction / signing guide?   → yield_get_transaction_guide or yield_get_chain_guide
-Need yield-type mechanics?          → yield_get_yields_endpoint_guide (Part 2)
-Need safety / limits / policies?    → yield_get_safety_rules / yield_get_api_limits
-Need to explore docs broadly?       → yield_list_doc_topics → yield_lookup_docs → yield_fetch_doc
+Need to explore docs broadly?       → yield_lookup_docs → yield_fetch_doc
 Hit an error?                       → yield_troubleshoot_error
+```
 
+**Static "how-to-build" needs → read this skill's `references/` files (no tool call):**
+```
+Sort/search/filter params for /v1/yields,
+  or yield-type mechanics?          → references/yield-types.md
+Transaction lifecycle / signing /
+  stepIndex / submit-hash?          → references/transaction-lifecycle.md
+unsignedTransaction format & signing
+  SDK for a specific chain?         → references/signing-patterns.md
+                                       → references/chains/<chain>.md
+Safety rules / pre-execution checks /
+  guardrails / policies?            → references/policies.md
+Rate limits / 429 / key tiers?      → references/api-limits.md
+Which integration approach (widget /
+  SDK / REST / programmatic)?       → references/setup.md
+Integration architecture patterns?  → references/integration-patterns.md
+Field naming / common mistakes?     → references/api-field-mapping.md, references/common-pitfalls.md
+```
+
+**Data / execution:**
+```
 Need real yield / balance / action data?
                                     → DO NOT call MCP action tools.
                                     → Use the user's API key to call the REST endpoint at
@@ -189,6 +167,24 @@ User wants to actually run/test an
                                        dedicated skill (yield-agentkit / -privy / -moonpay)
                                        — see SKILL.md → Critical Rule #3.
 ```
+
+---
+
+## Static Guidance — read from this skill's reference files
+
+These topics are **not** MCP tools. Read the file directly when you need the guidance.
+
+| Need | Read | (Former MCP tool) |
+|---|---|---|
+| `/v1/yields` query params + the 8 yield types & mechanics | `references/yield-types.md` | `yield_get_yields_endpoint_guide` |
+| End-to-end transaction flow (discover → sign → submit-hash → confirm) | `references/transaction-lifecycle.md` | `yield_get_transaction_guide` |
+| Per-chain `unsignedTransaction` format & signing SDK | `references/signing-patterns.md` + `references/chains/<chain>.md` | `yield_get_chain_guide` |
+| Safety rules, pre-execution checks, guardrails | `references/policies.md` | `yield_get_safety_rules` |
+| Rate limits, key tiers, throttling | `references/api-limits.md` | `yield_get_api_limits` |
+| Choosing an integration approach (widget / SDK / REST / programmatic) | `references/setup.md` | `yield_recommend_stack` |
+| Integration architecture patterns by product type | `references/integration-patterns.md` | `yield_get_integration_guide` |
+
+The action-tool table above replaces the former `yield_get_tool_reference` and `yield_get_overview` tools.
 
 ---
 
