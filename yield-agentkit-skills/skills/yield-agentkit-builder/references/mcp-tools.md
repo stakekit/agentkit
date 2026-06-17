@@ -16,8 +16,6 @@ Consult this file whenever you're unsure if a given MCP tool is safe to invoke d
 
 The **one purpose** of action tools is to let an end-user execute yield flows via an AI agent — not to let a builder inspect schemas. For building, always go through the live REST API.
 
-> **Note:** The MCP used to also expose ~10 static doc tools (`yield_get_overview`, `yield_get_chain_guide`, `yield_get_transaction_guide`, `yield_get_yields_endpoint_guide`, `yield_get_safety_rules`, `yield_get_api_limits`, `yield_get_tool_reference`, `yield_list_doc_topics`, `yield_recommend_stack`, `yield_get_integration_guide`). Those have been removed — their content now lives in this skill's `references/` files. If you see them referenced anywhere, read the corresponding skill file instead (mapping below).
-
 ---
 
 ## ✅ Doc Tools — Use These
@@ -38,8 +36,6 @@ The MCP exposes **five** live doc tools, all read-only and safe. Prefer them ove
 Fetches the **live** Yield OpenAPI spec (`https://api.yield.xyz/docs.json`, default `product` `yield`) — covering staking, liquid/restaking, lending, vaults, and RWA. This is the **source of truth** for request bodies, field constraints (min/max/enum), error response shapes, and operationIds. Accepts an optional `endpoint` filter (e.g. `/v1/actions/enter`), an optional `query` keyword search across paths, and `method`/`section` filters.
 
 **Use when:** Before generating any integration code. Always verify current field names against this tool — don't trust memory.
-
-> **Chain formats, transaction lifecycle, yield types, safety rules, and API limits used to be MCP doc tools (`yield_get_chain_guide`, `yield_get_transaction_guide`, `yield_get_yields_endpoint_guide`, `yield_get_safety_rules`, `yield_get_api_limits`).** They are no longer on the MCP — that guidance now lives in this skill's `references/` files. See [Static Guidance](#static-guidance--read-from-this-skills-reference-files).
 
 ### `yield_troubleshoot_error`
 - Diagnoses API errors, HTTP status codes, or unexpected responses. For unrecognized errors, automatically looks up the live OpenAPI spec for the authoritative error shape.
@@ -163,17 +159,15 @@ User wants to actually run/test an
 
 These topics are **not** MCP tools. Read the file directly when you need the guidance.
 
-| Need | Read | (Former MCP tool) |
-|---|---|---|
-| `/v1/yields` query params + the 8 yield types & mechanics | `references/yield-types.md` | `yield_get_yields_endpoint_guide` |
-| End-to-end transaction flow (discover → sign → submit-hash → confirm) | `references/transaction-lifecycle.md` | `yield_get_transaction_guide` |
-| Per-chain `unsignedTransaction` format & signing SDK | `references/signing-patterns.md` + `references/chains/<chain>.md` | `yield_get_chain_guide` |
-| Safety rules, pre-execution checks, guardrails | `references/policies.md` | `yield_get_safety_rules` |
-| Rate limits, key tiers, throttling | `references/api-limits.md` | `yield_get_api_limits` |
-| Choosing an integration approach (widget / SDK / REST / programmatic) | `references/setup.md` | `yield_recommend_stack` |
-| Integration architecture patterns by product type | `references/integration-patterns.md` | `yield_get_integration_guide` |
-
-The action-tool table above replaces the former `yield_get_tool_reference` and `yield_get_overview` tools.
+| Need | Read |
+|---|---|
+| `/v1/yields` query params + the 8 yield types & mechanics | `references/yield-types.md` |
+| End-to-end transaction flow (discover → sign → submit-hash → confirm) | `references/transaction-lifecycle.md` |
+| Per-chain `unsignedTransaction` format & signing SDK | `references/signing-patterns.md` + `references/chains/<chain>.md` |
+| Safety rules, pre-execution checks, guardrails | `references/policies.md` |
+| Rate limits, key tiers, throttling | `references/api-limits.md` |
+| Choosing an integration approach (widget / SDK / REST / programmatic) | `references/setup.md` |
+| Integration architecture patterns by product type | `references/integration-patterns.md` |
 
 ---
 
