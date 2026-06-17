@@ -1,9 +1,6 @@
 # API Reference
 
-**API Base URL:** `https://api.yield.xyz`
-
-This is the only correct production URL. Do not use `api.stakek.it`, `api.stakekit.io`,
-or any other legacy domain.
+**API Base URL:** `https://api.yield.xyz` (live OpenAPI spec at `https://api.yield.xyz/docs.json`).
 
 ---
 

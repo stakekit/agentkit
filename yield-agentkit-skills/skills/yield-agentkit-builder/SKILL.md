@@ -69,11 +69,8 @@ the `yield-agentkit` skill — not this one.
 ### 1. API Base URL
 
 The production base URL is `https://api.yield.xyz`, with the live OpenAPI spec at
-`https://api.yield.xyz/docs.json`.
-
-This is the only correct production URL. Do not use `api.stakek.it`,
-`api.stakekit.io`, or any other legacy domain. Every code sample, fetch call,
-and SDK config must use this base URL.
+`https://api.yield.xyz/docs.json`. Every code sample, fetch call, and SDK config must
+use this base URL.
 
 ### 2. API Key Requirement
 

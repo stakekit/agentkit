@@ -6,32 +6,26 @@ Real errors encountered during builder sessions. Read this before generating any
 
 ## 1. Wrong API Base URL
 
-**Error:** Using `api.stakek.it` or `api.stakekit.io` instead of `api.yield.xyz`.
+**Error:** Pointing requests at a host other than `https://api.yield.xyz`.
 
-**What happens:** Requests go to the wrong host — they fail, or return field names and
-shapes that don't match `api.yield.xyz`, so the integration breaks.
+**What happens:** Requests fail or hit the wrong service.
 
-**Fix:** Always use `https://api.yield.xyz`. No exceptions. If you see `stakek.it` or
-`stakekit.io` in any documentation, URL, or code — it's outdated. Replace it.
+**Fix:** Every fetch call and SDK config must use `https://api.yield.xyz` (live OpenAPI
+spec at `https://api.yield.xyz/docs.json`). Don't hardcode or guess a host.
 
 ---
 
-## 2. Wrong Field Names in Action Requests
+## 2. Guessing Field Names Instead of Reading the Spec
 
-**Error:** Using the wrong field names in request bodies. These incorrect names are a
-common mistake — they show up in stale examples and model memory. Use the correct ones:
+**Error:** Assuming request/response field names from memory instead of the live spec.
 
-| Don't use | Use |
-|---|---|
-| `integrationId` | `yieldId` |
-| `addresses` | `address` |
-| `args` | `arguments` |
-| `args.amount` | `arguments.amount` |
+**What happens:** `400 Bad Request` with no helpful error message when a field name
+doesn't match.
 
-**What happens:** `400 Bad Request` with no helpful error message.
-
-**Fix:** Always fetch the live OpenAPI spec from `https://api.yield.xyz/docs.json`
-before generating code. Never rely on field names from memory or cached documentation.
+**Fix:** Action request bodies use exactly `yieldId`, `address`, and `arguments` (e.g.
+`arguments.amount`). Always confirm field names against the live OpenAPI spec
+(`https://api.yield.xyz/docs.json` or `yield_get_api_spec`) before generating code —
+never rely on memory or cached docs.
 
 ---
 
