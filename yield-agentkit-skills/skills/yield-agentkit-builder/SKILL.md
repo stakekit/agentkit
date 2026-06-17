@@ -319,50 +319,31 @@ implementing one — use **`yield_list_repos`** to find the relevant public repo
 (widget, SDK, api-recipes, signers, shield, etc.) and read its raw source as a
 working reference.
 
-### Step 2 — Look Up the API Spec
+### Step 2 — Inspect the Live Spec & Real Responses
 
-Before generating any code, fetch the live OpenAPI spec to discover current field
-names and request/response shapes:
+Ground every field name in the live API before generating code — never assume from memory:
 
-**Option A — Use the doc tool:**
-```
-yield_get_api_spec({ endpoint: "/v1/actions/enter", section: "endpoints" })
-```
+- **Spec:** `yield_get_api_spec({ endpoint: "/v1/actions/enter" })`, or
+  `curl https://api.yield.xyz/docs.json | jq '.paths["/v1/actions/enter"]'`.
+- **Real response:** call the endpoint with the user's key and inspect the actual shape:
+  ```bash
+  curl -s "https://api.yield.xyz/v1/yields?network=base&token=USDC&limit=1" \
+    -H "x-api-key: $YIELD_API_KEY" | jq .
+  ```
 
-**Option B — Fetch directly with the user's key:**
-```bash
-curl https://api.yield.xyz/docs.json | jq '.paths["/v1/actions/enter"]'
-```
+Build against what the spec and live response show — not the shapes in these docs.
 
-Use the spec as the source of truth. Never assume field names from memory.
+### Step 3 — Generate Code
 
-### Step 3 — Call the Real API to See Actual Responses
+Generate code that uses `api.yield.xyz` with the key in the `x-api-key` header, uses
+field names exactly as the live spec/responses show, follows the full transaction
+lifecycle from the **Quickstart** above (and
+[`references/transaction-lifecycle.md`](./references/transaction-lifecycle.md) for status
+states, errors/retries, and exit/manage), and applies the signing pattern for the user's
+product type and wallet — see
+[`references/signing-patterns.md`](./references/signing-patterns.md).
 
-Use the user's API key to make a real API call and inspect the response. This lets you
-see the actual field names, nesting, and data types in the response:
-
-```bash
-curl -s "https://api.yield.xyz/v1/yields?network=base&token=USDC&limit=1" \
-  -H "x-api-key: $YIELD_API_KEY" | jq .
-```
-
-Use this real response as the reference when building the frontend or backend integration.
-
-### Step 4 — Generate Code
-
-Generate code that:
-1. Uses the base URL `api.yield.xyz`
-2. Passes the user's API key via `x-api-key` header
-3. Uses field names exactly as seen in the live spec and API responses
-4. Handles the full transaction lifecycle. **Always report the hash after
-   broadcasting** via `PUT /v1/transactions/{txId}/submit-hash` (action -> sign ->
-   broadcast -> submit-hash).
-5. Follows the signing pattern appropriate for the user's product type and wallet choice
-
-See **[`references/signing-patterns.md`](./references/signing-patterns.md)** for
-wallet SDK references and signing guidance per chain.
-
-### Step 5 — Run the Project Yourself and Report URLs
+### Step 4 — Run the Project Yourself and Report URLs
 
 **Do not tell the user "now run `npm run dev`" and walk away.** The skill's job
 isn't done until the project is actually running and you've handed the user the
