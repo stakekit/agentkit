@@ -341,3 +341,62 @@ Pool argument shapes also trip people up:
 
 Always read the yield's `mechanics.arguments.enter` / `.exit` schema — each field's
 `name`, `isArray`, and `required` are the contract.
+
+---
+
+## 17. Signing a Transaction That's Already at a Terminal Status
+
+**Error:** Iterating `action.transactions[]` and signing/broadcasting every step
+without checking each transaction's `status` first.
+
+**What happens:** An action can come back with a step **already terminal** — most
+commonly an `APPROVAL` pre-marked `SKIPPED` because the ERC-20 allowance already
+exists (e.g. the user approved on a previous attempt). If you sign it anyway and then
+call `submit-hash`, the API rejects it with **HTTP 412**: `"Transaction <id> is at
+terminal status SKIPPED; cannot resubmit a different hash."` You've also made the user
+sign a redundant (wasted-gas) transaction in their wallet.
+
+**Fix:** Before signing each transaction, check `tx.status` and **skip any step that is
+already terminal** (`SKIPPED`, `CONFIRMED`, `FAILED`) — do not sign it and do not call
+`submit-hash` for it. Only sign steps that still need it (`CREATED` /
+`WAITING_FOR_SIGNATURE`). The per-tx `status` field is present on the action response
+(`CREATED` for steps that need signing).
+
+```typescript
+const TERMINAL = new Set(["CONFIRMED", "FAILED", "SKIPPED"]);
+
+for (const tx of action.transactions.sort((a, b) => a.stepIndex - b.stepIndex)) {
+  if (TERMINAL.has(tx.status)) continue; // e.g. APPROVAL already SKIPPED — don't sign, don't submit-hash
+  const hash = await signAndBroadcast(tx);
+  await submitHash(tx.id, hash);
+  // ...wait for CONFIRMED per executionPattern
+}
+```
+
+A repeat enter into the same yield typically returns `APPROVAL` as `SKIPPED` and only
+`SUPPLY` as `CREATED` — surface "Approval — not needed" and go straight to the step that
+needs the user.
+
+---
+
+## 18. A Blanket 3-Second Timeout Aborts Slow Endpoints
+
+**Error:** Applying one short timeout (e.g. 3s) to **every** API call.
+
+**What happens:** Fast reads (`/v1/yields`, `/v1/networks`) return well under 3s, but
+several endpoints legitimately take longer and a 3s timeout aborts them mid-flight —
+falsely failing an operation that was actually succeeding:
+- `POST /v1/actions/{enter,exit,manage}` — builds and simulates the transactions.
+- `POST /v1/yields/balances` with `yieldId` omitted — a **chain scan** that sweeps a
+  whole network.
+- `GET /v1/transactions/{id}` — status polling, which can spike under load.
+
+Aborting a status poll mid-confirmation is especially bad: the transaction was already
+broadcast, so the failure is purely a client-side timeout on a tx that will still settle.
+
+**Fix:** Scope the timeout to the call — keep ~3s for fast reads, but allow ~15s for
+action building, ~20s for balance chain-scans, and ~12s for status polling. **And make
+the poll loop tolerant of transient failures** — count consecutive errors and give up
+only after several in a row (e.g. 8), never on a single timeout. A terminal
+non-`CONFIRMED` status is a real failure and should still fail fast; a slow/failed
+*fetch* is not.

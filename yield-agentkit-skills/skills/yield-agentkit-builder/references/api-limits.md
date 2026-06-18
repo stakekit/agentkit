@@ -82,8 +82,15 @@ GET /v1/yields?network=ethereum&token=USDC
 
 Use query parameters (`network`, `token`, `type`) to filter server-side rather than
 fetching everything and filtering client-side. Don't poll balances excessively — check
-after user actions, not on a tight loop. Set a **3-second timeout** on all API calls to
-avoid hanging requests.
+after user actions, not on a tight loop.
+
+**Scope your timeout to the call — do NOT put one short timeout on every request.**
+~3s is right for fast reads (`/v1/yields`, `/v1/networks`), but it aborts slower
+endpoints mid-flight and falsely fails an operation that was actually succeeding. Use a
+longer timeout for: action building `POST /v1/actions/{enter,exit,manage}` (~15s, it
+simulates), balance **chain-scans** `POST /v1/yields/balances` with `yieldId` omitted
+(~20s, it sweeps a whole network), and status polling `GET /v1/transactions/{id}` (~12s,
+it can spike under load). See `common-pitfalls.md` #18.
 
 ### Poll for Status — There Are No Webhooks
 

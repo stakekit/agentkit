@@ -190,6 +190,7 @@ interface TransactionDto {
 1. Execute in `stepIndex` order (0, then 1, then 2...)
 2. For `synchronous` actions, wait for CONFIRMED status before proceeding to next (see "Branch on executionPattern")
 3. NEVER modify `unsignedTransaction`
+4. **Skip any step that is already terminal.** Check `tx.status` before signing — a step can come back `SKIPPED` (e.g. an `APPROVAL` when the allowance already exists) or `CONFIRMED`. Do **not** sign or `submit-hash` a terminal step; signing it makes the user sign a redundant tx and `submit-hash` then returns **412** (`"is at terminal status SKIPPED; cannot resubmit a different hash"`). Only sign `CREATED` / `WAITING_FOR_SIGNATURE` steps. See `common-pitfalls.md` #17.
 
 ## Branch on `action.executionPattern`
 
@@ -394,6 +395,14 @@ is **terminal** (`CONFIRMED`, `FAILED`, or `SKIPPED`), bounded by an overall tim
 (~2–5 min). For `synchronous` actions this is also your sequencing gate — only submit the
 next `stepIndex` once the prior tx reaches `CONFIRMED`.
 
+> **Make the poll loop tolerant, and give this endpoint room.** `GET /v1/transactions/{id}`
+> can spike under load — a short per-call timeout (e.g. 3s) will abort it and falsely fail a
+> tx that's already broadcast and confirming. Allow ~12s per status call, and treat a
+> failed/timed-out *fetch* as transient: count consecutive errors and give up only after
+> several in a row (e.g. 8), not on the first. A terminal non-`CONFIRMED` status, by
+> contrast, is a real failure and should fail fast. See `common-pitfalls.md` #18 and
+> `api-limits.md`.
+
 ```typescript
 const TERMINAL = new Set(["CONFIRMED", "FAILED", "SKIPPED"]);
 
@@ -477,6 +486,12 @@ After entering, the position shows up in balances. This is also where follow-up 
 **Batch (recommended)** — `POST /v1/yields/balances`, body `{ queries: [...] }`:
 - Each query is `{ network, address, yieldId? }`. `network` and `address` are **required**; `yieldId` is optional (omit to get all of an address's positions on that network).
 - **Max 25 queries** per request.
+
+> **Omitting `yieldId` (chain scan) is best-effort and eventually-consistent.** The same
+> `{ network, address }` query can return 0 results one moment and the position the next —
+> don't treat a single empty scan as "no positions." For a **deterministic** read of a known
+> position, pass its `yieldId` explicitly. Chain scans are also slower (they sweep a whole
+> network) — give the call ~20s, not a 3s timeout (see `api-limits.md`).
 
 **Single yield** — `POST /v1/yields/{yieldId}/balances`, body `{ address }`.
 

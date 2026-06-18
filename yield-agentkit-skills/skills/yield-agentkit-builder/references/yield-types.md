@@ -40,6 +40,19 @@ This is the single most important endpoint in the Yield.xyz API. It's the discov
 > yield id (`aave-v3`, `compound-v3`). `?provider=aave-v3` returns total 0; `?provider=aave`
 > returns results.
 
+> **`token` / `inputToken` accept a symbol OR a contract address — but the symbol match is
+> coarse.** One symbol (e.g. `USDC`) maps to multiple contract variants on a chain (native vs.
+> bridged), so filtering by symbol can over-match across tokens you didn't mean. When you need
+> an **exact** token, pass the **contract address** (lowercased), not the symbol. Filtering by
+> symbol is fine for broad discovery; switch to address when precision matters.
+
+> **For the authoritative list of *live* networks, call `GET /v1/networks` — don't enumerate
+> from the spec.** The spec's `network` enum is a **superset**: it includes testnets
+> (`ethereum-sepolia`, `monad-testnet`, …) and networks that may not be enabled for your key.
+> `GET /v1/networks` returns the currently live set (and each entry's `category`, which you
+> need for signing — see `signing-patterns.md`). Which of those are usable by *your* key is
+> still gated by the dashboard (see `dashboard-and-api-keys.md`).
+
 ### Sort options (`YieldSortingOption` enum)
 
 | Value | Meaning |
