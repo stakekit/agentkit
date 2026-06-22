@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit × Privy Skill
 
-> **End-to-end on-chain yield, fully in Claude.** This skill combines Yield.xyz's yield discovery and transaction building with Privy's wallet infrastructure, policy enforcement, and transaction signing — so you can go from "find me the best USDC yield on Base" to a confirmed on-chain position without leaving your AI assistant.
+> The Privy connector for the Yield.xyz AgentKit. Combines Yield.xyz yield discovery and transaction building with Privy's wallet infrastructure, policy enforcement, and transaction signing.
 
 ---
 
@@ -82,8 +82,6 @@ The only moments Claude will pause and ask for your input are:
 - Which chain(s) to operate on
 - Your Key Quorum ID (Semi-Autonomous only — created on the Privy dashboard)
 
-Everything else is handled automatically.
-
 ---
 
 ## Verify setup
@@ -138,8 +136,8 @@ Stake 1 ETH on Ethereum
 Show me ETH liquid staking options — I want to use Lido
 ```
 
-Claude will automatically load the skill, call the right tools in order,
-confirm each step with you before signing, and submit the transactions.
+Claude loads the skill, calls the right tools in order, confirms each step
+with you before signing, and submits the transactions.
 
 ---
 

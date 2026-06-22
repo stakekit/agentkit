@@ -51,13 +51,13 @@ Mobile/Web App -> @yieldxyz/sdk -> Yield.xyz API
 
 ### Key Considerations
 - **Client-side signing:** User signs with their own wallet — see `signing-patterns.md` for SDK recommendations per wallet
-- **Widget option:** For fastest integration, use `@stakekit/widget` — a drop-in React component
+- **Widget option:** Use `@stakekit/widget`, a drop-in React component
 - **Multi-wallet support:** Use wagmi + RainbowKit or Web3Modal for supporting multiple wallets with one integration
 - **Chain detection:** Use the connected wallet's chain to filter relevant yields
 - **User-friendly amounts:** The API uses human-readable amounts — display as-is
 - **Browser wallet quirks:** See `common-pitfalls.md` entries #4, #5, #11
 
-### Widget Integration (Fastest Path)
+### Widget Integration
 The `@stakekit/widget` is a pre-built React component that handles the entire yield
 flow — discovery, entry, exit, and management. No need to call the API directly.
 
@@ -125,8 +125,8 @@ Key points for this path:
   as-is; don't mutate it (same rule as raw `unsignedTransaction`).
 - **Theming:** `SKApp` accepts a `theme` prop (a `ThemeWrapperTheme` object — use the
   exported `darkTheme`/`lightTheme`, or supply a custom theme to match your brand) plus
-  `tokenIconMapping`/`chainIconMapping` to override token/chain icons. The widget is more
-  customizable than "you get the default UI" implies — restyle it instead of forking.
+  `tokenIconMapping`/`chainIconMapping` to override token/chain icons. Restyle the widget
+  with these props instead of forking it.
 - Related props: `disableInjectedProviderDiscovery` (stop the widget probing for injected
   wallets when you supply your own), `validatorsConfig` (allow/block/prefer validators per
   chain), and `mapWalletListFn`/`mapWalletFn` (customize the connector list *if* you do use

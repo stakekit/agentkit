@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit Skill × MoonPay Skill
 
-> **End-to-end on-chain yield.** This skill combines Yield.xyz's yield discovery and transaction building with MoonPay's wallet authentication, signing, and broadcasting — so you can go from "find me ETH staking yields" to a confirmed on-chain position without leaving your AI assistant.
+> The MoonPay connector for the Yield.xyz AgentKit. Combines Yield.xyz yield discovery and transaction building with MoonPay's wallet authentication, signing, and broadcasting.
 
 ---
 
@@ -68,8 +68,6 @@ The only moments the agent will pause and ask for your input are:
 - The verification code sent to your email (if login is needed)
 - A wallet name (if wallet creation is needed)
 
-Everything else is handled automatically.
-
 ---
 
 ## Verify setup
@@ -136,9 +134,9 @@ Check my current yield positions for my MoonPay wallet
 ```
 
 
-The agent will automatically load the skill, call the right tools in order,
-confirm each step with you before signing, and submit the transaction hash
-back to Yield.xyz after broadcasting.
+The agent loads the skill, calls the right tools in order, confirms each step
+with you before signing, and submits the transaction hash to Yield.xyz after
+broadcasting.
 
 ---
 

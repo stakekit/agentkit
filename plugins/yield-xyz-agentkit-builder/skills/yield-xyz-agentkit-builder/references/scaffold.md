@@ -11,7 +11,7 @@ the API key works.
 
 ## 1. Widget app (default greenfield path)
 
-Vite + React + TypeScript + `@stakekit/widget`. Fastest path to a running yield UI.
+Vite + React + TypeScript + `@stakekit/widget`.
 
 ```
 my-yield-app/

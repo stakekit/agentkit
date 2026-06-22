@@ -12,7 +12,7 @@
   "interface": {
     "displayName": "Yield.xyz AgentKit Builder",
     "shortDescription": "Generate code to integrate the Yield.xyz API.",
-    "longDescription": "Scaffolds and writes production-ready code that integrates the Yield.xyz API for DeFi yield across 80+ networks — REST integration, transaction signing, and wallet connection.",
+    "longDescription": "Scaffolds and writes code that integrates the Yield.xyz API for DeFi yield across 80+ networks — REST integration, transaction signing, and wallet connection.",
     "category": "Finance",
     "capabilities": ["Interactive", "Read", "Write"],
     "websiteURL": "https://yield.xyz",

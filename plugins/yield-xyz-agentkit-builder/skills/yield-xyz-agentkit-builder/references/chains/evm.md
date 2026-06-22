@@ -195,7 +195,7 @@ Always execute in `stepIndex` order. Wait for `CONFIRMED` before proceeding.
 
 ## Available Yields
 
-EVM has the widest yield selection: lending (Aave, Morpho, Compound), liquid staking (Lido, Rocketpool), vaults (Euler, Yearn), and more.
+EVM supports lending (Aave, Morpho, Compound), liquid staking (Lido, Rocketpool), and vaults (Euler, Yearn).
 
 ```bash
 # USDC lending on Base

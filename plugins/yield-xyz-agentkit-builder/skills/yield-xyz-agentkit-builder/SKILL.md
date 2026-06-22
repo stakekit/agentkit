@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit-builder
-description: Build applications that integrate with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks. Generates production-ready code covering REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield, generate code, or set up a project using Yield.xyz.
+description: Build applications that integrate with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks. Generates code covering REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield, generate code, or set up a project using Yield.xyz.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -10,7 +10,7 @@ metadata:
 # Yield.xyz AgentKit — Builder Skill
 
 This skill helps developers build applications that integrate with the Yield.xyz API.
-It generates production-ready code, guides architecture decisions, and ensures correct
+It generates integration code, guides architecture decisions, and helps ensure correct
 API usage across all supported chains and protocols.
 
 **Scope: this skill builds Yield integrations** — staking, lending, vaults, and RWA
@@ -230,8 +230,8 @@ signing approach, and which reference files to load.
 
 **Pick the integration option (default is decisive and situational):**
 
-- **Greenfield / unspecified staking app → `@stakekit/widget`** — fastest path to a
-  running, clickable app.
+- **Greenfield / unspecified staking app → `@stakekit/widget`** — drop-in UI, least
+  integration code to a running app.
   *Already have a wallet / wagmi setup? The widget doesn't force its own connect flow —
   pass `externalProviders` (your address + signer) plus `disableInjectedProviderDiscovery`.
   See [`references/integration-patterns.md`](./references/integration-patterns.md) →

@@ -3,7 +3,7 @@
 [![AI Agent Skill](https://img.shields.io/badge/AI%20Agent-Skill-orange)](https://yield.xyz)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
-> **Build on Yield.xyz with AI agents.** This skill teaches any MCP-compatible AI agent how to generate production-ready code that integrates with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks.
+> **Build on Yield.xyz with AI agents.** This skill teaches any MCP-compatible AI agent how to generate code that integrates with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks.
 
 What you ship integrates with Yield.xyz through the [`@yieldxyz/sdk`](https://www.npmjs.com/package/@yieldxyz/sdk) or REST calls against `https://api.yield.xyz`. The [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp) is an optional build-time reference: its doc tools give the agent live access to the OpenAPI spec and public reference repos for grounding field names and schemas while generating code. Nothing in the shipped integration calls the MCP — it is not a runtime dependency.
 
@@ -19,10 +19,10 @@ Once installed, the agent activates this skill when you ask to build something:
 - "Set up a neobank with DeFi yield features"
 - "How do I sign Yield.xyz transactions with MetaMask?"
 
-It starts by understanding what you're building, then recommends the best
+It starts by understanding what you're building, then recommends an
 integration option (widget, SDK, or direct REST API) for it. From there it
 generates code that calls the Yield.xyz REST API directly, using correct field
-names, proper transaction signing, and the full submit-hash lifecycle.
+names, transaction signing, and the full submit-hash lifecycle.
 
 ---
 
@@ -33,7 +33,7 @@ names, proper transaction signing, and the full submit-hash lifecycle.
 | `yield-xyz-agentkit` | Explore yields conversationally | Tables, summaries, portfolio views |
 | `yield-xyz-agentkit-moonpay` | Enter yields end-to-end via MoonPay | Signed & broadcast transactions |
 | `yield-xyz-agentkit-privy` | Enter yields end-to-end via Privy | Signed & broadcast transactions |
-| **`yield-xyz-agentkit-builder`** | **Build apps that integrate Yield.xyz** | **Production-ready code** |
+| **`yield-xyz-agentkit-builder`** | **Build apps that integrate Yield.xyz** | **Generated integration code** |
 
 The explore/execute skills use MCP tools directly at runtime. The builder skill is different: it generates code that calls the Yield.xyz SDK or REST API with the user's own API key, and only uses the MCP doc tools as a build-time reference while writing that code.
 
