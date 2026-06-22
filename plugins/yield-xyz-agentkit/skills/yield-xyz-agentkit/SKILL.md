@@ -93,7 +93,7 @@ List and filter yield opportunities across networks and tokens.
 - `sort` — server-side sort order. **Always pass `rewardRateDesc` by default** — do not re-sort client-side. Switch to `rewardRateAsc`, `statusEnterDesc`, `statusEnterAsc`, `statusExitDesc`, or `statusExitAsc` per user request.
 - `search` — free-text search across yield names, token names, provider names, and descriptions.
 - `yieldIds` — batch fetch up to 100 specific yields by ID.
-- `inputTokens` — filter to yields whose **accepted deposit token** is in this list — symbols or contract addresses, e.g. `["USDC"]`. This is how you scope discovery to a wallet's holdings; prefer contract addresses when a symbol is ambiguous across chains.
+- `inputTokens` — filter to yields whose **accepted deposit token** is in this list — symbols or contract addresses, e.g. `["USDC"]`. This is how you scope discovery to a wallet's holdings. A symbol like `USDC` can over-match contract variants (native vs bridged); pass the contract address when you need an exact token.
 - `providers` — filter by provider IDs e.g. `["lido", "aave"]`. Use `providers_get_all` to get valid IDs.
 - `hasCooldownPeriod` — `true` to show only yields with a cooldown, `false` to exclude them.
 - `hasWarmupPeriod` — `true` to show only yields with a warmup period.
@@ -103,7 +103,7 @@ List and filter yield opportunities across networks and tokens.
 
 **Use when:** User wants to browse or compare yield options.
 
-**Canonical discovery — fetch *relevant* yields.** When a wallet is in context, scope discovery to what it can actually deposit: pass the wallet's held tokens as `inputTokens` (and their chains as `networks`) so you return only enterable yields instead of the whole catalog. The base has no wallet — get holdings from the host's signer/wallet (e.g. a connector's balance read). With no wallet in context, discover by the user's stated `token` / `networks` instead.
+**Canonical discovery — fetch *relevant* yields.** When a wallet is in context, scope discovery to what it can deposit: pass the wallet's held tokens as `inputTokens` (and their chains as `networks`) so you return only yields that **accept a token the wallet holds**, instead of the whole catalog. (Token match isn't a guarantee of entry — that still depends on holding enough vs `minEntry`, the yield's `status.enter`, and any gating like RWA KYC.) The base has no wallet — get holdings from the host's signer/wallet (e.g. a connector's balance read). With no wallet in context, discover by the user's stated `token` / `networks` instead.
 
 ---
 
@@ -382,7 +382,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 ## Recommended Workflows
 
 ### Find and enter a yield
-1. **Scope to holdings (when a wallet is in context).** Get the wallet's token balances from the host's signer/wallet, then call `yields_get_all` with `inputTokens` set to the held tokens and `networks` to their chains — so you fetch only yields the user can actually enter. With no wallet in context, discover by the user's stated `token` / `networks`. (`sort: "rewardRateDesc"`, `limit: 20`)
+1. **Scope to holdings (when a wallet is in context).** Get the wallet's token balances from the host's signer/wallet, then call `yields_get_all` with `inputTokens` set to the held tokens and `networks` to their chains — so you fetch only yields that accept a token the wallet holds (final entry still checks the held amount vs `minEntry` and `status.enter`). With no wallet in context, discover by the user's stated `token` / `networks`. (`sort: "rewardRateDesc"`, `limit: 20`)
 2. Present top 10 in formatted table
 3. Select a yield → `yields_get` on that ID — show reward breakdown + mechanics
 4. If `requiresValidatorSelection`, call `yields_get_validators`, present top 10
