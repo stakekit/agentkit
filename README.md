@@ -34,19 +34,13 @@ The Privy and MoonPay plugins **depend on** the base and pull it in automaticall
 
 ### Yield.xyz AgentKit Claude Skills
 
-The same skills can also be installed standalone (per-skill), without the plugin/MCP wiring:
+Prefer per-skill installation without the plugin/MCP wiring? Install any skill standalone and pick interactively:
 
 ```bash
 npx skills add https://github.com/stakekit/agentkit
 ```
 
-| Skill | Description |
-|---|---|
-| [`yield-xyz-agentkit`](./plugins/yield-xyz-agentkit/skills/yield-xyz-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
-| [`yield-xyz-agentkit-builder`](./plugins/yield-xyz-agentkit-builder/skills/yield-xyz-agentkit-builder/) | Build applications that integrate the Yield.xyz API — generates code for DeFi yield (staking, lending, vaults, and real-world assets) across 80+ networks, covering REST integration, transaction signing, wallet connection |
-| [`yield-xyz-agentkit-privy`](./plugins/yield-xyz-agentkit-privy/skills/yield-xyz-agentkit-privy/) | Policy-aware yield execution. Yield.xyz discovers yields and builds transactions, Privy enforces policy-guarded signing and broadcasting with autonomous and semi-autonomous workflows |
-| [`yield-xyz-agentkit-moonpay`](./plugins/yield-xyz-agentkit-moonpay/skills/yield-xyz-agentkit-moonpay/) | End-to-end yield flow. Yield.xyz discover yields and builds transactions, MoonPay signs and broadcasts |
-
+See **[`plugins/README.md`](./plugins/README.md)** for the per-plugin breakdown, individual skill descriptions, and a feature comparison.
 
 ---
 

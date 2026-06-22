@@ -3,14 +3,14 @@ name: yield-xyz-agentkit-privy
 description:
   Sign and broadcast Yield.xyz transactions with Privy agentic wallets. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; this one adds Privy wallet creation, policy enforcement, signing, and broadcasting, in autonomous and semi-autonomous (enterprise approval) modes. Use when the user wants to execute yield transactions via a Privy wallet, set up autonomous yield strategies, or manage agentic wallet policies. Requires the yield-xyz-agentkit skill + Yield.xyz MCP and Privy API credentials.
 metadata:
+  author: Yield.xyz
+  version: "1.0.0"
+  mcp-server: yield-xyz-agentkit
   claude:
-    emoji: "📈"
     requires:
       bins:
         - curl
         - jq
-  author: Yield.xyz
-  version: "1.0.0"
 ---
 
 # Yield.xyz AgentKit + Privy

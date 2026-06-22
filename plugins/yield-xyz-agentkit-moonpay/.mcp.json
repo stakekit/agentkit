@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "moonpay": {
-      "command": "mp",
-      "args": ["mcp"]
-    }
-  }
-}
