@@ -6,7 +6,7 @@
 
 ## How it works
 
-Two MCP servers, one seamless flow:
+Two MCP servers:
 
 ```
 User prompt

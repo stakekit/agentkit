@@ -1,6 +1,6 @@
 {
   "name": "yield-xyz-agentkit-privy",
-  "description": "The Privy connector — sign and broadcast Yield.xyz transactions via Privy agentic wallets. Builds on the yield-xyz-agentkit base plugin (installed automatically).",
+  "description": "The Privy connector — sign and broadcast Yield.xyz transactions via Privy agentic wallets. Builds on the yield-xyz-agentkit base plugin.",
   "version": "1.0.0",
   "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
   "homepage": "https://docs.yield.xyz",

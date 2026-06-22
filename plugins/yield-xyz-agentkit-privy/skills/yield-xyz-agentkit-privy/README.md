@@ -6,7 +6,7 @@
 
 ## How it works
 
-One MCP server, one connector, one seamless flow:
+One MCP server, one connector:
 
 ```
 User prompt

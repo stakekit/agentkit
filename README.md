@@ -26,7 +26,7 @@ Four composable plugins in one marketplace. Each installs its skill and auto-reg
 | `yield-xyz-agentkit-privy` | `/plugin install yield-xyz-agentkit-privy@agentkit` | Sign + broadcast via Privy agentic wallets |
 | `yield-xyz-agentkit-moonpay` | `/plugin install yield-xyz-agentkit-moonpay@agentkit` | Sign + broadcast via MoonPay |
 
-The Privy and MoonPay connectors **depend on** the base and pull it in automatically — one install is enough:
+The Privy and MoonPay connectors **depend on** the base:
 
 ```bash
 /plugin install yield-xyz-agentkit-privy@agentkit   # also installs yield-xyz-agentkit
