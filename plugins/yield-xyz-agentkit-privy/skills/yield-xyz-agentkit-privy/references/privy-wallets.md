@@ -65,16 +65,23 @@ curl -s "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID" \
 
 ## Get Wallet Balance
 
-**When fetching wallet balances for Privy wallets, ALWAYS use the following endpoint.
-This is the recommended and reliable method for retrieving balances across supported chains.**
+**When fetching wallet balances for Privy wallets, ALWAYS use this endpoint.** It does
+**not** enumerate holdings — you must name which tokens to check: `asset` (named assets
+like `usdc`, `eth`, up to 10) with `chain`, **or** `token` (contract addresses as
+`chain:address`, up to 10). Omitting both returns nothing.
 
-Example: 
 ```bash
 # USDC balance on Base
 curl -s "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/balance?chain=base&asset=usdc" \
   --user "$PRIVY_APP_ID:$PRIVY_APP_SECRET" \
   -H "privy-app-id: $PRIVY_APP_ID" | jq .
 ```
+
+**Portfolio-aware discovery** (filter yields to what the wallet holds — see the base
+skill's "Canonical discovery"): because Privy can't list unknown tokens, first call
+`yields_get_all` for the target `networks` to collect the candidate `inputTokens`, check
+the wallet for those (batches of up to 10), then re-query `yields_get_all` with
+`inputTokens` set to the non-zero holdings.
 
 ---
 
