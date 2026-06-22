@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit-moonpay
-description: Sign and broadcast Yield.xyz transactions with MoonPay. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; this one adds MoonPay wallet auth, signing, and broadcasting. Use when the user wants to enter, exit, or manage yield positions end-to-end via a MoonPay wallet. Requires the yield-xyz-agentkit skill + Yield.xyz MCP and the MoonPay MCP.
+description: The MoonPay connector for the Yield.xyz AgentKit — signs and broadcasts via MoonPay. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; this one adds MoonPay wallet auth, signing, and broadcasting. Use when the user wants to enter, exit, or manage yield positions end-to-end via a MoonPay wallet. Requires the yield-xyz-agentkit skill + Yield.xyz MCP and the MoonPay MCP.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -9,7 +9,7 @@ metadata:
 
 # Yield.xyz AgentKit × MoonPay
 
-Adds a **signer** to the Yield.xyz AgentKit: MoonPay handles wallet auth and signs + broadcasts the transactions that `yield-xyz-agentkit` builds.
+The **MoonPay connector** for the Yield.xyz AgentKit: MoonPay handles wallet auth and signs + broadcasts the transactions that `yield-xyz-agentkit` builds.
 
 `yield-xyz-agentkit` (this skill's base) owns all yield logic — discovery, schemas, validator selection, balances, building `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`), output formatting, and the MCP tool reference. Use it for all of that; this skill only signs and broadcasts.
 

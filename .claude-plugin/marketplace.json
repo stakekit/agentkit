@@ -31,23 +31,23 @@
     },
     {
       "name": "yield-xyz-agentkit-privy",
-      "description": "Sign and broadcast Yield.xyz transactions with Privy agentic wallets. Builds on the yield-xyz-agentkit base plugin (installed automatically).",
+      "description": "The Privy connector — sign and broadcast Yield.xyz transactions via Privy agentic wallets. Builds on the yield-xyz-agentkit base plugin (installed automatically).",
       "version": "1.0.0",
       "source": "./plugins/yield-xyz-agentkit-privy",
       "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
       "homepage": "https://docs.yield.xyz",
       "repository": "https://github.com/stakekit/agentkit",
-      "keywords": ["defi", "yield", "privy", "agentic-wallet", "signing", "web3"]
+      "keywords": ["defi", "yield", "privy", "connector", "agentic-wallet", "signing", "web3"]
     },
     {
       "name": "yield-xyz-agentkit-moonpay",
-      "description": "Sign and broadcast Yield.xyz transactions with MoonPay. Builds on the yield-xyz-agentkit base plugin (installed automatically).",
+      "description": "The MoonPay connector — sign and broadcast Yield.xyz transactions via MoonPay. Builds on the yield-xyz-agentkit base plugin (installed automatically).",
       "version": "1.0.0",
       "source": "./plugins/yield-xyz-agentkit-moonpay",
       "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
       "homepage": "https://docs.yield.xyz",
       "repository": "https://github.com/stakekit/agentkit",
-      "keywords": ["defi", "yield", "moonpay", "wallet", "signing", "web3"]
+      "keywords": ["defi", "yield", "moonpay", "connector", "wallet", "signing", "web3"]
     }
   ]
 }

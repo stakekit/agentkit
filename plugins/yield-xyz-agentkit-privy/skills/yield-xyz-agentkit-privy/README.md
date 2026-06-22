@@ -6,7 +6,7 @@
 
 ## How it works
 
-One MCP server, one wallet layer, one seamless flow:
+One MCP server, one connector, one seamless flow:
 
 ```
 User prompt
@@ -236,13 +236,13 @@ Watch Claude:
 
 ## Folder structure
 
-This skill **extends the `yield-xyz-agentkit` skill** — that skill owns all yield
-discovery, transaction-building, and output formatting. This skill adds only the
-Privy signing layer.
+This skill is the **Privy connector** — it **extends the `yield-xyz-agentkit` skill**,
+which owns all yield discovery, transaction-building, and output formatting. This
+skill adds only Privy signing and broadcasting.
 
 ```
 yield-xyz-agentkit-privy/
-├── SKILL.md                        # Signing layer — extends yield-xyz-agentkit
+├── SKILL.md                        # Privy connector — extends yield-xyz-agentkit
 ├── README.md                       # This file
 └── references/
     ├── architecture.md             # Full system diagram and end-to-end flow

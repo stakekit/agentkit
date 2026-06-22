@@ -1,7 +1,7 @@
 ---
 name: yield-xyz-agentkit-privy
 description:
-  Sign and broadcast Yield.xyz transactions with Privy agentic wallets. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; this one adds Privy wallet creation, policy enforcement, signing, and broadcasting, in autonomous and semi-autonomous (enterprise approval) modes. Use when the user wants to execute yield transactions via a Privy wallet, set up autonomous yield strategies, or manage agentic wallet policies. Requires the yield-xyz-agentkit skill + Yield.xyz MCP and Privy API credentials.
+  The Privy connector for the Yield.xyz AgentKit — signs and broadcasts via Privy agentic wallets. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; this one adds Privy wallet creation, policy enforcement, signing, and broadcasting, in autonomous and semi-autonomous (enterprise approval) modes. Use when the user wants to execute yield transactions via a Privy wallet, set up autonomous yield strategies, or manage agentic wallet policies. Requires the yield-xyz-agentkit skill + Yield.xyz MCP and Privy API credentials.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -15,7 +15,7 @@ metadata:
 
 # Yield.xyz AgentKit + Privy
 
-Adds a **signer** to the Yield.xyz AgentKit: Privy holds the key, enforces policy, and signs + broadcasts the transactions that `yield-xyz-agentkit` builds.
+The **Privy connector** for the Yield.xyz AgentKit: Privy holds the key, enforces policy, and signs + broadcasts the transactions that `yield-xyz-agentkit` builds.
 
 `yield-xyz-agentkit` (this skill's base) owns all yield logic — discovery, schemas, balances, building `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`), output formatting, and the MCP tool reference. Use it for all of that; this skill only signs and broadcasts.
 

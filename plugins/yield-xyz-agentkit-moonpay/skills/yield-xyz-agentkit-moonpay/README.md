@@ -239,13 +239,13 @@ Watch your AI agent:
 
 ## Folder structure
 
-This skill **extends the `yield-xyz-agentkit` skill** — that skill owns all yield
-discovery, transaction-building, and output formatting. This skill adds only the
-MoonPay signing layer.
+This skill is the **MoonPay connector** — it **extends the `yield-xyz-agentkit` skill**,
+which owns all yield discovery, transaction-building, and output formatting. This
+skill adds only MoonPay signing and broadcasting.
 
 ```
 yield-xyz-agentkit-moonpay/
-├── SKILL.md                    # Signing layer — extends yield-xyz-agentkit
+├── SKILL.md                    # MoonPay connector — extends yield-xyz-agentkit
 ├── README.md                   # This file
 └── references/
     ├── setup.md                # Agent-executed setup guide for both MCP servers
