@@ -78,7 +78,7 @@ curl -s "https://api.privy.io/v1/wallets/$PRIVY_WALLET_ID/balance?chain=base&ass
 ```
 
 **Portfolio-aware discovery** (filter yields to what the wallet holds — see the base
-skill's "Canonical discovery"): because Privy can't list unknown tokens, first call
+skill's "Default discovery"): because Privy can't list unknown tokens, first call
 `yields_get_all` for the target `networks` to collect the candidate `inputTokens`, check
 the wallet for those (batches of up to 10), then re-query `yields_get_all` with
 `inputTokens` set to the non-zero holdings.
