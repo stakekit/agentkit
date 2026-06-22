@@ -1,4 +1,4 @@
-![Yield.xyz AgentKit Banner](./assets/yield-agentkit-banner.png)
+![Yield.xyz AgentKit Banner](./assets/yield-xyz-agentkit-banner.png)
 
 # Yield.xyz AgentKit — Claude Plugin & Skills
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
@@ -11,32 +11,36 @@ The official tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone
 
 ## What's in this repo
 
-### Yield.xyz AgentKit Claude Plugin
+### Yield.xyz AgentKit Claude Plugins
 
-A Claude Code plugin that installs the Yield.xyz skill and auto-registers the MCP server in one command.
+Four composable plugins in one marketplace. Each installs its skill and auto-registers the MCP server(s) it needs. Start with the base plugin, then add a connector for your wallet/execution provider.
 
 ```bash
 /plugin marketplace add stakekit/agentkit
-/plugin install yield_agentkit_agent@agentkit
+```
+
+| Plugin | Install | What it adds |
+|---|---|---|
+| **`yield-xyz-agentkit`** *(base)* | `/plugin install yield-xyz-agentkit@agentkit` | Discover yields + build transactions, bring your own signer |
+| `yield-xyz-agentkit-builder` | `/plugin install yield-xyz-agentkit-builder@agentkit` | Generate Yield.xyz integration code |
+| `yield-xyz-agentkit-privy` | `/plugin install yield-xyz-agentkit-privy@agentkit` | Sign + broadcast via Privy agentic wallets |
+| `yield-xyz-agentkit-moonpay` | `/plugin install yield-xyz-agentkit-moonpay@agentkit` | Sign + broadcast via MoonPay |
+
+The Privy and MoonPay connectors **depend on** the base:
+
+```bash
+/plugin install yield-xyz-agentkit-privy@agentkit   # also installs yield-xyz-agentkit
 ```
 
 ### Yield.xyz AgentKit Claude Skills
 
-Standalone skills, can be installed independently.
-
+Prefer per-skill installation without the plugin/MCP wiring? Install any skill standalone and pick interactively:
 
 ```bash
 npx skills add https://github.com/stakekit/agentkit
 ```
 
-| Skill | Description |
-|---|---|
-| [`yield-agentkit`](./yield-agentkit-skills/skills/yield-agentkit/) | Yield discovery and transaction building via the Yield.xyz MCP |
-| [`yield-agentkit-builder`](./yield-agentkit-skills/skills/yield-agentkit-builder/) | Build applications that integrate the Yield.xyz API — generates code for DeFi yield (staking, lending, vaults, and real-world assets) across 80+ networks, covering REST integration, transaction signing, wallet connection |
-| [`yield-agentkit-privy`](./yield-agentkit-skills/skills/yield-agentkit-privy/) | Policy-aware yield execution. Yield.xyz discovers yields and builds transactions, Privy enforces policy-guarded signing and broadcasting with autonomous and semi-autonomous workflows |
-| [`yield-agentkit-rwakit-privy`](./yield-agentkit-skills/skills/yield-agentkit-rwakit-privy/) | Real-World Asset (RWA) yield execution via Privy. Same flow as the Privy skill, scoped to tokenized RWA yields (Superstate, Midas) with KYC / accreditation / minimum / on-chain allowlist gating before any deposit |
-| [`yield-agentkit-moonpay`](./yield-agentkit-skills/skills/yield-agentkit-moonpay/) | End-to-end yield flow. Yield.xyz discover yields and builds transactions, MoonPay signs and broadcasts |
-
+See **[`plugins/README.md`](./plugins/README.md)** for the per-plugin breakdown, individual skill descriptions, and a feature comparison.
 
 ---
 
@@ -49,7 +53,7 @@ The Yield.xyz AgentKit MCP Server exposes 7 tools that give Claude live access t
 ### Option 1: Connect via Claude Code
 
 ```bash
-claude mcp add --transport http yield-agentkit https://mcp.yield.xyz/mcp
+claude mcp add --transport http yield-xyz-agentkit https://mcp.yield.xyz/mcp
 ```
 
 ### Option 2: Connect via Claude Desktop
@@ -59,7 +63,7 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 ```json
 {
   "mcpServers": {
-    "yield-agentkit": {
+    "yield-xyz-agentkit": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp.yield.xyz/mcp"]
     }

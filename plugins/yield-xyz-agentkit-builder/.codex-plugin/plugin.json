@@ -1,0 +1,24 @@
+{
+  "name": "yield-xyz-agentkit-builder",
+  "version": "1.0.0",
+  "description": "Build applications that integrate the Yield.xyz API.",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
+  "skills": "./skills",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Yield.xyz AgentKit Builder",
+    "shortDescription": "Generate code to integrate the Yield.xyz API.",
+    "longDescription": "Scaffolds and writes code that integrates the Yield.xyz API for DeFi yield across 80+ networks — REST integration, transaction signing, and wallet connection.",
+    "category": "Finance",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://yield.xyz",
+    "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
+    "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
+    "defaultPrompt": ["Scaffold a Yield.xyz integration in Next.js.", "Generate code to enter an Aave position.", "Show me how to sign and broadcast a Yield.xyz transaction."],
+    "brandColor": "#FFC21B"
+  }
+}
