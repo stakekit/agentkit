@@ -31,7 +31,7 @@
     },
     {
       "name": "yield-xyz-agentkit-privy",
-      "description": "Sign and broadcast Yield.xyz transactions with Privy agentic wallets. Add-on — install alongside yield-xyz-agentkit.",
+      "description": "Discover yields and execute them with Privy agentic wallets. Installing this automatically pulls in the yield-xyz-agentkit base plugin.",
       "version": "1.0.0",
       "source": "./plugins/yield-xyz-agentkit-privy",
       "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
@@ -41,7 +41,7 @@
     },
     {
       "name": "yield-xyz-agentkit-moonpay",
-      "description": "Sign and broadcast Yield.xyz transactions with MoonPay. Add-on — install alongside yield-xyz-agentkit.",
+      "description": "Discover yields and execute them with MoonPay. Installing this automatically pulls in the yield-xyz-agentkit base plugin.",
       "version": "1.0.0",
       "source": "./plugins/yield-xyz-agentkit-moonpay",
       "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },

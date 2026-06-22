@@ -1,10 +1,11 @@
 {
   "name": "yield-xyz-agentkit-privy",
-  "description": "Sign and broadcast Yield.xyz transactions with Privy agentic wallets. Add-on to the yield-xyz-agentkit plugin.",
+  "description": "Sign and broadcast Yield.xyz transactions with Privy agentic wallets. Builds on the yield-xyz-agentkit base plugin (installed automatically).",
   "version": "1.0.0",
   "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
-  "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
+  "keywords": ["defi", "yield", "privy", "agentic-wallet", "signing", "web3"],
+  "dependencies": ["yield-xyz-agentkit"],
   "components": { "skills": ["./skills"] }
 }

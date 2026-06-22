@@ -15,30 +15,14 @@ metadata:
 
 # Yield.xyz AgentKit + Privy
 
-This skill adds a **signer** to the Yield.xyz AgentKit. Privy's wallet
-infrastructure holds the key, enforces policy, and signs and broadcasts
-the transactions that the core skill builds.
+Adds a **signer** to the Yield.xyz AgentKit: Privy holds the key, enforces policy, and signs + broadcasts the transactions that `yield-xyz-agentkit` builds.
 
-## Relationship to `yield-xyz-agentkit`
-
-**This skill extends the `yield-xyz-agentkit` skill — it does not replace it.**
-
-All yield logic lives in `yield-xyz-agentkit`:
-- Discovering and comparing yields, inspecting schemas, checking balances
-- Building `unsignedTransaction` objects (`actions_enter` / `actions_exit` / `actions_manage`)
-- Output formatting and API-usage policies
-- The full Yield.xyz MCP tool reference
-
-**Use the `yield-xyz-agentkit` skill for all of that.** This skill only takes the
-`unsignedTransaction` the core skill produces and signs + broadcasts it through
-Privy. The division of labor:
+`yield-xyz-agentkit` (this skill's base) owns all yield logic — discovery, schemas, balances, building `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`), output formatting, and the MCP tool reference. Use it for all of that; this skill only signs and broadcasts.
 
 ```
-User prompt
-  → yield-xyz-agentkit: discover yield + build unsignedTransaction
-  → Privy: evaluate policy rules
-  → Privy: sign + broadcast
-  → yield-xyz-agentkit: submit_hash + poll get_transaction until CONFIRMED
+yield-xyz-agentkit  → discover yield + build unsignedTransaction
+Privy               → evaluate policy → sign → broadcast
+yield-xyz-agentkit  → submit_hash + poll get_transaction until CONFIRMED
 ```
 
 See `references/architecture.md` for the full diagram.
@@ -50,7 +34,7 @@ See `references/architecture.md` for the full diagram.
 > **DO NOT MODIFY `unsignedTransaction` before signing — under any circumstances.**
 > Not addresses, amounts, fees, or encoding, on any chain, ever.
 >
-> If anything looks wrong, **STOP** and have the core skill build a NEW action
+> If anything looks wrong, **STOP** and have `yield-xyz-agentkit` build a NEW action
 > with corrected inputs. Never "fix" an existing transaction.
 >
 > Modifying `unsignedTransaction` **WILL RESULT IN PERMANENT LOSS OF FUNDS.**

@@ -162,6 +162,6 @@ onboarding (`references/kyc-flows.md`).
 
 | File | Read when |
 |---|---|
-| `references/kyc-flows.md` | Detecting the gate and running issuer onboarding (the core RWA reference) |
+| `references/kyc-flows.md` | Detecting the gate and running issuer onboarding (the primary RWA reference) |
 | `SKILL.md` (Available Tools) | Exact parameters for `yields_get_all` (the `real_world_asset` type) and the action tools |
 | `references/output-formats.md` | Displaying RWA yields with KYC / allowlist / minimum badges |

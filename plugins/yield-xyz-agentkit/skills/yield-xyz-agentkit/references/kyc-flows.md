@@ -1,6 +1,6 @@
 # RWA KYC & Eligibility Flows
 
-This is the core reference for the RWA kit. It defines **how the agent decides
+This is the primary reference for RWA yields. It defines **how the agent decides
 whether a wallet may enter an RWA yield**, and the **end-to-end onboarding flow**
 to run when it can't yet.
 

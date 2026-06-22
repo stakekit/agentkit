@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit — Plugins
 
-Four composable Claude Code plugins. Each bundles one skill and auto-registers the MCP server(s) it needs. The signer plugins (Privy, MoonPay) **extend** the base — install `yield-xyz-agentkit` alongside them.
+Four composable Claude Code plugins. Each ships one skill and auto-registers the MCP server(s) it needs. The signer plugins (Privy, MoonPay) **depend on** the base and pull it in automatically — installing a signer is a single command.
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -34,30 +34,28 @@ Helps developers scaffold and build Yield.xyz integrations — generating code f
 
 ---
 
-### [`yield-xyz-agentkit-privy`](./yield-xyz-agentkit-privy/) — extends the base
+### [`yield-xyz-agentkit-privy`](./yield-xyz-agentkit-privy/) — depends on the base
 
 **Signing and execution via Privy agentic wallets.**
 
-Adds Privy wallet creation, policy enforcement, signing, and broadcasting on top of the base plugin. Supports autonomous and semi-autonomous (enterprise approval) workflows. Install alongside `yield-xyz-agentkit`.
+Adds Privy wallet creation, policy enforcement, signing, and broadcasting on top of the base plugin. Supports autonomous and semi-autonomous (enterprise approval) workflows. Declares the base as a dependency, so it installs automatically.
 
 ```bash
-/plugin install yield-xyz-agentkit@agentkit
-/plugin install yield-xyz-agentkit-privy@agentkit
+/plugin install yield-xyz-agentkit-privy@agentkit   # also installs yield-xyz-agentkit
 ```
 
 Requires: Privy API credentials.
 
 ---
 
-### [`yield-xyz-agentkit-moonpay`](./yield-xyz-agentkit-moonpay/) — extends the base
+### [`yield-xyz-agentkit-moonpay`](./yield-xyz-agentkit-moonpay/) — depends on the base
 
 **Signing and broadcasting via MoonPay.**
 
-Adds MoonPay wallet auth, signing, and broadcasting on top of the base plugin. Install alongside `yield-xyz-agentkit`.
+Adds MoonPay wallet auth, signing, and broadcasting on top of the base plugin. Declares the base as a dependency, so it installs automatically.
 
 ```bash
-/plugin install yield-xyz-agentkit@agentkit
-/plugin install yield-xyz-agentkit-moonpay@agentkit
+/plugin install yield-xyz-agentkit-moonpay@agentkit   # also installs yield-xyz-agentkit
 ```
 
 Requires: MoonPay MCP (guided CLI setup included).

@@ -9,29 +9,15 @@ metadata:
 
 # Yield.xyz AgentKit × MoonPay
 
-This skill adds a **signer** to the Yield.xyz AgentKit. MoonPay handles wallet
-auth and signs + broadcasts the transactions that the core skill builds.
+Adds a **signer** to the Yield.xyz AgentKit: MoonPay handles wallet auth and signs + broadcasts the transactions that `yield-xyz-agentkit` builds.
 
-## Relationship to `yield-xyz-agentkit`
-
-**This skill extends the `yield-xyz-agentkit` skill — it does not replace it.**
-
-All yield logic lives in `yield-xyz-agentkit`:
-- Discovering and comparing yields, inspecting schemas, validator selection, balances
-- Building `unsignedTransaction` objects (`actions_enter` / `actions_exit` / `actions_manage`)
-- Output formatting and API-usage policies
-- The full Yield.xyz MCP tool reference
-
-**Use the `yield-xyz-agentkit` skill for all of that.** This skill only takes the
-`unsignedTransaction` the core skill produces and signs + broadcasts it through
-MoonPay.
+`yield-xyz-agentkit` (this skill's base) owns all yield logic — discovery, schemas, validator selection, balances, building `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`), output formatting, and the MCP tool reference. Use it for all of that; this skill only signs and broadcasts.
 
 ```
-User prompt
-  → MoonPay: confirm auth + wallet (provides the address)
-  → yield-xyz-agentkit: discover yield + build unsignedTransaction
-  → MoonPay: sign + broadcast
-  → yield-xyz-agentkit: submit_hash + poll get_transaction until CONFIRMED
+MoonPay             → confirm auth + wallet (provides the address)
+yield-xyz-agentkit  → discover yield + build unsignedTransaction
+MoonPay             → sign + broadcast
+yield-xyz-agentkit  → submit_hash + poll get_transaction until CONFIRMED
 ```
 
 ---
@@ -53,7 +39,7 @@ connection instructions.
 ## ⚠️ CRITICAL
 
 - **Never modify `unsignedTransaction`** before signing — not addresses, amounts,
-  fees, or encoding, on any chain. If anything looks wrong, have the core skill
+  fees, or encoding, on any chain. If anything looks wrong, have `yield-xyz-agentkit`
   build a NEW action. Modifying it **will result in permanent loss of funds**.
 - **Never call the Yield.xyz API directly** (curl/HTTP) — it requires an API key
   and returns `401`. All Yield.xyz access goes through the MCP (handled by the
