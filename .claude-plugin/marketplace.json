@@ -1,5 +1,5 @@
 {
-  "name": "yield-agent-skills",
+  "name": "agentkit",
   "owner": {
     "name": "Yield.xyz Agent",
     "email": ""
@@ -10,10 +10,10 @@
   },
   "plugins": [
     {
-      "name": "yield_agentkit_agent",
+      "name": "yield-xyz-agentkit",
       "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API.",
       "version": "1.0.0",
-      "source": "./yield-agentkit-plugin",
+      "source": "./yield-xyz-agentkit-plugin",
       "author": {
         "name": "Yield.xyz",
         "url": "https://yield.xyz"
