@@ -13,6 +13,20 @@ A skill for discovering and acting on DeFi yield opportunities via the Yield.xyz
 
 ---
 
+## Integration Boundary
+
+This skill is the **yield layer** — it discovers yields, inspects their schemas, and builds **unsigned** transactions. It **never holds keys, signs, or broadcasts**, and it's tied to no wallet or custody product. Drop it into any agent or app that can already sign, and it becomes that agent's expertise for earning yield.
+
+Responsibility splits cleanly on every transaction:
+
+1. **This skill** builds the `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`).
+2. **Your side signs and broadcasts it.** Whatever does that is your *signer* — a user's wallet, your agent's own custody (MPC / KMS / HSM), or a provider like Privy or MoonPay. This skill doesn't care which.
+3. **This skill** records the result — `submit_hash` with the returned hash, then `get_transaction` until `CONFIRMED`.
+
+This holds whether signing is human-approved or fully autonomous. Where a human is in the loop, confirm before signing; where the host signs on its own, skip the confirmation and let it run.
+
+---
+
 ## ⚠️ How to Call Tools — Read This First
 
 **Always call tools via the connected MCP server (`https://mcp.yield.xyz/mcp`). Never fall back to curl, bash, or raw HTTP requests.**
@@ -44,7 +58,7 @@ The MCP server exposes these tools directly — call them like any other tool:
 **DO NOT modify `unsignedTransaction` returned by any action tool under any circumstances.** Not addresses, amounts, fees, encoding — nothing.
 
 - Amount wrong → call the action tool again with corrected amount
-- Gas insufficient → ask user to add funds, call again
+- Gas insufficient → top up the wallet (or have the user add funds), call again
 - Anything looks off → STOP, do not proceed
 
 Modifying `unsignedTransaction` **will result in permanent loss of funds.**
@@ -127,7 +141,7 @@ List validators for a yield that requires validator selection.
 - Flag validators with `preferred: true` with a ✓ or "Curated" label.
 - Warn if a validator has 0% commission — note it may be a temporary rate.
 - If the user doesn't specify a validator, recommend the top preferred validator by APR and explain why.
-- Never pick a validator autonomously without confirming with the user first.
+- Never pick a validator unilaterally — confirm with the user, or follow the host's configured selection criteria.
 
 ---
 
@@ -192,7 +206,7 @@ Perform a management action on an existing position (claim rewards, restake, cha
 ---
 
 ### 8. `submit_hash`
-Submit the on-chain transaction hash after the user has signed and broadcasted a transaction.
+Submit the on-chain transaction hash after the signer has signed and broadcast a transaction.
 
 **This is mandatory after every transaction.** Never skip this step.
 
@@ -202,7 +216,7 @@ Submit the on-chain transaction hash after the user has signed and broadcasted a
 
 **Returns:** Updated `TransactionDto`
 
-**Use when:** User has signed and broadcasted any transaction from an enter, exit, or manage action.
+**Use when:** The signer has signed and broadcast any transaction from an enter, exit, or manage action.
 
 ---
 
@@ -368,28 +382,28 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 ### Find and enter a yield
 1. `yields_get_all` — `networks` + `token`, `sort: "rewardRateDesc"`, `limit: 20`
 2. Present top 10 in formatted table
-3. User picks one → `yields_get` on that ID — show reward breakdown + mechanics
+3. Select a yield → `yields_get` on that ID — show reward breakdown + mechanics
 4. If `requiresValidatorSelection`, call `yields_get_validators`, present top 10
-5. Run safety checklist, get user confirmation
+5. Run safety checklist; confirm before signing (if a human is in the loop)
 6. `actions_enter` → present structured transaction summary
-7. User signs and broadcasts each transaction → call `submit_hash` with the tx hash (**mandatory**)
+7. The signer signs and broadcasts each transaction → call `submit_hash` with the tx hash (**mandatory**)
 8. Poll `get_transaction` until `CONFIRMED` before proceeding to the next transaction
 
 ### Check balances and claim rewards
 1. `yields_get_balances` with wallet address + yield IDs
 2. Show portfolio summary, each position sorted by value
 3. Highlight `pendingActions` with claimable amounts
-4. User wants to claim → `actions_manage` with `passthrough` from pending action
+4. To claim → `actions_manage` with `passthrough` from pending action
 5. Present transaction summary
-6. User signs and broadcasts → call `submit_hash` (**mandatory**)
+6. The signer signs and broadcasts → call `submit_hash` (**mandatory**)
 7. Poll `get_transaction` until `CONFIRMED`
 
 ### Exit a position
 1. `yields_get` → confirm `status.exit === true`
 2. Surface cooldown/lockup from safety checklist
-3. Get user confirmation
+3. Confirm before signing (if a human is in the loop)
 4. `actions_exit` → return structured transaction summary
-5. User signs and broadcasts → call `submit_hash` (**mandatory**)
+5. The signer signs and broadcasts → call `submit_hash` (**mandatory**)
 6. Poll `get_transaction` until `CONFIRMED`
 
 ### Compare yields
