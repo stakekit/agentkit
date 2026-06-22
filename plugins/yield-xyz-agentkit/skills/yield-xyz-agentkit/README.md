@@ -119,14 +119,16 @@ claude mcp remove yield-xyz-agentkit
 ## Folder structure
 
 ```
-yield-xyz-agentkit-skills/skills/yield-xyz-agentkit/
+yield-xyz-agentkit/
 ├── SKILL.md                 # Main skill instructions (auto-loaded by Claude)
 ├── README.md                # This file
 └── references/
     ├── setup.md             # Agent-executed setup guide
-    ├── key-rules.md         # Core rules: tool mapping, amounts, tx ordering, validator selection
+    ├── key-rules.md         # Tool mapping, amounts, tx ordering, validator selection
     ├── output-formats.md    # Display rules for yields, tables, and summaries
-    └── policies.md          # API usage and efficiency guidelines
+    ├── policies.md          # API usage and efficiency guidelines
+    ├── rwa-overview.md      # Real-world asset access models
+    └── kyc-flows.md         # RWA eligibility gate and issuer onboarding
 ```
 
 ---

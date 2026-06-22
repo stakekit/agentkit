@@ -6,7 +6,7 @@
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
   "license": "MIT",
-  "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
+  "keywords": ["defi", "yield", "moonpay", "wallet", "signing", "web3"],
   "skills": "./skills",
   "mcpServers": "./.mcp.json",
   "interface": {
