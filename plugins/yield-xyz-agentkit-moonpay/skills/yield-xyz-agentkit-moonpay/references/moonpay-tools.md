@@ -16,7 +16,7 @@ Get token balances for a wallet.
 - Both `wallet` and `chain` are required
 - Use to verify the user has enough funds before calling `actions_enter`
 - Use to confirm a position was entered after hash submission
-- **Portfolio-aware discovery:** it enumerates the wallet's tokens, so feed the non-zero holdings into `yields_get_all` as `inputTokens` to fetch only yields that accept a held token (see the base skill's "Default discovery")
+- **Portfolio-aware discovery:** it enumerates the wallet's tokens, so feed the non-zero holdings into `yields_get_all` as `inputTokens` to fetch only yields that accept a held token (see the base skill's "Discovery" note)
 
 ---
 

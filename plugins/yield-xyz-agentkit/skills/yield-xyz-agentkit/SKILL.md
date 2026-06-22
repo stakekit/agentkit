@@ -103,7 +103,7 @@ List and filter yield opportunities across networks and tokens.
 
 **Use when:** User wants to browse or compare yield options.
 
-**Default discovery — fetch *relevant* yields.** When a wallet is in context, scope discovery to what it can deposit: pass the wallet's held tokens as `inputTokens` (and their chains as `networks`) so you return only yields that **accept a token the wallet holds**, instead of the whole catalog. (Token match isn't a guarantee of entry — that still depends on holding enough vs `minEntry`, the yield's `status.enter`, and any gating like RWA KYC.) The base has no wallet — get holdings from the host's signer/wallet (e.g. a connector's balance read). With no wallet in context, discover by the user's stated `token` / `networks` instead.
+**Discovery — fetch *relevant* yields.** When a wallet is in context, scope discovery to what it can deposit: pass the wallet's held tokens as `inputTokens` (and their chains as `networks`) so you return only yields that **accept a token the wallet holds**, instead of the whole catalog. (Token match isn't a guarantee of entry — that still depends on holding enough vs `minEntry`, the yield's `status.enter`, and any gating like RWA KYC.) The base has no wallet — get holdings from the host's signer/wallet (e.g. a connector's balance read). With no wallet in context, discover by the user's stated `token` / `networks` instead.
 
 ---
 
