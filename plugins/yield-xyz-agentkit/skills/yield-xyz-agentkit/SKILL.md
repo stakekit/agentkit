@@ -99,9 +99,7 @@ List and filter yield opportunities across networks and tokens.
 - `hasWarmupPeriod` — `true` to show only yields with a warmup period.
 - `limit` / `offset` — pagination (default 20, max 50)
 
-**Returns:** `{ total, offset, limit, items[] }`. List items are a **flattened** shape (not the full `YieldDto`): `id`, `tokenSymbol`, `network`, `type`, `providerId`, `rewardRate` (a **number** = the APY/APR total), `tvlUsd`, `status`, `cooldownPeriod`, `warmupPeriod`, `lockupPeriod`, `minEntry`, `maxEntry`, top-level `kycRequired`, `authorizeUrl`, `kyc`.
-
-> **List vs detail shapes — read the right path.** `yields_get_all` items are flattened as above (flat `rewardRate` number, `tvlUsd`, `minEntry`/`maxEntry`, top-level `kycRequired`). `yields_get` returns the full **nested** `YieldDto`: `rewardRate` is `{ total, rateType, components[] }`, TVL is `statistics.tvlUsd`, limits are `mechanics.entryLimits.{minimum, maximum}`, and KYC is `mechanics.requirements.kycRequired`. Use the flat fields when working from a list result, the nested paths when working from `yields_get`.
+**Returns:** `{ total, offset, limit, items[] }`. Each item has: `id`, `tokenSymbol`, `network`, `type`, `providerId`, `rewardRate` (number, the APY/APR), `tvlUsd`, `status` `{ enter, exit }`, `cooldownPeriod`, `warmupPeriod`, `lockupPeriod`, `minEntry`, `maxEntry`, `kycRequired`, `authorizeUrl`. Use `yields_get` for full per-yield detail (fees, validators, full reward breakdown).
 
 **Use when:** User wants to browse or compare yield options.
 

@@ -126,7 +126,7 @@ the next transaction until `status` reaches a terminal state.
 | `SKIPPED` | Terminal — step needs no on-chain tx | Proceed to next transaction |
 | `FAILED` | Failed on-chain | Stop — report to user, do not sign later steps |
 
-(Terminal states are `CONFIRMED`, `SKIPPED`, and `FAILED`; `get_transaction` may also return `CREATED`, `WAITING_FOR_SIGNATURE`, `SIGNED`, `BROADCASTED`, `PENDING`.)
+Terminal states: `CONFIRMED`, `SKIPPED`, `FAILED`. Any other status means keep polling.
 
 ---
 
