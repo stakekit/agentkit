@@ -54,7 +54,7 @@ Before calling any action endpoint (`POST /v1/actions/enter`, `exit`, `manage`):
 2. **Execute in `stepIndex` order** — multi-step transactions (e.g., EVM approve + deposit) must be executed sequentially. Wait for `CONFIRMED` status before proceeding.
 3. **Always submit hash** — after broadcasting, call `PUT /v1/transactions/{txId}/submit-hash`. Without this, balances won't update.
 4. **Amounts are human-readable** — pass `"100"` for 100 USDC, not `"100000000"`. The API handles decimal conversion.
-5. **Use Shield for validation** — before signing, validate with `@yieldxyz/shield`: `shield.validate({ unsignedTransaction, yieldId, userAddress })`.
+5. **Use Shield for validation** — before signing, validate with `@yieldxyz/shield`: instantiate `const shield = new Shield()`, then call `shield.validate({ unsignedTransaction, yieldId, userAddress })`. It is **synchronous** (no `await`) and returns a `{ isValid, reason }` object, not a boolean — reject the transaction when `!result.isValid`.
 6. **Handle pending actions** — after entering a position, check balances for `pendingActions`. These are follow-up transactions the user must complete (e.g., claiming rewards).
 7. **Respect cooldown periods** — some yields have unbonding/cooldown periods. After `exit`, the balance moves to `"exiting"` status before becoming `"withdrawable"`.
 
@@ -77,6 +77,8 @@ You can implement additional guardrails in your application:
 #### Implementation Pattern
 
 ```typescript
+import { Shield } from "@yieldxyz/shield";
+
 async function executeWithGuardrails(params: {
   yieldId: string;
   amount: string;
@@ -110,14 +112,18 @@ async function executeWithGuardrails(params: {
   }
 
   if (params.guardrails.requireShieldValidation) {
+    const shield = new Shield();
     const action = await sdk.api.enterYield({ ... });
     for (const tx of action.transactions) {
-      const valid = await shield.validate({
+      // validate() is synchronous and returns { isValid, reason }, not a boolean
+      const result = shield.validate({
         unsignedTransaction: tx.unsignedTransaction,
         yieldId: params.yieldId,
         userAddress: params.address,
       });
-      if (!valid) throw new Error("Shield validation failed");
+      if (!result.isValid) {
+        throw new Error(`Shield validation failed: ${result.reason ?? "unknown"}`);
+      }
     }
   }
 }

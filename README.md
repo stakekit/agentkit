@@ -13,7 +13,7 @@ The official tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone
 
 ### Yield.xyz AgentKit Claude Plugins
 
-Four composable plugins in one marketplace. Each installs its skill and auto-registers the MCP server(s) it needs. Start with the base plugin, then add a connector for your wallet/execution provider.
+Four composable plugins in one marketplace. Each installs its skill; the base and builder auto-register the Yield.xyz MCP, and the connectors inherit it from the base (MoonPay additionally needs the MoonPay MCP via guided setup). Start with the base plugin, then add a connector for your wallet/execution provider.
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -46,7 +46,7 @@ See **[`plugins/README.md`](./plugins/README.md)** for the per-plugin breakdown,
 
 ### Yield.xyz AgentKit MCP Server
 
-The Yield.xyz AgentKit MCP Server exposes 7 tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
+The Yield.xyz AgentKit MCP Server exposes a suite of tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
 
 **Endpoint:** `https://mcp.yield.xyz/mcp`
 
@@ -74,6 +74,10 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 → [Full connection guide and all methods](https://docs.yield.xyz/docs/mcp-server)
 
 ---
+
+## Security & custody
+
+Yield.xyz is **SOC 2 compliant** ([trust.yield.xyz](https://trust.yield.xyz)). The agent never takes custody of funds — it only constructs unsigned transactions that your wallet signs and broadcasts.
 
 ## Risk Disclosure
 

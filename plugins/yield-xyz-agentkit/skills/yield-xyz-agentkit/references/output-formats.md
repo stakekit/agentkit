@@ -16,11 +16,15 @@ All display rules for Yield.xyz Agent tool outputs. Always follow these formats 
 - Lockup seconds → human time: `86400 → 1 day`, `604800 → 7 days`
 
 **Badges — show only when applicable:**
-- `⚠️ Under Maintenance` — `metadata.underMaintenance`
-- `⚠️ Deprecated` — `metadata.deprecated`
-- `🔒 KYC Required` — `mechanics.requirements.kycRequired`
-- `⭐ Preferred` — yield or validator flagged preferred
-- `🔥 High APY` — `rewardRate.total > 0.20` — flag as potentially incentivised
+- `Under Maintenance` — `metadata.underMaintenance`
+- `Deprecated` — `metadata.deprecated`
+- `KYC Required` — `mechanics.requirements.kycRequired`
+- `RWA` — yield `type` is `real_world_asset`
+- `Allowlist` — a KYC-gated RWA whose holder wallet must be allowlisted on-chain
+- `Min $X` — entry minimum when non-zero (e.g. `"100000"` → `Min $100K`)
+- **RWA access label** — built live from the yield's eligibility, never a lookup table: ungated → `Open` (or `Open (non-US)` where a jurisdiction restriction applies); KYC-gated → a short descriptor (`Allowlist`, `non-US`, `US QP ok`). Never describe a yield as "Permissionless" to the user.
+- `Preferred` — yield or validator flagged preferred
+- `High APY` — `rewardRate.total > 0.20` — flag as potentially incentivised
 
 ---
 
@@ -38,40 +42,40 @@ Always display as a table, never as individual cards.
 
 **Single network example:**
 
-📈 Top ETH Yields on Ethereum
+Top ETH Yields on Ethereum
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 | # | Protocol | Vault | APY | TVL | Type | Lockup | Cooldown | Min |
 |---|----------|-------|-----|-----|------|--------|----------|-----|
-| 🥇 | Lido | stETH | 3.80% | $32.1B | staking | None | 1–5 days | — |
-| 🥈 | Aave | aWETH | 3.10% | $1.2B | lending | None | None | — |
-| 🥉 | Morpho | mWETH | 2.95% | $540M | vault | None | None | — |
+| 1 | Lido | stETH | 3.80% | $32.1B | staking | None | 1–5 days | — |
+| 2 | Aave | aWETH | 3.10% | $1.2B | lending | None | None | — |
+| 3 | Morpho | mWETH | 2.95% | $540M | vault | None | None | — |
 
 Showing top 5 of 24 — ask for more or filter.
 
 **Multi-network comparison example (parallel calls, one per network):**
 
-📈 ETH Yields · Ethereum vs Arbitrum
+ETH Yields · Ethereum vs Arbitrum
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**🔵 Ethereum**
+**Ethereum**
 | # | Protocol | Vault | APY | TVL | Type | Lockup | Cooldown | Min |
 |---|----------|-------|-----|-----|------|--------|----------|-----|
-| 🥇 | Lido | stETH | 3.80% | $32.1B | staking | None | 1–5 days | — |
-| 🥈 | Aave | aWETH | 3.10% | $1.2B | lending | None | None | — |
-| 🥉 | Morpho | mWETH | 2.95% | $540M | vault | None | None | — |
+| 1 | Lido | stETH | 3.80% | $32.1B | staking | None | 1–5 days | — |
+| 2 | Aave | aWETH | 3.10% | $1.2B | lending | None | None | — |
+| 3 | Morpho | mWETH | 2.95% | $540M | vault | None | None | — |
 
-**🟠 Arbitrum**
+**Arbitrum**
 | # | Protocol | Vault | APY | TVL | Type | Lockup | Cooldown | Min |
 |---|----------|-------|-----|-----|------|--------|----------|-----|
-| 🥇 | Aave | aWETH | 2.85% | $210M | lending | None | None | — |
-| 🥈 | Compound | cWETH | 2.40% | $88M | lending | None | None | — |
-| 🥉 | Morpho | mWETH | 2.10% | $65M | vault | None | None | — |
+| 1 | Aave | aWETH | 2.85% | $210M | lending | None | None | — |
+| 2 | Compound | cWETH | 2.40% | $88M | lending | None | None | — |
+| 3 | Morpho | mWETH | 2.10% | $65M | vault | None | None | — |
 
 Showing top 5 per network — ask for more or filter.
 
 
-Badges go in the Protocol cell when applicable, e.g. `Morpho ⭐`.
+Badges go in the Protocol cell when applicable, e.g. `Morpho (preferred)`.
 
 **Minimum TVL filter (apply before sorting):**
 
@@ -88,13 +92,13 @@ Before sorting or displaying results, filter out yields below these TVL threshol
 | Governance / altcoins (AAVE, CRV, etc.) | $100K |
 | Unknown / unlisted tokens | $100K |
 
-- If `statistics.tvlUsd` is `null`, `0`, or missing — **exclude by default**. 
+- If `tvlUsd` is `null`, `0`, or missing — **exclude by default**. 
 - If applying the filter leaves fewer than 3 results, lower the threshold by 50% and retry once, then note: `(TVL filter relaxed to $250K — limited results available)`.
-- Never silently include low-TVL yields — if a user explicitly asks for them, show with a ⚠️ Low TVL badge.
+- Never silently include low-TVL yields — if a user explicitly asks for them, show with a Low TVL badge.
 
 **Sorting priority:**
 1. `rewardRate.total` descending — default, always
-2. `statistics.tvlUsd` descending — if user asks "safest" or "highest TVL"
+2. `tvlUsd` descending — if user asks "safest" or "highest TVL"
 3. `mechanics.lockupPeriod.seconds` ascending — if user asks "most flexible" or "no lockup"
 
 ---
@@ -118,41 +122,41 @@ If any component is an incentive/bonus, note it may be temporary.
 ## yields_get_balances — Displaying Balances
 
 ```
-💼 Portfolio Summary
+Portfolio Summary
    Total value:  ~$12,450  across 3 positions
 
-📍 Aave USDC Lending  ·  ethereum
+Aave USDC Lending  ·  ethereum
    Balance:   1,000 USDC  (~$1,000)
-   Earning:   ✅ Active
-   Pending:   🎁 Claim 12.4 USDC rewards
+   Earning:   Active
+   Pending:   Claim 12.4 USDC rewards
 
-📍 ...
+...
 ```
 
 - Sort by `amountUsd` descending
-- If `isEarning === false`: *"⏳ Not yet earning — may be in warmup period."*
-- If `errors[]` non-empty: *"⚠️ Could not fetch balance for `<yieldId>`: `<error>`."*
+- If `isEarning === false`: *"Not yet earning — may be in warmup period."*
+- If `errors[]` non-empty: *"Could not fetch balance for `<yieldId>`: `<error>`."*
 
 ---
 
 ## yields_get_validators — Displaying Validators
 
-Default: top 10 sorted by `rewardRate.total` descending.
+Default: preferred validators first, then by APR descending within each group; show top 10. (Matches the selection rule in SKILL.md.)
 
 Always display as a table, never as individual cards:
 
 Validators for ATOM Native Staking · cosmos
-Base APR: ~15.39% · 605 total · Showing top 10  ⭐ Preferred
+Base APR: ~15.39% · 605 total · Showing top 10  Preferred
 
 | # | Validator | APY | Commission | TVL | Voting Power | Status |
 |---|-----------|-----|------------|-----|--------------|--------|
-| 🥇 | Stakin ⭐ | 15.82% | 5% | $522K | 0.18% | active |
-| 🥈 | Meria ⭐ | 15.82% | 5% | $1.54M | 0.52% | active |
-| 🥉 | StakeLab ⭐ | 15.82% | 5% | $1.32M | 0.45% | active |
-| #4 | Crosnest ⭐ | 15.82% | 5% | $431K | 0.15% | active |
-| #5 | Chorus One ⭐ | 15.41% | 7.5% | $5.71M | 1.92% | active |
+| 1 | Stakin (preferred) | 15.82% | 5% | $522K | 0.18% | active |
+| 2 | Meria (preferred) | 15.82% | 5% | $1.54M | 0.52% | active |
+| 3 | StakeLab (preferred) | 15.82% | 5% | $1.32M | 0.45% | active |
+| #4 | Crosnest (preferred) | 15.82% | 5% | $431K | 0.15% | active |
+| #5 | Chorus One (preferred) | 15.41% | 7.5% | $5.71M | 1.92% | active |
 
-If `remainingSlots` is low (<500): add a ⚠️ column or note below the table.
+If `remainingSlots` is low (<500): add a warning column or note below the table.
 
 ---
 
@@ -162,11 +166,11 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 
 | Condition | Source field | Message |
 |---|---|---|
-| Entry closed | `status.enter === false` | ⚠️ This yield is closed for new deposits. |
-| Exit closed | `status.exit === false` | ⚠️ This yield cannot be exited right now. |
-| Under maintenance | `metadata.underMaintenance` | ⚠️ Protocol is under maintenance. |
-| Deprecated | `metadata.deprecated` | ⚠️ Deprecated — consider alternatives. |
-| KYC required | `mechanics.requirements.kycRequired` | 🔒 KYC required. Complete at: `<kycUrl>` |
+| Entry closed | `status.enter === false` | This yield is closed for new deposits. |
+| Exit closed | `status.exit === false` | This yield cannot be exited right now. |
+| Under maintenance | `metadata.underMaintenance` | Protocol is under maintenance. |
+| Deprecated | `metadata.deprecated` | Deprecated — consider alternatives. |
+| KYC required | `mechanics.requirements.kycRequired` | KYC required. Complete at: `<kycUrl>` |
 | Below minimum | `entryLimits.minimum` | Minimum deposit is X `<token>`. |
 | Above maximum | `entryLimits.maximum` | Maximum deposit is X `<token>`. |
 | Lockup | `mechanics.lockupPeriod` | Funds locked for X days after deposit. |
@@ -181,33 +185,33 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 Always display as a table, never as a list of cards:
 
 ```
-📋 Action History · 0x742d…f44e
+Action History · 0x742d…f44e
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 | # | Yield | Type | Amount | Network | Status | Date |
 |---|-------|------|--------|---------|--------|------|
-| 1 | Lido stETH | STAKE | 1.5 ETH | ethereum | ✅ SUCCESS | Apr 18 |
-| 2 | Aave USDC | STAKE | 500 USDC | base | ⏳ PROCESSING | Apr 20 |
-| 3 | Cosmos ATOM | CLAIM_REWARDS | — | cosmos | ✅ SUCCESS | Apr 15 |
+| 1 | Lido stETH | STAKE | 1.5 ETH | ethereum | SUCCESS | Apr 18 |
+| 2 | Aave USDC | STAKE | 500 USDC | base | PROCESSING | Apr 20 |
+| 3 | Cosmos ATOM | CLAIM_REWARDS | — | cosmos | SUCCESS | Apr 15 |
 
 Showing 3 of 12 — ask for more or filter by status/network.
 ```
 
 **Status badges:**
-- `✅ SUCCESS` — confirmed on-chain
-- `⏳ PROCESSING` — in-flight
-- `🕐 CREATED` — submitted, not yet on-chain
-- `⏸ WAITING_FOR_NEXT` — multi-step, awaiting next tx
-- `❌ FAILED` — reverted or errored
-- `🚫 CANCELED` — user-cancelled
-- `⌛ STALE` — timed out
+- `SUCCESS` — confirmed on-chain
+- `PROCESSING` — in-flight
+- `CREATED` — submitted, not yet on-chain
+- `WAITING_FOR_NEXT` — multi-step, awaiting next tx
+- `FAILED` — reverted or errored
+- `CANCELED` — user-cancelled
+- `STALE` — timed out
 
 ---
 
 ## yields_get_reward_rate_history — APY Trend
 
 ```
-📈 APY History · Lido stETH · Last 30 days
+APY History · Lido stETH · Last 30 days
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   High:    2.51%  (Mar 28)
@@ -225,7 +229,7 @@ Showing 3 of 12 — ask for more or filter by status/network.
 ## yields_get_tvl_history — TVL Trend
 
 ```
-📊 TVL History · Lido stETH · Last 30 days
+TVL History · Lido stETH · Last 30 days
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   High:    $32.1B  (Mar 21)
@@ -238,18 +242,18 @@ Showing 3 of 12 — ask for more or filter by status/network.
 - Format TVL values as `$4.93M` / `$322K` / `$1.2B` — never raw string
 - Trend direction: ↗ Growing / ↘ Declining / → Stable (use ±5% as threshold)
 - If `items` is empty: *"Historical TVL data is not available for this yield."*
-- ⚠️ Flag a consistent downward trend as a potential risk signal
+- Flag a consistent downward trend as a potential risk signal
 
 ---
 
 ## yields_get_risk — Risk Rating
 
 ```
-🛡 Risk Assessment · Lido stETH
+Risk Assessment · Lido stETH
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Exponential.fi:  A  (Score: 1)  — "A"
-  🔗 Full report: https://exponential.fi/pools/…
+  Full report: https://exponential.fi/pools/…
 ```
 
 - If both `exponentialFi` and `credora` are present, show both
@@ -261,7 +265,7 @@ Showing 3 of 12 — ask for more or filter by status/network.
 
 ## actions_enter / actions_exit / actions_manage — After an Action is Created
 
-**✅ Action Created — {intent}**
+**Action Created — {intent}**
 
 - Yield: {yield_name} · {network}
 - Amount: {amount} {token}

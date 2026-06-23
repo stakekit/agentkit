@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit — Plugins
 
-Four composable Claude Code plugins. Each ships one skill and auto-registers the MCP server(s) it needs. The connectors (Privy, MoonPay) **depend on** the base.
+Four composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay) **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP via guided setup).
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -76,11 +76,11 @@ npx skills add https://github.com/stakekit/agentkit
 
 | | `yield-xyz-agentkit` | `+ privy` | `+ moonpay` |
 |---|---|---|---|
-| Find yields | ✅ | ✅ | ✅ |
-| Build transactions | ✅ | ✅ | ✅ |
-| Sign + broadcast | ❌ bring your own signer | ✅ via Privy wallet | ✅ via MoonPay wallet |
-| Check balances | ✅ | ✅ | ✅ |
-| Policy guarded | ❌ | ✅ | ❌ |
+| Find yields | Yes | Yes | Yes |
+| Build transactions | Yes | Yes | Yes |
+| Sign + broadcast | No — bring your own signer | Yes — via Privy wallet | Yes — via MoonPay wallet |
+| Check balances | Yes | Yes | Yes |
+| Policy guarded | No | Yes | No |
 
 `yield-xyz-agentkit-builder` is separate — it generates integration code rather than running yields.
 

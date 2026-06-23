@@ -16,8 +16,8 @@ explain it, guide onboarding, and stop until the user is eligible.
 ```
 ┌─ User asks to enter an RWA yield
 │
-├─ 1. Identify the access model — from the yields_get_all item you ALREADY have
-│      (flat field names; no extra call needed):
+├─ 1. Identify the access model — read it from the yields_get_all list item
+│      (no extra call needed):
 │      • kycRequired === true → PERMISSIONED (go to 2b). Otherwise → OPEN-ACCESS (2a).
 │      • The gating fields (minEntry/maxEntry, cooldown/warmup/lockup, type,
 │        rewardRate, status, fees) AND the full KYC requirements (onboarding URL,
@@ -39,9 +39,10 @@ explain it, guide onboarding, and stop until the user is eligible.
 ├─ 2b. PERMISSIONED (e.g. Superstate) — requirements & onboarding in the playbook below
 │      • Surface the requirements + live onboarding authorizeUrl (from the list item);
 │        check wallet balance ≥ the live entry minimum.
-│      • CHECK KYC STATUS: yields_get_kyc_status(yieldId, address)
-│           verified/eligible ⇒ sign (autonomous) / submit intent (semi-auto)
-│           not started / pending ⇒ NOT eligible ⇒ run the onboarding flow below, STOP (do not sign)
+│      • CHECK KYC STATUS: yields_get_kyc_status(yieldId, address) → kycStatus
+│           approved (or not_required) ⇒ eligible ⇒ sign (autonomous) / submit intent (semi-auto)
+│           not_started / pending ⇒ NOT eligible ⇒ send user to authorizeUrl, run onboarding below, STOP (do not sign)
+│           rejected ⇒ blocked ⇒ do not sign
 │
 └─ 3. Standard pre-action safety checks still apply
        (entry open, maintenance, fees, cooldown on exit — see
@@ -52,10 +53,10 @@ explain it, guide onboarding, and stop until the user is eligible.
 
 `kycRequired` is a property of the **yield** (does it need KYC) — it does **not**
 tell you whether *this wallet* is KYC'd or eligible. `yields_get_kyc_status` answers
-that: pass the `yieldId` and the wallet `address` and it returns the wallet's
-normalized KYC status for that yield (and, when onboarding is still needed, the
-issuer's authorize URL). Use it to decide whether to proceed — sign only when the
-status reports the wallet is verified/eligible; otherwise run the onboarding flow
+that: pass the `yieldId` and the wallet `address` and it returns `{ kycStatus, authorizeUrl? }`,
+where `kycStatus` is one of `not_required` / `not_started` / `pending` / `approved` / `rejected`
+(and, when onboarding is still needed, the issuer's `authorizeUrl`). Use it to decide whether to
+proceed — sign only when `kycStatus` is `approved` (or `not_required`); otherwise run the onboarding flow
 below and do not sign.
 
 ---
@@ -83,8 +84,8 @@ present, don't infer it — and if eligibility is exposed for neither, ask the u
 confirm they're eligible per the issuer's terms.
 
 **3. Permissioned — gate on KYC status before signing.** Check
-`yields_get_kyc_status(yieldId, address)`. Sign only when it reports the wallet
-verified/eligible. If KYC is not started / pending, do **not** sign — guide the user
+`yields_get_kyc_status(yieldId, address)`. Sign only when `kycStatus` is `approved`
+(or `not_required`). If `not_started` / `pending`, do **not** sign — guide the user
 through onboarding at the issuer's live authorize URL, then stop. The identity-bound
 steps the agent **cannot** do for the user: KYC / AML / accreditation, executing any
 investment agreement, and adding the wallet to the issuer's on-chain allowlist. The
@@ -109,9 +110,9 @@ their choice — never default it silently. See the `actions_exit` parameters in
 
 | Step | Agent |
 |---|---|
-| Discover the yield, read requirements, check balance, check KYC status, build/sign deposit & exit txns | ✅ Automates (once eligible) |
-| KYC / AML / accreditation / investment agreements | ❌ User, on the issuer portal |
-| Add the wallet to the issuer's on-chain allowlist | ❌ User, on the issuer portal |
+| Discover the yield, read requirements, check balance, check KYC status, build/sign deposit & exit txns | Yes — automates (once eligible) |
+| KYC / AML / accreditation / investment agreements | No — user, on the issuer portal |
+| Add the wallet to the issuer's on-chain allowlist | No — user, on the issuer portal |
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit
-description: Discover and act on 2,988 DeFi yield opportunities via Yield.xyz AgentKit Skills, find yields, check APY enter/exit positions, and manage rewards across 80+ networks.
+description: Discover and act on 2,900+ DeFi yield opportunities via Yield.xyz AgentKit Skills, find yields, check APY enter/exit positions, and manage rewards across 80+ networks.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -27,7 +27,7 @@ This holds whether signing is human-approved or fully autonomous. Where a human 
 
 ---
 
-## ⚠️ How to Call Tools — Read This First
+## How to Call Tools — Read This First
 
 **Always call tools via the connected MCP server (`https://mcp.yield.xyz/mcp`). Never fall back to curl, bash, or raw HTTP requests.**
 
@@ -53,7 +53,7 @@ The MCP server exposes these tools directly — call them like any other tool:
 
 ---
 
-## ⚠️ CRITICAL: Never Modify Transactions
+## CRITICAL: Never Modify Transactions
 
 **DO NOT modify `unsignedTransaction` returned by any action tool under any circumstances.** Not addresses, amounts, fees, encoding — nothing.
 
@@ -75,7 +75,7 @@ Never dump raw JSON or plain comma-separated data. Always follow the formats def
 
 ---
 
-## ⚠️ API Usage Policy
+## API Usage Policy
 
 **You must follow** the guidelines defined in **[`references/policies.md`](./references/policies.md)** for API usage, data fetching, and efficiency.
 
@@ -99,7 +99,7 @@ List and filter yield opportunities across networks and tokens.
 - `hasWarmupPeriod` — `true` to show only yields with a warmup period.
 - `limit` / `offset` — pagination (default 20, max 50)
 
-**Returns:** `{ total, offset, limit, items[] }` — each item includes: `id`, `tokenSymbol`, `network`, `type`, `providerId`, `rewardRate`, `tvlUsd`, `status`, `cooldownPeriod`, `warmupPeriod`, `lockupPeriod`, `minEntry`, `maxEntry`
+**Returns:** `{ total, offset, limit, items[] }`. Each item has: `id`, `tokenSymbol`, `network`, `type`, `providerId`, `rewardRate` (number, the APY/APR), `tvlUsd`, `status` `{ enter, exit }`, `cooldownPeriod`, `warmupPeriod`, `lockupPeriod`, `minEntry`, `maxEntry`, `kycRequired`, `authorizeUrl`. Use `yields_get` for full per-yield detail (fees, validators, full reward breakdown).
 
 **Use when:** User wants to browse or compare yield options.
 
@@ -140,7 +140,7 @@ List validators for a yield that requires validator selection.
 - Default to `limit: 20` unless the user asks to see more.
 - Display as a table sorted by: **preferred validators first, then APR descending within each group.**
 - Columns to show: Validator, Commission, APR, TVL, Voting Power.
-- Flag validators with `preferred: true` with a ✓ or "Curated" label.
+- Flag validators with `preferred: true` with a "Curated" label.
 - Warn if a validator has 0% commission — note it may be a temporary rate.
 - If the user doesn't specify a validator, recommend the top preferred validator by APR and explain why.
 - Never pick a validator unilaterally — confirm with the user, or follow the host's configured selection criteria.
@@ -157,7 +157,7 @@ Fetch the user's balances across one or more yield positions.
 
 **Returns:** `{ items: YieldBalancesDto[], errors: [{ yieldId, error }] }`
 
-Each `YieldBalancesDto` has `yieldId`, `balances: BalanceDto[]`, and optional `outputTokenBalance`.
+Each `YieldBalancesDto` has `yieldId` and `balances: BalanceDto[]`. **`pendingActions[]` lives on each `BalanceDto`** (path: `items[].balances[].pendingActions[]`), not on `YieldBalancesDto`. Each pending action has `intent`, `type`, `passthrough`, optional `arguments`, and optional `amount`. To act on one, pass `pendingActions[].type` as the `action` parameter and `pendingActions[].passthrough` as `passthrough` to `actions_manage`.
 
 **Use when:** User asks "what are my positions?", "how much am I earning?", or "show my balances".
 
@@ -170,7 +170,9 @@ Initiate entering (depositing into) a yield position.
 - `yieldId`
 - `address` — user's wallet address
 - `amount` — human-readable (e.g. `"100"`, never raw wei)
-- `args` — optional extras like `validatorAddress`, `inputToken`
+- `validatorAddress` — optional; required when `mechanics.requiresValidatorSelection`
+- `receiverAddress`, `useMaxAllowance` — optional
+- Any other per-yield enter fields come from `mechanics.arguments.enter` — pass them as top-level params (there is no `args` wrapper), and never invent an `inputToken` param
 
 **Returns:** `ActionDto` with `transactions: TransactionDto[]`
 
@@ -183,8 +185,9 @@ Initiate exiting (withdrawing from) a yield position.
 
 **Key parameters:**
 - `yieldId`, `address`, `amount`
-- `passthrough` — from `pendingActions[].passthrough` if available
-- `validatorAddress` — optional
+- `validatorAddress`, `receiverAddress`, `useMaxAmount`, `useAutoClaim` — optional
+- `useInstantExecution` — optional; only when the yield offers it (e.g. some RWA redemptions). `true` → instant settlement, usually for a fee; `false` → standard NAV redemption, funds settle in ~1–7 business days. Ask the user which they want; never default it silently.
+- Does **not** take `passthrough` (that's `actions_manage` only).
 
 **Returns:** `ActionDto`
 
@@ -228,9 +231,9 @@ Poll the status of a transaction by its ID.
 **Key parameters:**
 - `transactionId` — the transaction UUID from the `transactions[]` array
 
-**Returns:** `TransactionDto` with `status`: `CREATED` | `BROADCASTED` | `CONFIRMED` | `FAILED`
+**Returns:** `TransactionDto` with `status`: one of `NOT_FOUND` | `CREATED` | `BLOCKED` | `WAITING_FOR_SIGNATURE` | `SIGNED` | `BROADCASTED` | `PENDING` | `CONFIRMED` | `FAILED` | `SKIPPED`. Terminal states are `CONFIRMED`, `FAILED`, and `SKIPPED`.
 
-**Use when:** After calling `submit_hash`, poll until status is `CONFIRMED` or `FAILED` before proceeding to the next transaction in a multi-step action.
+**Use when:** After calling `submit_hash`, poll until status is terminal (`CONFIRMED`, `FAILED`, or `SKIPPED`) before proceeding. On `CONFIRMED` continue; on `FAILED` stop the sequence and report (don't sign later steps); `SKIPPED` means that step needs no on-chain tx — proceed to the next.
 
 ---
 
@@ -346,9 +349,9 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 - `yieldId` — the RWA yield's ID
 - `address` — the wallet address to check
 
-**Returns:** the wallet's KYC/eligibility status for that yield (e.g. not started, pending, verified/eligible).
+**Returns:** `{ kycStatus, authorizeUrl? }`. `kycStatus` is one of `not_required` | `not_started` | `pending` | `approved` | `rejected`. `authorizeUrl` (when present, for `not_started` / `pending`) is the issuer's onboarding link.
 
-**Use when:** Before building an `actions_enter` for any permissioned RWA yield (`kycRequired === true`). Proceed only if the wallet is verified/eligible — see `references/kyc-flows.md`.
+**Use when:** Before building an `actions_enter` for any permissioned RWA yield (`kycRequired === true`). **Proceed only when `kycStatus` is `approved` (or `not_required`).** For `not_started` / `pending`, send the user to `authorizeUrl` and stop; `rejected` means blocked — see `references/kyc-flows.md`.
 
 ---
 

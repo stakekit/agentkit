@@ -3,8 +3,7 @@
 ## Rate Limit Tiers
 
 > **Illustrative only — not authoritative.** The numbers below are rough examples,
-> not your key's real limits. Observed production keys have allowed far higher limits
-> (e.g. `x-ratelimit-limit` ~120,000). **Confirm your key's actual limit via the
+> not your key's real limits. **Confirm your key's actual limit via the
 > `x-ratelimit-limit` response header** rather than relying on this table.
 
 | Tier | Requests/min (illustrative) | Use Case |

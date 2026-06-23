@@ -119,7 +119,7 @@ for (const tx of action.transactions) {
 
 1. **cosmosPubKey missing → 400 error**: The most common Cosmos error. A missing or misplaced `cosmosPubKey` returns `400 Bad Request` with a `validation.message[]`. Always include the flat `cosmosPubKey` field (bech32 `cosmospub1...`) — there is no `additionalAddresses` wrapper.
 
-2. **21-day unbonding period**: Native ATOM staking has a 21-day unbonding. After `actions_exit`, the balance shows `type: "exiting"` for 21 days before becoming `type: "withdrawable"`.
+2. **21-day unbonding period**: Native ATOM staking has a 21-day unbonding. After `POST /v1/actions/exit`, the balance shows `type: "exiting"` for 21 days before becoming `type: "withdrawable"`.
 
 3. **Validator changes**: Don't hardcode validator addresses. Validators can change commission, get jailed, or go offline. Always use `GET /v1/yields/{id}/validators` at runtime.
 

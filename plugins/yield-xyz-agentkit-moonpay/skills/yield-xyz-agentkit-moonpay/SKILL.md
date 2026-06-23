@@ -36,7 +36,7 @@ connection instructions.
 
 ---
 
-## ⚠️ CRITICAL
+## CRITICAL
 
 - **Never modify `unsignedTransaction`** before signing — not addresses, amounts,
   fees, or encoding, on any chain. If anything looks wrong, have `yield-xyz-agentkit`
@@ -64,6 +64,8 @@ Hand off to the `yield-xyz-agentkit` skill to discover the yield, inspect its sc
 select a validator if required, and build the action — passing the MoonPay
 wallet address from Step 1. It returns
 `transactions[]` ordered by `stepIndex`.
+
+For real-world-asset (`real_world_asset`) yields, the base runs its RWA eligibility gate (`yields_get_kyc_status`) before building the enter — never broadcast an RWA enter the base flagged ineligible; it will revert on-chain. See the base skill's RWA notes.
 
 ### Step 3 — Sign and broadcast via MoonPay
 
@@ -100,7 +102,7 @@ After all transactions confirm, have the `yield-xyz-agentkit` skill fetch
 | Situation | Action |
 |---|---|
 | MoonPay not authenticated | Guide through `mp login` + email code verification |
-| No wallet found | Guide through `mp wallet create MyWallet` |
+| No wallet found | Guide through `mp wallet create --name <wallet-name>` |
 | Transaction FAILED | Do not retry automatically — report to user with txHash |
 
 (For Yield.xyz-side errors — wrong arguments, rate limits — see the

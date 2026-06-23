@@ -117,7 +117,7 @@ redirect them to the matching execute skill (`yield-xyz-agentkit`, `yield-xyz-ag
 `yield-xyz-agentkit-moonpay`), which carry the wallet/signing
 guidance execution requires.
 
-> 📖 **Full action-tool list + which are safe (doc tools) vs. never-call, with a one-line
+> **Full action-tool list + which are safe (doc tools) vs. never-call, with a one-line
 > description and REST equivalent for each — see
 > [`references/mcp-tools.md`](./references/mcp-tools.md).**
 
@@ -201,7 +201,7 @@ Registration command, for convenience —
 For Claude Code:
 ```bash
 claude mcp add yield-xyz-agentkit --transport http https://mcp.yield.xyz/mcp
-claude mcp list   # verify "yield-xyz-agentkit" shows "✓ Connected"
+claude mcp list   # verify "yield-xyz-agentkit" shows "Connected"
 ```
 
 For other agents (Codex, Gemini CLI, etc.), write the `yield-xyz-agentkit` entry into
@@ -312,7 +312,7 @@ route you dropped into a running app.
    example:
 
    ```
-   ✅ Project is running.
+   Project is running.
 
    Frontend:        http://localhost:3000
    Backend API:     http://localhost:3001

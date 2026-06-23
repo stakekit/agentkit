@@ -259,7 +259,7 @@ Ask the user to check the dashboard and manually approve this.
    → Extract transaction hash from the executed intent response
 
 7. Agent calls submit_hash on the Yield.xyz MCP (mandatory)
-   submit_hash(actionId, hash)
+   submit_hash(transactionId, hash)   // transactionId from transactions[].id
    This is required — without it, Yield.xyz cannot track the position.
    Never skip this step, even in semi-autonomous flow.
 
@@ -329,7 +329,7 @@ approved individually on the dashboard. Process them in `stepIndex`
 order — do not submit the next intent until the previous one reaches
 `executed`.
 
-> **⚠️ Nonce handling:** The yield.xyz MCP may return all transactions
+> **Nonce handling:** The yield.xyz MCP may return all transactions
 > with the **same nonce** because they are built before any are executed
 > on-chain. You **must** increment the nonce for each subsequent
 > transaction. Take the nonce from `stepIndex=0` and add the stepIndex
@@ -348,7 +348,7 @@ TX stepIndex=0:
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_0
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_0} until "executed"
-  → Call submit_hash(actionId, hash) on Yield.xyz MCP ← mandatory
+  → Call submit_hash(transactionId, hash) on Yield.xyz MCP ← mandatory
   → Confirm to user
 
 TX stepIndex=1:
@@ -356,7 +356,7 @@ TX stepIndex=1:
   → POST /v1/intents/wallets/{id}/rpc → get intent_id_1
   → Notify user → user approves on dashboard
   → Poll GET /v1/intents/{intent_id_1} until "executed"
-  → Call submit_hash(actionId, hash) on Yield.xyz MCP ← mandatory
+  → Call submit_hash(transactionId, hash) on Yield.xyz MCP ← mandatory
   → Confirm to user
 ```
 
@@ -390,7 +390,7 @@ ask the agent to resubmit it.
 | **Submit intent** | POST | `/v1/intents/wallets/{id}/rpc` | Queued for approval — NOT immediate |
 | **Poll intent** | GET | `/v1/intents/{intent_id}` | Check status + retrieve hash |
 
-> ⚠️ Do NOT use `POST /v1/wallets/{id}/rpc` (the synchronous endpoint)
+> Do NOT use `POST /v1/wallets/{id}/rpc` (the synchronous endpoint)
 > for semi-autonomous. Always use `POST /v1/intents/wallets/{id}/rpc`.
 > The synchronous endpoint bypasses the approval queue entirely.
 

@@ -116,7 +116,10 @@ for (const tx of action.transactions.sort((a, b) => a.stepIndex - b.stepIndex)) 
   const { value: status } = await connection.confirmTransaction(signature, "confirmed");
   if (status.err) throw new Error(`Transaction failed on-chain: ${JSON.stringify(status.err)}`);
 
-  // Submit hash — MANDATORY
+  // Submit hash — MANDATORY. Browser code must NOT hold the API key:
+  // this relative path proxies to your own backend, which forwards to
+  // https://api.yield.xyz/v1/transactions/{id}/submit-hash with x-api-key
+  // added server-side. (Server-side code calls the absolute URL + key directly.)
   await fetch(`/v1/transactions/${tx.id}/submit-hash`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
