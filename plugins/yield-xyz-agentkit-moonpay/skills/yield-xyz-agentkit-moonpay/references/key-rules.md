@@ -57,7 +57,7 @@
 - Call `yields_get_validators` when `mechanics.requiresValidatorSelection === true`
 - Display: preferred validators first, then APY descending within each group
 - Columns: Validator, Commission, APY, TVL, Voting Power
-- Flag validators with `preferred: true` as ✓ Curated
+- Flag validators with `preferred: true` as Curated
 - Warn on 0% commission — likely a temporary rate
 - Recommend top preferred by APY — but always confirm with user before proceeding
 - Never select a validator autonomously

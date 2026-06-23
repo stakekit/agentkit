@@ -27,7 +27,7 @@ This holds whether signing is human-approved or fully autonomous. Where a human 
 
 ---
 
-## ⚠️ How to Call Tools — Read This First
+## How to Call Tools — Read This First
 
 **Always call tools via the connected MCP server (`https://mcp.yield.xyz/mcp`). Never fall back to curl, bash, or raw HTTP requests.**
 
@@ -53,7 +53,7 @@ The MCP server exposes these tools directly — call them like any other tool:
 
 ---
 
-## ⚠️ CRITICAL: Never Modify Transactions
+## CRITICAL: Never Modify Transactions
 
 **DO NOT modify `unsignedTransaction` returned by any action tool under any circumstances.** Not addresses, amounts, fees, encoding — nothing.
 
@@ -75,7 +75,7 @@ Never dump raw JSON or plain comma-separated data. Always follow the formats def
 
 ---
 
-## ⚠️ API Usage Policy
+## API Usage Policy
 
 **You must follow** the guidelines defined in **[`references/policies.md`](./references/policies.md)** for API usage, data fetching, and efficiency.
 
@@ -140,7 +140,7 @@ List validators for a yield that requires validator selection.
 - Default to `limit: 20` unless the user asks to see more.
 - Display as a table sorted by: **preferred validators first, then APR descending within each group.**
 - Columns to show: Validator, Commission, APR, TVL, Voting Power.
-- Flag validators with `preferred: true` with a ✓ or "Curated" label.
+- Flag validators with `preferred: true` with a "Curated" label.
 - Warn if a validator has 0% commission — note it may be a temporary rate.
 - If the user doesn't specify a validator, recommend the top preferred validator by APR and explain why.
 - Never pick a validator unilaterally — confirm with the user, or follow the host's configured selection criteria.

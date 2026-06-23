@@ -329,7 +329,7 @@ approved individually on the dashboard. Process them in `stepIndex`
 order — do not submit the next intent until the previous one reaches
 `executed`.
 
-> **⚠️ Nonce handling:** The yield.xyz MCP may return all transactions
+> **Nonce handling:** The yield.xyz MCP may return all transactions
 > with the **same nonce** because they are built before any are executed
 > on-chain. You **must** increment the nonce for each subsequent
 > transaction. Take the nonce from `stepIndex=0` and add the stepIndex
@@ -390,7 +390,7 @@ ask the agent to resubmit it.
 | **Submit intent** | POST | `/v1/intents/wallets/{id}/rpc` | Queued for approval — NOT immediate |
 | **Poll intent** | GET | `/v1/intents/{intent_id}` | Check status + retrieve hash |
 
-> ⚠️ Do NOT use `POST /v1/wallets/{id}/rpc` (the synchronous endpoint)
+> Do NOT use `POST /v1/wallets/{id}/rpc` (the synchronous endpoint)
 > for semi-autonomous. Always use `POST /v1/intents/wallets/{id}/rpc`.
 > The synchronous endpoint bypasses the approval queue entirely.
 

@@ -51,10 +51,10 @@ minting / redeeming at NAV). For these — and **only** these — a curated list
 below as a fallback. Always prefer the MCP; use this only when the MCP returns no
 eligibility for the yield, and point the user to the issuer when in doubt.
 
-**Midas — mTBILL (Ethereum & Base)** · open-access on-chain · `🌐 EU-14 · KYC to mint`
-- ✅ Supported (EU-14): Austria · Belgium · France · Germany · Ireland · Italy ·
+**Midas — mTBILL (Ethereum & Base)** · open-access on-chain · `Open · EU-14 · KYC to mint`
+- Supported (EU-14): Austria · Belgium · France · Germany · Ireland · Italy ·
   Luxembourg · Malta · Netherlands · Poland · Portugal · Romania · Spain · Sweden.
-- 🚫 Restricted: United States · Canada · China · Australia · Iran · United Kingdom ·
+- Restricted: United States · Canada · China · Australia · Iran · United Kingdom ·
   Russia · Afghanistan · Belarus · Mali · North Korea · Syria · Venezuela ·
   Zimbabwe · Nicaragua · Burundi · and all EU/US-sanctioned jurisdictions.
 - The token is freely holdable / transferable on-chain (**no KYC to hold**); KYC and

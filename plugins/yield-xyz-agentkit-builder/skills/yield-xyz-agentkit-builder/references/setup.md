@@ -114,7 +114,7 @@ To confirm it's connected:
 claude mcp list
 ```
 
-The output should include `yield-xyz-agentkit` with status `✓ Connected`. If it fails,
+The output should include `yield-xyz-agentkit` with status `Connected`. If it fails,
 re-run the add command or inspect `.mcp.json` for typos.
 
 ---

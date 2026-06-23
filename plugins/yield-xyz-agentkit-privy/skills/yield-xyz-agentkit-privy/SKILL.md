@@ -29,7 +29,7 @@ See `references/architecture.md` for the full diagram.
 
 ---
 
-## ⚠️ CRITICAL: Never Modify Unsigned Transactions
+## CRITICAL: Never Modify Unsigned Transactions
 
 > **DO NOT MODIFY `unsignedTransaction` before signing — under any circumstances.**
 > Not addresses, amounts, fees, or encoding, on any chain, ever.
@@ -71,7 +71,7 @@ If either is empty → **stop** and tell the user:
 | Best For | Automation, speed | Safety, oversight, treasury management |
 | Privy Plan Required | Any plan | **Enterprise plan required** |
 
-> ⚠️ **Semi-Autonomous mode requires a Privy Enterprise plan.** Confirm at
+> **Semi-Autonomous mode requires a Privy Enterprise plan.** Confirm at
 > https://dashboard.privy.io before selecting it.
 
 Ask the user which they want. Then:

@@ -133,7 +133,7 @@ Most DeFi positions require multiple transactions (e.g., ERC-20 approval
 followed by deposit). Always process them in `stepIndex` order, one at
 a time, never in parallel:
 
-> **⚠️ Nonce handling:** The yield.xyz MCP may return all transactions
+> **Nonce handling:** The yield.xyz MCP may return all transactions
 > with the **same nonce** because they are built before any are executed
 > on-chain. You **must** increment the nonce for each subsequent
 > transaction. Take the nonce from `stepIndex=0` and add the stepIndex

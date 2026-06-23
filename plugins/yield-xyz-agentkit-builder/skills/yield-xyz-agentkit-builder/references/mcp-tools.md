@@ -10,15 +10,15 @@ Consult this file whenever you're unsure if a given MCP tool is safe to invoke d
 
 | Category | Use during builder sessions? | Why |
 |---|---|---|
-| **Doc tools** (`yield_get_api_spec`, `yield_lookup_docs`, `yield_fetch_doc`, `yield_troubleshoot_error`, `yield_list_repos`) | ✅ Yes — freely | Read-only, and all **live**: they pull the current OpenAPI spec, search/read the live docs, diagnose errors against the live spec, or point at real source repos. Authoritative and always current. |
-| **Static guidance** (this skill's `references/*.md`) | ✅ Yes — read directly | Chains, transaction lifecycle, yield types, safety, limits, integration patterns. Curated and bundled with the skill — no tool call needed. |
-| **Action tools** (`yields_get*`, `actions_*`) | ❌ **No — never** | Return trimmed/slimmed responses that omit fields present in the full REST API. Code built from their responses will be wrong. Use `curl`/`fetch` against `https://api.yield.xyz` with the user's API key instead. |
+| **Doc tools** (`yield_get_api_spec`, `yield_lookup_docs`, `yield_fetch_doc`, `yield_troubleshoot_error`, `yield_list_repos`) | Yes — freely | Read-only, and all **live**: they pull the current OpenAPI spec, search/read the live docs, diagnose errors against the live spec, or point at real source repos. Authoritative and always current. |
+| **Static guidance** (this skill's `references/*.md`) | Yes — read directly | Chains, transaction lifecycle, yield types, safety, limits, integration patterns. Curated and bundled with the skill — no tool call needed. |
+| **Action tools** (`yields_get*`, `actions_*`) | **No — never** | Return trimmed/slimmed responses that omit fields present in the full REST API. Code built from their responses will be wrong. Use `curl`/`fetch` against `https://api.yield.xyz` with the user's API key instead. |
 
 The **one purpose** of action tools is to let an end-user execute yield flows via an AI agent — not to let a builder inspect schemas. For building, always go through the live REST API.
 
 ---
 
-## ✅ Doc Tools — Use These
+## Doc Tools — Use These
 
 The MCP exposes **five** live doc tools, all read-only and safe. Prefer them over web searches or guessing. (Static "how-to-build" guidance — chains, transaction lifecycle, yield types, safety, limits — is **not** on the MCP; it lives in this skill's own `references/` files, listed under [Static Guidance](#static-guidance--read-from-this-skills-reference-files) below.)
 
@@ -49,7 +49,7 @@ Fetches the **live** Yield OpenAPI spec (`https://api.yield.xyz/docs.json`, defa
 
 ---
 
-## ❌ Action Tools — **DO NOT CALL** During Builder Sessions
+## Action Tools — **DO NOT CALL** During Builder Sessions
 
 The MCP exposes **17 action tools** (listed below). They exist to let an end-user
 execute yield flows via an agent — not to let a builder inspect schemas or run flows.

@@ -75,6 +75,10 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
 
 ---
 
+## Security & custody
+
+Yield.xyz is **SOC 2 compliant** ([trust.yield.xyz](https://trust.yield.xyz)). The agent never takes custody of funds — it only constructs unsigned transactions that your wallet signs and broadcasts.
+
 ## Risk Disclosure
 
 Yield.xyz AgentKit is a software tool for discovering yield opportunities and constructing transactions via the Yield.xyz infrastructure. It is not a financial advisor. Nothing in this repository constitutes investment advice or a recommendation to transact in any digital asset.

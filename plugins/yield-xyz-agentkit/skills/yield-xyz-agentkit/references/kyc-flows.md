@@ -109,9 +109,9 @@ their choice — never default it silently. See the `actions_exit` parameters in
 
 | Step | Agent |
 |---|---|
-| Discover the yield, read requirements, check balance, check KYC status, build/sign deposit & exit txns | ✅ Automates (once eligible) |
-| KYC / AML / accreditation / investment agreements | ❌ User, on the issuer portal |
-| Add the wallet to the issuer's on-chain allowlist | ❌ User, on the issuer portal |
+| Discover the yield, read requirements, check balance, check KYC status, build/sign deposit & exit txns | Yes — automates (once eligible) |
+| KYC / AML / accreditation / investment agreements | No — user, on the issuer portal |
+| Add the wallet to the issuer's on-chain allowlist | No — user, on the issuer portal |
 
 ---
 

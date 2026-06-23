@@ -59,18 +59,18 @@ Store the returned id as PRIVY_POLICY_ID.
 
 ## Policy Templates
 
-> ⚠️ Critical — Rule Evaluation Logic
+> Critical — Rule Evaluation Logic
 >
 > Privy allows a transaction if any single rule matches. Conditions
 > across separate rules do NOT stack. Always combine chain + amount
 > restrictions into the same rule so both must be true together.
 >
-> ❌ Rule 1: ALLOW if chain = Base       ← allows unlimited amounts on Base
->    Rule 2: ALLOW if value ≤ $4         ← allows any chain if value is low
+> Wrong: Rule 1: ALLOW if chain = Base       ← allows unlimited amounts on Base
+>        Rule 2: ALLOW if value ≤ $4         ← allows any chain if value is low
 >
-> ✅ Rule 1: ALLOW if chain = Base AND value ≤ $4   ← both enforced together
+> Right: Rule 1: ALLOW if chain = Base AND value ≤ $4   ← both enforced together
 
-### 🔒 Conservative — Single chain, small ETH cap
+### Conservative — Single chain, small ETH cap
 
 One rule combining chain + native ETH value cap.
 
@@ -91,7 +91,7 @@ One rule combining chain + native ETH value cap.
 For ERC-20 / DeFi token caps (USDC, vault deposits, etc.), use
 ethereum_calldata conditions — see Rule Structure below.
 
-### ⚖️ Balanced — Multi-chain, ERC-20 token cap
+### Balanced — Multi-chain, ERC-20 token cap
 
 One rule per function type, each combining chain + calldata amount.
 
@@ -162,7 +162,7 @@ One rule per function type, each combining chain + calldata amount.
 
 5000000 = 5 USDC (6 decimals). Adjust per token decimals.
 
-### 🎯 DeFi Contract Allowlist — Specific protocols only
+### DeFi Contract Allowlist — Specific protocols only
 
 Combine chain + contract allowlist in one rule. Get addresses from
 yields_get → inputTokens[].address.
@@ -181,7 +181,13 @@ yields_get → inputTokens[].address.
 ]
 ```
 
-### ⚡ Power User — Loose cap, all L2s
+### RWA Protocol Allowlist — confine the wallet to one RWA yield's contracts
+
+For an RWA agent, a **contract allowlist** is usually the right control: confine the wallet to the specific RWA yield's contracts so the agent can deposit into and exit the fund but move funds nowhere else. RWA minimums are large (e.g. $100K), so a small value cap is counterproductive — it would block a legitimate deposit; an allowlist is the better control. Combine `chain_id` + a `to` allowlist in one rule, with addresses from the action's `transactions[].unsignedTransaction.to` (the approve/deposit/exit contracts) and `yields_get` → `inputTokens[].address` (the input token for the approval).
+
+> **RWA note.** A Privy policy contract-allowlist is a *spending* control on your side — it limits which contracts the agent may call. It is **separate from** the issuer's **on-chain holder allowlist** for permissioned RWA tokens (e.g. Superstate USTB/USCC), which gates who may *hold* the token and is enforced by the token contract itself. Both must permit a deposit: the Privy policy must allow the call, **and** the wallet must be eligible per the issuer — which you confirm with `yields_get_kyc_status(yieldId, address)` before signing, never by inspecting the chain yourself. A policy allowlist alone does **not** make a wallet eligible to hold a permissioned RWA token. See `references/kyc-flows.md`.
+
+### Power User — Loose cap, all L2s
 
 ```json
 [
@@ -302,7 +308,7 @@ curl -s -X POST "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID/rules" \
 
 `DELETE /v1/policies/{policy_id}`
 
-> ⚠️ PROTECTED. Requires explicit verbal confirmation from the user.
+> PROTECTED. Requires explicit verbal confirmation from the user.
 > See references/privy-security.md for the required
 > confirmation flow before calling this endpoint.
 
@@ -310,7 +316,7 @@ curl -s -X POST "https://api.privy.io/v1/policies/$PRIVY_POLICY_ID/rules" \
 
 `DELETE /v1/policies/{policy_id}/rules/{rule_id}`
 
-> ⚠️ PROTECTED. Same confirmation requirement as policy deletion.
+> PROTECTED. Same confirmation requirement as policy deletion.
 
 ---
 
@@ -333,17 +339,17 @@ data or known mappings before proceeding.
 
 ---
 
-## ❌ Policy Anti-Patterns
+## Policy Anti-Patterns
 
 ```js
-// ❌ No spending limit — wallet can be drained
+// AVOID: No spending limit — wallet can be drained
 { "method": "*", "conditions": [], "action": "ALLOW" }
 
-// ❌ Chain and amount in separate rules — each alone allows everything on its match
+// AVOID: Chain and amount in separate rules — each alone allows everything on its match
 Rule 1: { chain_id eq "8453" }           → allows unlimited amounts on Base
 Rule 2: { value lte "2000000000000000" } → allows any chain if ETH value is low
 
-// ❌ value cap only covers native ETH — useless for ERC-20 transfers (value = 0)
+// AVOID: value cap only covers native ETH — useless for ERC-20 transfers (value = 0)
 { "field": "value", "operator": "lte", "value": "2000000000000000" }
 // To cap ERC-20 amounts, use ethereum_calldata with the function's ABI instead.
 ```

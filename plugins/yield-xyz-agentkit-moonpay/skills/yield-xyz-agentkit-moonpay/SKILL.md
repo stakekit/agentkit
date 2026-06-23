@@ -36,7 +36,7 @@ connection instructions.
 
 ---
 
-## ⚠️ CRITICAL
+## CRITICAL
 
 - **Never modify `unsignedTransaction`** before signing — not addresses, amounts,
   fees, or encoding, on any chain. If anything looks wrong, have `yield-xyz-agentkit`
