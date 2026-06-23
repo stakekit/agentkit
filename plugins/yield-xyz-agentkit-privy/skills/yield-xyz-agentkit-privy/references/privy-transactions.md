@@ -69,9 +69,8 @@ CAIP-2 table below.
 
 ## Solana Transactions
 
-Privy requires the Solana transaction as a base64 string, not the raw
-hex that the Yield.xyz AgentKit MCP returns. Build a new base64-encoded variable
-from the original, do not modify UNSIGNED_TX.
+Privy requires the Solana transaction as a base64 string. Build a new base64-encoded
+variable from the original; do not modify UNSIGNED_TX.
 
 ```bash
 TX_BASE64=$(echo "$UNSIGNED_TX" | xxd -r -p | base64)

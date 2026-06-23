@@ -148,7 +148,7 @@ interface ActionDto {
   id: string;
   intent: string;              // "enter" | "exit" | "manage"
   type: string;                // "STAKE" for enter, "UNSTAKE" for exit —
-                               // applies even to lending/vault yields (surprising naming)
+                               // applies even to lending/vault yields
   executionPattern: string;    // "synchronous" | "asynchronous" | "batch" — see "Branch on executionPattern"
   status: string;              // ActionDto.status — NOT the transaction enum. One of:
                                // CANCELED, CREATED, WAITING_FOR_NEXT, PROCESSING, FAILED, SUCCESS, STALE.

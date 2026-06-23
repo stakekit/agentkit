@@ -89,7 +89,7 @@ Additional live endpoints, useful for discovery and analytics. History endpoints
 | `/v1/providers` | GET | List protocol/validator providers |
 | `/v1/providers/{id}` | GET | Single provider metadata |
 | `/v1/yields/{id}/campaigns` | GET | Reward campaigns for a yield |
-| `/v1/yields/{id}/balances` | POST | Balances for a single yield. Body: `{ "address": "…" }`. **POST is the canonical/spec method (recommended).** `GET` with `?address=` also works today, but prefer POST |
+| `/v1/yields/{id}/balances` | POST | Balances for a single yield. Body: `{ "address": "…" }`. Use POST (the spec method). |
 | `/v1/yields/{id}/balances/history` | GET | Balance history (indexed yields only) |
 | `/v1/yields/{id}/rewards/history` | GET | Reward history (indexed yields only) |
 | `/v1/yields/{id}/reward-rate/history` | GET | Reward-rate history |

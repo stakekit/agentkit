@@ -16,8 +16,8 @@ explain it, guide onboarding, and stop until the user is eligible.
 ```
 ┌─ User asks to enter an RWA yield
 │
-├─ 1. Identify the access model — from the yields_get_all item you ALREADY have
-│      (flat field names; no extra call needed):
+├─ 1. Identify the access model — read it from the yields_get_all list item
+│      (no extra call needed):
 │      • kycRequired === true → PERMISSIONED (go to 2b). Otherwise → OPEN-ACCESS (2a).
 │      • The gating fields (minEntry/maxEntry, cooldown/warmup/lockup, type,
 │        rewardRate, status, fees) AND the full KYC requirements (onboarding URL,

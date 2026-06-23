@@ -14,8 +14,6 @@ Consult this file whenever you're unsure if a given MCP tool is safe to invoke d
 | **Static guidance** (this skill's `references/*.md`) | Yes — read directly | Chains, transaction lifecycle, yield types, safety, limits, integration patterns. Curated and bundled with the skill — no tool call needed. |
 | **Action tools** (`yields_get*`, `actions_*`) | **No — never** | Return trimmed/slimmed responses that omit fields present in the full REST API. Code built from their responses will be wrong. Use `curl`/`fetch` against `https://api.yield.xyz` with the user's API key instead. |
 
-The **one purpose** of action tools is to let an end-user execute yield flows via an AI agent — not to let a builder inspect schemas. For building, always go through the live REST API.
-
 ---
 
 ## Doc Tools — Use These
@@ -148,9 +146,3 @@ Static "how-to-build" topics (yield types, transaction lifecycle, signing, safet
 rate limits, integration approach, architecture patterns) are **not** MCP tools — they
 live in this skill's `references/*.md` files. For the full need → file mapping, use the
 canonical router: **SKILL.md → Reference Files**. Don't duplicate that table here.
-
----
-
-## Why This Matters
-
-The builder skill's job is to produce **production-ready code**. That requires accurate schemas. MCP action tools are tuned for token efficiency in agent chats, not for API fidelity — so they are the wrong reference surface for code generation. Sticking to doc tools + live REST calls is what prevents the skill from hallucinating field names or generating calls that silently drop required data.
