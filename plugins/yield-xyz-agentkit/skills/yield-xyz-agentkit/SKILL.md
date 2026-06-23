@@ -157,7 +157,7 @@ Fetch the user's balances across one or more yield positions.
 
 **Returns:** `{ items: YieldBalancesDto[], errors: [{ yieldId, error }] }`
 
-Each `YieldBalancesDto` has `yieldId`, `balances: BalanceDto[]`, optional `outputTokenBalance`, and `pendingActions[]` — each pending action has `type`, `passthrough`, and optional `arguments`, which are the inputs to `actions_manage` / `actions_exit`.
+Each `YieldBalancesDto` has `yieldId`, `balances: BalanceDto[]`, optional `outputTokenBalance`, and `pendingActions[]` — each pending action has `type`, `passthrough`, and optional `arguments`, which are the inputs to `actions_manage`.
 
 **Use when:** User asks "what are my positions?", "how much am I earning?", or "show my balances".
 
@@ -183,7 +183,6 @@ Initiate exiting (withdrawing from) a yield position.
 
 **Key parameters:**
 - `yieldId`, `address`, `amount`
-- `passthrough` — from `pendingActions[].passthrough` if available
 - `validatorAddress` — optional
 - `useInstantExecution` — optional; only when the yield offers it (e.g. some RWA redemptions). `true` → instant settlement, usually for a fee; `false` → standard NAV redemption, funds settle in ~1–7 business days. Ask the user which they want; never default it silently.
 
