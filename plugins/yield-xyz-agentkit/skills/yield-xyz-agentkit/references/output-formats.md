@@ -92,13 +92,13 @@ Before sorting or displaying results, filter out yields below these TVL threshol
 | Governance / altcoins (AAVE, CRV, etc.) | $100K |
 | Unknown / unlisted tokens | $100K |
 
-- If `statistics.tvlUsd` is `null`, `0`, or missing — **exclude by default**. 
+- If `tvlUsd` is `null`, `0`, or missing — **exclude by default**. 
 - If applying the filter leaves fewer than 3 results, lower the threshold by 50% and retry once, then note: `(TVL filter relaxed to $250K — limited results available)`.
 - Never silently include low-TVL yields — if a user explicitly asks for them, show with a Low TVL badge.
 
 **Sorting priority:**
 1. `rewardRate.total` descending — default, always
-2. `statistics.tvlUsd` descending — if user asks "safest" or "highest TVL"
+2. `tvlUsd` descending — if user asks "safest" or "highest TVL"
 3. `mechanics.lockupPeriod.seconds` ascending — if user asks "most flexible" or "no lockup"
 
 ---

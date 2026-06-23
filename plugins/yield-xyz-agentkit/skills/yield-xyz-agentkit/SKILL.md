@@ -99,7 +99,9 @@ List and filter yield opportunities across networks and tokens.
 - `hasWarmupPeriod` — `true` to show only yields with a warmup period.
 - `limit` / `offset` — pagination (default 20, max 50)
 
-**Returns:** `{ total, offset, limit, items[] }` — each item includes: `id`, `tokenSymbol`, `network`, `type`, `providerId`, `rewardRate`, `tvlUsd`, `status`, `cooldownPeriod`, `warmupPeriod`, `lockupPeriod`, `minEntry`, `maxEntry`
+**Returns:** `{ total, offset, limit, items[] }`. List items are a **flattened** shape (not the full `YieldDto`): `id`, `tokenSymbol`, `network`, `type`, `providerId`, `rewardRate` (a **number** = the APY/APR total), `tvlUsd`, `status`, `cooldownPeriod`, `warmupPeriod`, `lockupPeriod`, `minEntry`, `maxEntry`, top-level `kycRequired`, `authorizeUrl`, `kyc`.
+
+> **List vs detail shapes — read the right path.** `yields_get_all` items are flattened as above (flat `rewardRate` number, `tvlUsd`, `minEntry`/`maxEntry`, top-level `kycRequired`). `yields_get` returns the full **nested** `YieldDto`: `rewardRate` is `{ total, rateType, components[] }`, TVL is `statistics.tvlUsd`, limits are `mechanics.entryLimits.{minimum, maximum}`, and KYC is `mechanics.requirements.kycRequired`. Use the flat fields when working from a list result, the nested paths when working from `yields_get`.
 
 **Use when:** User wants to browse or compare yield options.
 
@@ -157,7 +159,7 @@ Fetch the user's balances across one or more yield positions.
 
 **Returns:** `{ items: YieldBalancesDto[], errors: [{ yieldId, error }] }`
 
-Each `YieldBalancesDto` has `yieldId`, `balances: BalanceDto[]`, optional `outputTokenBalance`, and `pendingActions[]` — each pending action has `type`, `passthrough`, and optional `arguments`, which are the inputs to `actions_manage`.
+Each `YieldBalancesDto` has `yieldId` and `balances: BalanceDto[]`. **`pendingActions[]` lives on each `BalanceDto`** (path: `items[].balances[].pendingActions[]`), not on `YieldBalancesDto`. Each pending action has `intent`, `type`, `passthrough`, optional `arguments`, and optional `amount` — `type` + `passthrough` are the inputs to `actions_manage`.
 
 **Use when:** User asks "what are my positions?", "how much am I earning?", or "show my balances".
 
@@ -170,7 +172,9 @@ Initiate entering (depositing into) a yield position.
 - `yieldId`
 - `address` — user's wallet address
 - `amount` — human-readable (e.g. `"100"`, never raw wei)
-- `args` — optional extras like `validatorAddress`, `inputToken`
+- `validatorAddress` — optional; required when `mechanics.requiresValidatorSelection`
+- `receiverAddress`, `useMaxAllowance` — optional
+- Any other per-yield enter fields come from `mechanics.arguments.enter` — pass them as top-level params (there is no `args` wrapper), and never invent an `inputToken` param
 
 **Returns:** `ActionDto` with `transactions: TransactionDto[]`
 
@@ -183,8 +187,9 @@ Initiate exiting (withdrawing from) a yield position.
 
 **Key parameters:**
 - `yieldId`, `address`, `amount`
-- `validatorAddress` — optional
+- `validatorAddress`, `receiverAddress`, `useMaxAmount`, `useAutoClaim` — optional
 - `useInstantExecution` — optional; only when the yield offers it (e.g. some RWA redemptions). `true` → instant settlement, usually for a fee; `false` → standard NAV redemption, funds settle in ~1–7 business days. Ask the user which they want; never default it silently.
+- Does **not** take `passthrough` (that's `actions_manage` only).
 
 **Returns:** `ActionDto`
 
@@ -228,9 +233,9 @@ Poll the status of a transaction by its ID.
 **Key parameters:**
 - `transactionId` — the transaction UUID from the `transactions[]` array
 
-**Returns:** `TransactionDto` with `status`: `CREATED` | `BROADCASTED` | `CONFIRMED` | `FAILED`
+**Returns:** `TransactionDto` with `status`: one of `NOT_FOUND` | `CREATED` | `BLOCKED` | `WAITING_FOR_SIGNATURE` | `SIGNED` | `BROADCASTED` | `PENDING` | `CONFIRMED` | `FAILED` | `SKIPPED`. Terminal states are `CONFIRMED`, `FAILED`, and `SKIPPED`.
 
-**Use when:** After calling `submit_hash`, poll until status is `CONFIRMED` or `FAILED` before proceeding to the next transaction in a multi-step action.
+**Use when:** After calling `submit_hash`, poll until status is terminal (`CONFIRMED`, `FAILED`, or `SKIPPED`) before proceeding. On `CONFIRMED` continue; on `FAILED` stop the sequence and report (don't sign later steps); `SKIPPED` means that step needs no on-chain tx — proceed to the next.
 
 ---
 
@@ -346,9 +351,9 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 - `yieldId` — the RWA yield's ID
 - `address` — the wallet address to check
 
-**Returns:** the wallet's KYC/eligibility status for that yield (e.g. not started, pending, verified/eligible).
+**Returns:** `{ kycStatus, authorizeUrl? }`. `kycStatus` is one of `not_required` | `not_started` | `pending` | `approved` | `rejected`. `authorizeUrl` (when present, for `not_started` / `pending`) is the issuer's onboarding link.
 
-**Use when:** Before building an `actions_enter` for any permissioned RWA yield (`kycRequired === true`). Proceed only if the wallet is verified/eligible — see `references/kyc-flows.md`.
+**Use when:** Before building an `actions_enter` for any permissioned RWA yield (`kycRequired === true`). **Proceed only when `kycStatus` is `approved` (or `not_required`).** For `not_started` / `pending`, send the user to `authorizeUrl` and stop; `rejected` means blocked — see `references/kyc-flows.md`.
 
 ---
 

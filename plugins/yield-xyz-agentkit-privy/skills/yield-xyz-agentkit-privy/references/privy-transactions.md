@@ -121,9 +121,12 @@ the next transaction until `status` reaches a terminal state.
 | Status | Meaning | Next Action |
 |---|---|---|
 | `CREATED` | Built, not yet broadcast | Wait |
-| `BROADCASTED` | Broadcast, awaiting on-chain confirmation | Poll again |
+| `BROADCASTED` / `PENDING` | Broadcast, awaiting on-chain confirmation | Poll again |
 | `CONFIRMED` | Finalized on-chain | Proceed to next transaction |
+| `SKIPPED` | Terminal — step needs no on-chain tx | Proceed to next transaction |
 | `FAILED` | Failed on-chain | Stop — report to user, do not sign later steps |
+
+(Terminal states are `CONFIRMED`, `SKIPPED`, and `FAILED`; `get_transaction` may also return `CREATED`, `WAITING_FOR_SIGNATURE`, `SIGNED`, `BROADCASTED`, `PENDING`.)
 
 ---
 
