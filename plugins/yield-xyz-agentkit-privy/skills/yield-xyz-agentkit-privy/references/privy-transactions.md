@@ -152,7 +152,7 @@ TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → poll CONF
 TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → poll CONFIRMED → submit_hash ← mandatory
 ```
 
-After each transaction reaches `CONFIRMED`, call `submit_hash(actionId, hash)` on the Yield.xyz MCP before proceeding to the next transaction. This is mandatory — without it, Yield.xyz cannot track the position.
+After each transaction reaches `CONFIRMED`, call `submit_hash(transactionId, hash)` (the `transactionId` is from `transactions[].id`) on the Yield.xyz MCP before proceeding to the next transaction. This is mandatory — without it, Yield.xyz cannot track the position.
 
 If any transaction reaches `FAILED`, stop immediately. Do not proceed
 with subsequent transactions. Report the failure and the hash to the user

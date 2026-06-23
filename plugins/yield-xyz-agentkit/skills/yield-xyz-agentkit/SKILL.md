@@ -185,6 +185,7 @@ Initiate exiting (withdrawing from) a yield position.
 - `yieldId`, `address`, `amount`
 - `passthrough` — from `pendingActions[].passthrough` if available
 - `validatorAddress` — optional
+- `useInstantExecution` — optional; only when the yield offers it (e.g. some RWA redemptions). `true` → instant settlement, usually for a fee; `false` → standard NAV redemption, funds settle in ~1–7 business days. Ask the user which they want; never default it silently.
 
 **Returns:** `ActionDto`
 

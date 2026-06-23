@@ -1,5 +1,15 @@
 # Key Rules
 
+## Type Rules — match these exactly, or MCP tool calls fail validation
+
+- `limit` and `offset` are **numbers**, never strings. Pass `20`, not `"20"`.
+- `amount` is a **string** — human-readable decimal, never raw wei. Pass `"100"`, not `100`.
+- `network` is a **lowercase string** (`"base"`); `networks` is an **array** of them (`["base"]`).
+- `token` is **uppercase** (`"USDC"`); `inputTokens` / `yieldIds` / `providers` are **arrays**.
+- `types` is an **array of exact enum values** (`staking`, `lending`, `vault`, `real_world_asset`, …) — never a bare `type` string.
+
+---
+
 > The API is self-documenting. Every yield describes its own requirements through the `YieldDto`.
 > Before taking any action, always call `yields_get` to inspect the yield first. The `mechanics`
 > field tells you everything: required arguments (`mechanics.arguments.enter`, `.exit`), entry
@@ -33,7 +43,9 @@
 
 
 5. **Execute transactions in exact order.** Multiple transactions are ordered by `stepIndex`.
-   Wait for `CONFIRMED` status before proceeding to the next. Never skip or reorder.
+   Wait for `CONFIRMED` status before proceeding to the next. Never skip or reorder. Skip any
+   transaction already at a terminal status (`SKIPPED` / `CONFIRMED` / `FAILED`) — don't re-sign
+   or re-`submit_hash` it (calling `submit_hash` on an already-terminal transaction returns HTTP 412).
 
 6. **MCP tool → API mapping.** The 7 MCP tools map directly to API endpoints:
 
