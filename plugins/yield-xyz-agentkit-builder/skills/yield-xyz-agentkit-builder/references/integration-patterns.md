@@ -243,7 +243,7 @@ Enterprise integrations need reliability, monitoring, and compliance controls.
 - **Disaster recovery:** Cache unsigned transactions and implement retry logic
 - **Compliance:** Implement configurable guardrails for allowed networks and risk thresholds
 - **Multi-region:** Use geographically distributed API calls for resilience
-- **Timeout:** Set a 3-second max timeout on all API calls to avoid hanging requests
+- **Timeout:** Use scoped timeouts, not a blanket short one — ~3s for fast reads, ~15s for action-building, ~20s for balance chain-scans, ~12s for status polls. A blanket 3s aborts action calls mid-flight and falsely fails a tx that already broadcast (see common-pitfalls #18).
 
 ### Infrastructure Pattern
 ```typescript

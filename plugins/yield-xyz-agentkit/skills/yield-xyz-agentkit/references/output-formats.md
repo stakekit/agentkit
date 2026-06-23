@@ -141,7 +141,7 @@ Aave USDC Lending  ·  ethereum
 
 ## yields_get_validators — Displaying Validators
 
-Default: top 10 sorted by `rewardRate.total` descending.
+Default: preferred validators first, then by APR descending within each group; show top 10. (Matches the selection rule in SKILL.md.)
 
 Always display as a table, never as individual cards:
 

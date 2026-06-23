@@ -121,9 +121,9 @@ the next transaction until `status` reaches a terminal state.
 | Status | Meaning | Next Action |
 |---|---|---|
 | `CREATED` | Built, not yet broadcast | Wait |
-| `PENDING` | Broadcast, awaiting on-chain confirmation | Poll again |
+| `BROADCASTED` | Broadcast, awaiting on-chain confirmation | Poll again |
 | `CONFIRMED` | Finalized on-chain | Proceed to next transaction |
-| `FAILED` | Failed on-chain | Stop — report to user |
+| `FAILED` | Failed on-chain | Stop — report to user, do not sign later steps |
 
 ---
 
@@ -147,12 +147,12 @@ a time, never in parallel:
 > back to hex before submitting to Privy.
 
 ```
-TX stepIndex=0: use nonce as-is → Privy signs → broadcast → poll CONFIRMED → submit_hash ← mandatory
-TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → poll CONFIRMED → submit_hash ← mandatory
-TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → poll CONFIRMED → submit_hash ← mandatory
+TX stepIndex=0: use nonce as-is → Privy signs → broadcast → submit_hash → poll CONFIRMED
+TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → submit_hash → poll CONFIRMED
+TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → submit_hash → poll CONFIRMED
 ```
 
-After each transaction reaches `CONFIRMED`, call `submit_hash(transactionId, hash)` (the `transactionId` is from `transactions[].id`) on the Yield.xyz MCP before proceeding to the next transaction. This is mandatory — without it, Yield.xyz cannot track the position.
+Right after each broadcast returns a hash, call `submit_hash(transactionId, hash)` (the `transactionId` is from `transactions[].id`) on the Yield.xyz MCP, **then** poll `get_transaction` until `CONFIRMED` before starting the next transaction. `submit_hash` is mandatory — without it, Yield.xyz cannot track the position (and `get_transaction` cannot confirm it).
 
 If any transaction reaches `FAILED`, stop immediately. Do not proceed
 with subsequent transactions. Report the failure and the hash to the user

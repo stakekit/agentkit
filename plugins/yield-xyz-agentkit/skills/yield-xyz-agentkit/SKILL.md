@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit
-description: Discover and act on 2,988 DeFi yield opportunities via Yield.xyz AgentKit Skills, find yields, check APY enter/exit positions, and manage rewards across 80+ networks.
+description: Discover and act on 2,900+ DeFi yield opportunities via Yield.xyz AgentKit Skills, find yields, check APY enter/exit positions, and manage rewards across 80+ networks.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -157,7 +157,7 @@ Fetch the user's balances across one or more yield positions.
 
 **Returns:** `{ items: YieldBalancesDto[], errors: [{ yieldId, error }] }`
 
-Each `YieldBalancesDto` has `yieldId`, `balances: BalanceDto[]`, and optional `outputTokenBalance`.
+Each `YieldBalancesDto` has `yieldId`, `balances: BalanceDto[]`, optional `outputTokenBalance`, and `pendingActions[]` — each pending action has `type`, `passthrough`, and optional `arguments`, which are the inputs to `actions_manage` / `actions_exit`.
 
 **Use when:** User asks "what are my positions?", "how much am I earning?", or "show my balances".
 

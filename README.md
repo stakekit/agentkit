@@ -46,7 +46,7 @@ See **[`plugins/README.md`](./plugins/README.md)** for the per-plugin breakdown,
 
 ### Yield.xyz AgentKit MCP Server
 
-The Yield.xyz AgentKit MCP Server exposes 7 tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
+The Yield.xyz AgentKit MCP Server exposes a suite of tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
 
 **Endpoint:** `https://mcp.yield.xyz/mcp`
 

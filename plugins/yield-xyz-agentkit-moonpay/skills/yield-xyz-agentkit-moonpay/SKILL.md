@@ -65,6 +65,8 @@ select a validator if required, and build the action — passing the MoonPay
 wallet address from Step 1. It returns
 `transactions[]` ordered by `stepIndex`.
 
+For real-world-asset (`real_world_asset`) yields, the base runs its RWA eligibility gate (`yields_get_kyc_status`) before building the enter — never broadcast an RWA enter the base flagged ineligible; it will revert on-chain. See the base skill's RWA notes.
+
 ### Step 3 — Sign and broadcast via MoonPay
 
 **Read `references/moonpay-tools.md` in full before proceeding — mistakes here

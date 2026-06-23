@@ -141,7 +141,7 @@ Claude loads skills using **progressive disclosure**:
 
 This keeps context usage minimal.
 
-The 7 MCP tools this skill orchestrates:
+The core MCP tools this skill orchestrates:
 
 | Tool | What it does |
 |---|---|

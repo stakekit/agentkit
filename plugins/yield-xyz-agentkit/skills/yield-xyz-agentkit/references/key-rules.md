@@ -47,7 +47,7 @@
    transaction already at a terminal status (`SKIPPED` / `CONFIRMED` / `FAILED`) — don't re-sign
    or re-`submit_hash` it (calling `submit_hash` on an already-terminal transaction returns HTTP 412).
 
-6. **MCP tool → API mapping.** The 7 MCP tools map directly to API endpoints:
+6. **MCP tool → API mapping.** The MCP tools map directly to API endpoints:
 
    | MCP Tool | API Endpoint |
    |---|---|

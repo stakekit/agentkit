@@ -54,6 +54,8 @@ For each transaction in order:
 
 **Never pass raw JSON to `transaction_sign`.** Always serialize to base64 RLP first.
 
+> **EVM only.** This `ethers`-based serializer handles EVM (EIP-1559) transactions. For non-EVM chains MoonPay supports (e.g. Solana), pass the chain-native encoding the `unsignedTransaction` already carries, in the form `transaction_sign` expects — do **not** run it through the ethers serializer. If the action returns `isMessage: true`, sign it as a message, not a transaction.
+
 
 ---
 
