@@ -102,7 +102,7 @@ After all transactions confirm, have the `yield-xyz-agentkit` skill fetch
 | Situation | Action |
 |---|---|
 | MoonPay not authenticated | Guide through `mp login` + email code verification |
-| No wallet found | Guide through `mp wallet create MyWallet` |
+| No wallet found | Guide through `mp wallet create --name <wallet-name>` |
 | Transaction FAILED | Do not retry automatically — report to user with txHash |
 
 (For Yield.xyz-side errors — wrong arguments, rate limits — see the

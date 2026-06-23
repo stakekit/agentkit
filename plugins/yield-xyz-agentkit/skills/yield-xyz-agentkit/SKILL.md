@@ -157,7 +157,7 @@ Fetch the user's balances across one or more yield positions.
 
 **Returns:** `{ items: YieldBalancesDto[], errors: [{ yieldId, error }] }`
 
-Each `YieldBalancesDto` has `yieldId` and `balances: BalanceDto[]`. **`pendingActions[]` lives on each `BalanceDto`** (path: `items[].balances[].pendingActions[]`), not on `YieldBalancesDto`. Each pending action has `intent`, `type`, `passthrough`, optional `arguments`, and optional `amount` — `type` + `passthrough` are the inputs to `actions_manage`.
+Each `YieldBalancesDto` has `yieldId` and `balances: BalanceDto[]`. **`pendingActions[]` lives on each `BalanceDto`** (path: `items[].balances[].pendingActions[]`), not on `YieldBalancesDto`. Each pending action has `intent`, `type`, `passthrough`, optional `arguments`, and optional `amount`. To act on one, pass `pendingActions[].type` as the `action` parameter and `pendingActions[].passthrough` as `passthrough` to `actions_manage`.
 
 **Use when:** User asks "what are my positions?", "how much am I earning?", or "show my balances".
 

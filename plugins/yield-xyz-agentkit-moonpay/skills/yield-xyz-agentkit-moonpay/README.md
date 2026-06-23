@@ -230,7 +230,7 @@ Watch your AI agent:
 | Skill not triggering | Run `/yield-xyz-agentkit-moonpay find ETH yields` to force-invoke |
 | MoonPay auth error | Ask the agent: `Re-authenticate my MoonPay wallet` |
 | `transaction_sign` fails | Ask the agent to check if wallet has enough balance |
-| Balances not updating | Hash submission was skipped — re-enter position or submit manually |
+| Balances not updating | Hash submission was skipped — submit the hash manually via `submit_hash`. Never re-enter the position; it may already be funded on-chain. |
 | Skill missing from `/context` | Ask the agent to check and reload the skill.  |
 
 ---

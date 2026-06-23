@@ -13,7 +13,7 @@ The official tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone
 
 ### Yield.xyz AgentKit Claude Plugins
 
-Four composable plugins in one marketplace. Each installs its skill and auto-registers the MCP server(s) it needs. Start with the base plugin, then add a connector for your wallet/execution provider.
+Four composable plugins in one marketplace. Each installs its skill; the base and builder auto-register the Yield.xyz MCP, and the connectors inherit it from the base (MoonPay additionally needs the MoonPay MCP via guided setup). Start with the base plugin, then add a connector for your wallet/execution provider.
 
 ```bash
 /plugin marketplace add stakekit/agentkit

@@ -156,7 +156,7 @@ real_world_asset  concentrated_liquidity_pool  liquidity_pool
 
 **The type is only a high-level category.** It tells you roughly what a yield does — it does **not** define a yield's exact inputs, flow, lock period, fees, or receipt token, and two yields of the same type can differ. For any specific yield, the **yield DTO is the source of truth**:
 
-> `GET /v1/yields/{yieldId}` → read `mechanics.arguments.enter` / `.exit` for the exact required fields, plus `cooldownPeriod`, fees, `status.enter` / `status.exit`, and `entryLimits`. Never assume a yield's behavior from its type alone, and always read `mechanics.arguments.enter` before calling `actions_enter` — that's the contract for what to send.
+> `GET /v1/yields/{yieldId}` → read `mechanics.arguments.enter` / `.exit` for the exact required fields, plus `cooldownPeriod`, fees, `status.enter` / `status.exit`, and `entryLimits`. Never assume a yield's behavior from its type alone, and always read `mechanics.arguments.enter` before calling `POST /v1/actions/enter` — that's the contract for what to send.
 
 | Type | What it is (high level) | Often involves — **confirm in the DTO** |
 |------|-------------------------|------------------------------------------|

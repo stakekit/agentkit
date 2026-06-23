@@ -117,7 +117,7 @@ Run `claude mcp list` and check if `moonpay` is already registered.
 - **If no** — register it:
 
 ```bash
-claude mcp add moonpay "mp" mcp
+claude mcp add moonpay -- mp mcp
 ```
 
 ---

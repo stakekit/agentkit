@@ -9,7 +9,7 @@ MoonPay MCP runs locally via `mp mcp`. Tools available once connected:
 ### `wallet_list`
 List all local wallets and their addresses.
 - Call first — the returned address is used as `address` in all Yield.xyz calls
-- If empty, guide user to run `mp wallet create MyWallet`
+- If empty, guide user to run `mp wallet create --name <wallet-name>`
 
 ### `token_balance_list`
 Get token balances for a wallet.
@@ -29,11 +29,13 @@ For each transaction in order:
 
 1. **Serialize** the `unsignedTransaction` JSON from Yield.xyz AgentKit MCP into base64 RLP.
    MoonPay's `transaction_sign` expects base64, not raw JSON.
-   Use this script, and reuse it for every transaction:
+   Use this script, and reuse it for every transaction. Pass the `unsignedTransaction`
+   JSON in via the `UNSIGNED_TX` environment variable (the value is MCP output from the
+   agent's context, not a shell variable — it must be supplied explicitly):
 ```bash
-   node -e "
+   UNSIGNED_TX='<paste the unsignedTransaction JSON here>' node -e "
      const { ethers } = require('ethers');
-     const { from, ...txToSerialize } = unsignedTransaction;
+     const { from, ...txToSerialize } = JSON.parse(process.env.UNSIGNED_TX);
      const serialized = ethers.Transaction.from(txToSerialize).unsignedSerialized;
      const b64 = Buffer.from(serialized.slice(2), 'hex').toString('base64');
      console.log(b64);

@@ -5,6 +5,6 @@
   "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
-  "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
+  "keywords": ["defi", "yield", "sdk", "developer", "web3", "integration"],
   "components": { "skills": ["./skills"] }
 }

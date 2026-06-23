@@ -129,6 +129,6 @@ yield-xyz-agentkit-builder/
 
 ## Related
 
-- [Yield.xyz AgentKit Skill](../yield-xyz-agentkit/README.md) — explore yields conversationally
+- [Yield.xyz AgentKit Skill](https://github.com/stakekit/agentkit/tree/main/plugins/yield-xyz-agentkit) — explore yields conversationally
 - [Yield.xyz AgentKit MCP Server](https://mcp.yield.xyz/mcp) — optional build-time doc tools
 - [Yield.xyz Docs](https://docs.yield.xyz/docs/getting-started) — official documentation
