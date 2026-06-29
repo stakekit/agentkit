@@ -19,7 +19,7 @@ The **Robinhood Chain connector** for the Yield.xyz AgentKit: it adds the Robinh
 Robinhood Chain     → configure chain (RPC + chainId) + mint testnet tokens
 yield-xyz-agentkit  → discover yield + build unsignedTransaction
 Your EVM signer     → sign + broadcast (same as any EVM chain)
-yield-xyz-agentkit  → submit_hash + poll get_transaction until CONFIRMED
+yield-xyz-agentkit  → submit_hash + poll get_transaction
 ```
 
 ---

@@ -22,7 +22,7 @@ The **Privy connector** for the Yield.xyz AgentKit: Privy holds the key, enforce
 ```
 yield-xyz-agentkit  → discover yield + build unsignedTransaction
 Privy               → evaluate policy → sign → broadcast
-yield-xyz-agentkit  → submit_hash + poll get_transaction until CONFIRMED
+yield-xyz-agentkit  → submit_hash + poll get_transaction
 ```
 
 See `references/architecture.md` for the full diagram.
