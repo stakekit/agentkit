@@ -142,9 +142,9 @@ a time, never in parallel:
 > back to hex before submitting to Privy.
 
 ```
-TX stepIndex=0: use nonce as-is → Privy signs → broadcast → submit_hash → poll CONFIRMED
-TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → submit_hash → poll CONFIRMED
-TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → submit_hash → poll CONFIRMED
+TX stepIndex=0: use nonce as-is → Privy signs → broadcast → submit_hash → poll get_transaction
+TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → submit_hash → poll get_transaction
+TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → submit_hash → poll get_transaction
 ```
 
 Right after each broadcast returns a hash, call `submit_hash(transactionId, hash)` (the `transactionId` is from `transactions[].id`) on the Yield.xyz MCP, **then** poll `get_transaction` to a terminal status before starting the next transaction. `submit_hash` is mandatory — without it, Yield.xyz cannot track the position (and `get_transaction` cannot confirm it).
