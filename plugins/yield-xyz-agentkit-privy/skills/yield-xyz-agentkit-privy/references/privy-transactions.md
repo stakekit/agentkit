@@ -114,18 +114,11 @@ For networks not in this table: check the `chainId` field from the
 
 ## Poll for Confirmation
 
-Poll every 3–5 seconds to check status. Do not proceed to
-the next transaction until `status` reaches a terminal state.
-
-| Status | Meaning | Next Action |
-|---|---|---|
-| `CREATED` | Built, not yet broadcast | Wait |
-| `BROADCASTED` / `PENDING` | Broadcast, awaiting on-chain confirmation | Poll again |
-| `CONFIRMED` | Finalized on-chain | Proceed to next transaction |
-| `SKIPPED` | Terminal — step needs no on-chain tx | Proceed to next transaction |
-| `FAILED` | Failed on-chain | Stop — report to user, do not sign later steps |
-
-Terminal states: `CONFIRMED`, `SKIPPED`, `FAILED`. Any other status means keep polling.
+Poll every 3–5 seconds via `get_transaction`. Do not proceed to the next transaction
+until `status` reaches a terminal state: keep polling while pending, proceed on
+success, stop on failure. The full status enum and which states are terminal are
+defined in the base `yield-xyz-agentkit` skill — the single source of truth; don't
+restate them here.
 
 ---
 
@@ -154,7 +147,7 @@ TX stepIndex=1: increment nonce by 1 → Privy signs → broadcast → submit_ha
 TX stepIndex=2: increment nonce by 2 → Privy signs → broadcast → submit_hash → poll CONFIRMED
 ```
 
-Right after each broadcast returns a hash, call `submit_hash(transactionId, hash)` (the `transactionId` is from `transactions[].id`) on the Yield.xyz MCP, **then** poll `get_transaction` until `CONFIRMED` before starting the next transaction. `submit_hash` is mandatory — without it, Yield.xyz cannot track the position (and `get_transaction` cannot confirm it).
+Right after each broadcast returns a hash, call `submit_hash(transactionId, hash)` (the `transactionId` is from `transactions[].id`) on the Yield.xyz MCP, **then** poll `get_transaction` to a terminal status before starting the next transaction. `submit_hash` is mandatory — without it, Yield.xyz cannot track the position (and `get_transaction` cannot confirm it).
 
 If any transaction reaches `FAILED`, stop immediately. Do not proceed
 with subsequent transactions. Report the failure and the hash to the user

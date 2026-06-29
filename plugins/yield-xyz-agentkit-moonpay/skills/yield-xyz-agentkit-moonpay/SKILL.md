@@ -72,14 +72,11 @@ For real-world-asset (`real_world_asset`) yields, the base runs its RWA eligibil
 **Read `references/moonpay-tools.md` in full before proceeding — mistakes here
 result in permanent loss of funds or silent failure.**
 
-Execute each transaction in `transactions[]` **sequentially**, in `stepIndex`
-order — never in parallel, never out of order. Do not begin transaction N+1 until
-N is `CONFIRMED`.
-
-After MoonPay broadcasts each transaction:
-1. Call `submit_hash` (yield-xyz-agentkit MCP) with the `transactionId` (from
-   `transactions[].id`) and the on-chain hash — **mandatory**.
-2. Poll `get_transaction` until status is `CONFIRMED` or `FAILED` before the next.
+Execute each transaction in `transactions[]` **sequentially**, in `stepIndex` order —
+never in parallel, never out of order. After MoonPay broadcasts each one, hand back to
+`yield-xyz-agentkit` to record the hash (`submit_hash`, **mandatory**) and poll it to a
+**terminal status** before signing the next — terminal-state semantics are defined in
+the base skill. Never begin transaction N+1 until the current one resolves.
 
 ### Step 4 — Confirm
 
@@ -93,7 +90,7 @@ After all transactions confirm, have the `yield-xyz-agentkit` skill fetch
 1. `yield-xyz-agentkit` reads `pendingActions[]` (`yields_get_balances`) and builds the
    `actions_manage` / `actions_exit` action.
 2. Sign each transaction via MoonPay (same as Step 3).
-3. `submit_hash` after each broadcast (**mandatory**), then poll until `CONFIRMED`.
+3. `submit_hash` after each broadcast (**mandatory**), then poll to a terminal status before the next — as in Step 3.
 
 ---
 

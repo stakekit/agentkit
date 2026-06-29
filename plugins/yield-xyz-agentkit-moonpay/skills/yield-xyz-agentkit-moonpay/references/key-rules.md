@@ -16,8 +16,8 @@
 4. **Set `inputToken` only if it appears in `mechanics.arguments.enter` schema.**
    The API handles swaps and routing automatically.
 
-5. **Execute transactions in exact `stepIndex` order.** Wait for `CONFIRMED`
-   before proceeding to the next transaction.
+5. **Execute transactions in exact `stepIndex` order.** Wait for a terminal status
+   (defined in the base `yield-xyz-agentkit` skill) before proceeding to the next.
 
 
 ---

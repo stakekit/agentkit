@@ -1,0 +1,11 @@
+{
+  "name": "yield-xyz-agentkit-robinhood",
+  "description": "The Robinhood Chain connector — configure Robinhood Chain (testnet) and act on Yield.xyz yields there. Builds on the yield-xyz-agentkit base plugin.",
+  "version": "1.0.0",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "keywords": ["defi", "yield", "robinhood", "connector", "testnet", "evm", "web3"],
+  "dependencies": ["yield-xyz-agentkit"],
+  "components": { "skills": ["./skills"] }
+}

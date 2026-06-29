@@ -1,0 +1,23 @@
+{
+  "name": "yield-xyz-agentkit-robinhood",
+  "version": "1.0.0",
+  "description": "The Robinhood Chain connector — configure Robinhood Chain (testnet) and act on Yield.xyz yields there. Requires the yield-xyz-agentkit plugin — install it too.",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "keywords": ["defi", "yield", "robinhood", "connector", "testnet", "evm", "web3"],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "Yield.xyz AgentKit + Robinhood Chain",
+    "shortDescription": "The Robinhood Chain connector — configure the chain and act on Yield.xyz yields.",
+    "longDescription": "Connects the Yield.xyz AgentKit to Robinhood Chain (testnet): chain configuration, wallet setup, supported capabilities, and testnet token minting. Install alongside the Yield.xyz AgentKit plugin.",
+    "category": "Finance",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://yield.xyz",
+    "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
+    "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
+    "defaultPrompt": ["Configure Robinhood Chain testnet.", "Mint testnet tokens on Robinhood Chain.", "Find and enter a yield on Robinhood Chain."],
+    "brandColor": "#00C805"
+  }
+}
