@@ -149,7 +149,7 @@ The `yield-xyz-agentkit` skill builds the action; its response contains
    Response: { "data": { "hash": "0x..." } }
 
 5. Call submit_hash (yield-xyz-agentkit MCP) with the transactionId and hash — MANDATORY.
-   Then poll get_transaction until CONFIRMED or FAILED.
+   Then poll get_transaction to a terminal status (per the base skill) before the next.
 
 6. Move to the next transaction (if any).
 ```
@@ -166,8 +166,8 @@ the platform cannot track the transaction.
 ## Key Rules (Privy)
 
 1. **Never modify `unsignedTransaction`.** See the critical note above.
-2. **Execute transactions in exact `stepIndex` order.** Wait for `CONFIRMED`
-   before the next. Never skip or reorder.
+2. **Execute transactions in exact `stepIndex` order.** Wait for a terminal status
+   (defined in the base `yield-xyz-agentkit` skill) before the next. Never skip or reorder.
 3. **Policy deletion requires explicit verbal confirmation from the user.**
    Explain what will be removed and wait for clear confirmation. See
    `references/privy-security.md`.

@@ -21,25 +21,12 @@ any other EVM chain.
 
 ---
 
-## Wallet setup
-
-Use any EVM signer (a user's wallet, your agent's custody, or a connector like
-Privy or MoonPay) configured with the RPC URL and chain ID above. No Robinhood
-Chain–specific signing is required — the EVM integration is the same as any other
-EVM chain.
-
----
-
 ## Supported capabilities
 
 Discover what's available on Robinhood Chain dynamically — never hardcode a yield
 list. Call the base skill's `yields_get_all` with `networks: ["robinhood-testnet"]`
 to list the live yields, then `yields_get` for a specific one. Capabilities are
 whatever Yield.xyz exposes on the network at the time.
-
-> **Skip deprecated yields.** `yields_get_all` returns a `deprecated` flag on each
-> yield. When it's `true`, do not show that yield to the user — filter it out of the
-> list.
 
 ---
 

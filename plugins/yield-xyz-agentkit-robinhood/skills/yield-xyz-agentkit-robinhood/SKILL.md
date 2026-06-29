@@ -71,19 +71,18 @@ the signer's wallet address. It returns `transactions[]` ordered by `stepIndex`.
 
 ### Step 4 — Sign and broadcast
 
-Signing on Robinhood Chain is the same as any EVM chain: execute each transaction in
-`transactions[]` **sequentially**, in `stepIndex` order — never in parallel, never
-out of order. Do not begin transaction N+1 until N is `CONFIRMED`.
+Execute each transaction in `transactions[]` **sequentially**, in `stepIndex` order —
+never in parallel, never out of order. (Step 5 covers when N is done and N+1 may begin.)
 
 ### Step 5 — Record the result
 
-After the signer broadcasts each transaction:
-1. Call `submit_hash` (yield-xyz-agentkit MCP) with the `transactionId` (from
-   `transactions[].id`) and the on-chain hash — **mandatory**.
-2. Poll `get_transaction` until status is `CONFIRMED` or `FAILED` before the next.
+After the signer broadcasts each transaction, hand back to `yield-xyz-agentkit` to
+record the hash (`submit_hash`, **mandatory**) and poll it to a **terminal status**
+before signing the next — terminal-state semantics are defined in the base skill.
+Never begin transaction N+1 until the current one resolves.
 
-When all transactions confirm, have the `yield-xyz-agentkit` skill fetch
-`yields_get_balances` and show the user their new position.
+When all transactions confirm, have `yield-xyz-agentkit` fetch `yields_get_balances`
+and show the user their new position.
 
 ---
 
@@ -108,7 +107,6 @@ Read on demand:
 - **[`references/setup.md`](./references/setup.md)** — connecting the Yield.xyz MCP, configuring the Robinhood Chain testnet network, verification
 - **[`references/chain-config.md`](./references/chain-config.md)** — Robinhood Chain testnet chain config, supported capabilities, and funding testnet tokens
 
-For everything about discovering yields, building transactions, and output
-formatting, use the **`yield-xyz-agentkit`** skill. For EVM signing patterns
-(unsignedTransaction format, multi-step approvals), the integration is identical to
-any other EVM chain.
+For everything about discovering yields, building transactions, output formatting,
+and EVM signing patterns (unsignedTransaction format, multi-step approvals), use the
+**`yield-xyz-agentkit`** skill.
