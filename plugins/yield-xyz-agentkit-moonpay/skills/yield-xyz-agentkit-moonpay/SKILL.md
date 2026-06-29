@@ -17,7 +17,7 @@ The **MoonPay connector** for the Yield.xyz AgentKit: MoonPay handles wallet aut
 MoonPay             → confirm auth + wallet (provides the address)
 yield-xyz-agentkit  → discover yield + build unsignedTransaction
 MoonPay             → sign + broadcast
-yield-xyz-agentkit  → submit_hash + poll get_transaction until CONFIRMED
+yield-xyz-agentkit  → submit_hash + poll get_transaction to terminal status
 ```
 
 ---
