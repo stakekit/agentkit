@@ -1,7 +1,7 @@
 # Setup Guide
 
 This skill requires the **Yield.xyz AgentKit MCP** and an **EVM signer** configured
-for Robinhood Chain testnet. Follow the steps below in order.
+for Robinhood Chain mainnet. Follow the steps below in order.
 
 ---
 
@@ -9,7 +9,7 @@ for Robinhood Chain testnet. Follow the steps below in order.
 
 Run `claude mcp list` and check if `yield-xyz-agentkit` is already registered.
 
-- **If yes** — skip to [Section 2](#2-robinhood-chain-testnet).
+- **If yes** — skip to [Section 2](#2-robinhood-chain).
 - **If no** — register it:
 
 ```bash
@@ -29,16 +29,16 @@ continuing.
 
 ---
 
-## 2. Robinhood Chain testnet
+## 2. Robinhood Chain
 
-Point your EVM signer at Robinhood Chain testnet using these values (full table in
+Point your EVM signer at Robinhood Chain mainnet using these values (full table in
 [`chain-config.md`](./chain-config.md)):
 
-- **RPC URL:** `https://rpc.testnet.chain.robinhood.com`
-- **Chain ID:** `46630`
+- **RPC URL:** `https://rpc.mainnet.chain.robinhood.com`
+- **Chain ID:** `4663`
 
-The Yield.xyz network slug is `robinhood-testnet` — use it wherever a network
-parameter is required.
+The Yield.xyz network slug is `robinhood` — use it wherever a network parameter is
+required.
 
 ---
 
@@ -53,7 +53,7 @@ Confirm the MCP is connected and Robinhood Chain resolves on Yield.xyz:
 `yield-xyz-agentkit` should appear under connected MCP servers. Then ask:
 
 ```
-List the yields available on Robinhood Chain testnet
+List the yields available on Robinhood Chain
 ```
 
 If yields appear, setup is complete.

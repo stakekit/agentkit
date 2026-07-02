@@ -1,6 +1,6 @@
-# Robinhood Chain — Configuration & Testnet Tokens
+# Robinhood Chain — Configuration & Funding
 
-The canonical reference for Robinhood Chain testnet. Every value here is
+The canonical reference for Robinhood Chain. Every value here is
 Robinhood Chain–specific; everything else (yield discovery, transaction building,
 EVM signing) is handled by the base `yield-xyz-agentkit` skill and is identical to
 any other EVM chain.
@@ -12,71 +12,57 @@ any other EVM chain.
 
 | Field | Value |
 |---|---|
-| Network name | Robinhood Chain (testnet) |
-| Yield.xyz network slug | `robinhood-testnet` |
-| Chain ID | `46630` |
-| RPC URL | `https://rpc.testnet.chain.robinhood.com` |
-| Block explorer | `https://explorer.testnet.chain.robinhood.com/` |
-| Native token | `ETH` |
+| Network name | Robinhood Chain |
+| Network type | Mainnet — Arbitrum Orbit L2 (EIP-1559) |
+| Yield.xyz network slug | `robinhood` |
+| Chain ID | `4663` |
+| RPC URL | `https://rpc.mainnet.chain.robinhood.com` |
+| Block explorer | `https://robinhoodchain.blockscout.com` |
+| Gas / fee token | `ETH` (EIP-1559) |
+
+> **Treat balances and yields as test data, not production value.** Per the
+> Yield.xyz Robinhood Chain integration, positions on this network should not be
+> treated as production value. You still pay real ETH for gas, so only bridge what
+> you need.
 
 ---
 
-## Supported capabilities
+## Supported yield providers
 
-Discover what's available on Robinhood Chain dynamically — never hardcode a yield
-list. Call the base skill's `yields_get_all` with `networks: ["robinhood-testnet"]`
-to list the live yields, then `yields_get` for a specific one. Capabilities are
-whatever Yield.xyz exposes on the network at the time.
+Robinhood Chain yields are all denominated in **USDG** (Global Dollar, the Paxos
+stablecoin) — that's the deposit token for every yield below.
+
+| Provider | Model | Status |
+|---|---|---|
+| **Morpho V2 vaults** | ERC-4626 vault, fixed share count, appreciating `pricePerShare` (yield realized on redemption) | Live — e.g. Steakhouse USDG V2 Vault |
+| **Midas** | Tokenized yield-bearing mToken (plain ERC-20, e.g. mGLO), fixed balance, appreciates as strategy accrues | Live |
+| **Spark Savings** | ERC-4626 savings vault (e.g. spUSDG), fixed share count, `pricePerShare` accrues via the Spark Savings Rate | Coming soon — onchain but pending confirmation and Spark UI listing |
+
+**Always confirm what's actually live via dynamic discovery — never hardcode a
+yield list.** Call the base skill's `yields_get_all` with `networks: ["robinhood"]`
+to list the live yields, then `yields_get` for a specific one. Whatever Yield.xyz
+exposes on the network at the time is the source of truth; Spark yields will appear
+here automatically once they go live.
 
 ---
 
-## Funding testnet tokens
+## Funding the wallet
 
-Robinhood Chain testnet tokens are **mock deployments** — each token is unique, so
-match balances by **contract address**, not by symbol.
+Robinhood Chain is a mainnet, so there is **no faucet and no permissionless mock
+mint**. You fund a wallet with **real assets bridged onto the chain**:
 
-An enter needs the yield's **deposit token** in the wallet, not just gas. Before
-building an enter, check the wallet's balance of that token. If it's short, fund it:
+- **Gas — ETH.** Fees are paid in ETH (EIP-1559). Bridge ETH onto Robinhood Chain
+  via the canonical Arbitrum bridge, Robinhood Wallet, or a supported cross-chain
+  route.
+- **Deposit token — USDG.** Every supported yield takes **USDG**. Acquire/bridge
+  USDG onto Robinhood Chain before entering a position.
 
-1. **Faucet first** — request the token (and testnet gas) from
-   **https://faucet.testnet.chain.robinhood.com/**.
-2. **Mint if the faucet doesn't cover it** — the deposit tokens are mock ERC-20s
-   with **permissionless mints**: any address can mint any amount. Minting is a
-   **state-changing write** — build the calldata, then sign and broadcast it through
-   your EVM signer (the same flow as any action transaction). Never `eth_call` a mint;
-   that only simulates and mints nothing.
+An enter needs the yield's **deposit token (USDG)** in the wallet, not just gas.
+Before building an enter, check the wallet's USDG balance with the base skill's
+`yields_get_balances` (or a `balanceOf` read); if it's short, bridge more before
+proceeding. Confirm the token by its **contract address** returned by
+`yields_get` for the target yield, not by symbol alone.
 
-### Build the mint transaction (no ABI needed)
-
-```
-data = selector + pad32(recipientAddress) + pad32(amountInBaseUnits)
-```
-
-**Use the token's real decimals** — read `decimals()` if unsure, never assume 18.
-A wrong multiplier mints the wrong amount.
-
-### Example — fund and enter an fUSDC yield
-
-`fUSDC` (FakeUSDC) is at `0xaab0d4ef25dfb00d59802fa33acc1c85957df4e2`, **18 decimals**,
-faucet `mint(address,uint256)` (selector `0x40c10f19`).
-
-1. The wallet holds no fUSDC, and the faucet doesn't dispense it → mint 1 fUSDC:
-   `data = 0x40c10f19 + pad32(walletAddress) + pad32(1e18)`. Sign + broadcast.
-2. Once the mint confirms, `balanceOf(wallet)` reflects it.
-3. Hand off to the base skill: `actions_enter` for the fUSDC yield → sign the
-   returned approval + supply transactions in `stepIndex` order.
-
-**The mint is a standalone token call, not a Yield.xyz action** — do **not** call
-`submit_hash` for it. `submit_hash` applies only to the action transactions the base
-builds (approval, supply, etc.).
-
-### Discovering the mint for an unknown token
-
-A new yield's deposit token may use a different mint. To find it:
-
-1. Read `decimals()` and `symbol()` to confirm units.
-2. Match against common faucet selectors: `mint(address,uint256)` `0x40c10f19`,
-   `allocateTo(address,uint256)` `0x08bca566`, `mint(uint256)` `0xa0712d68`,
-   `faucet()` `0xde5f72fd`.
-3. Confirm it's permissionless: `eth_call` the candidate from a random address —
-   no revert means an open mint.
+There is nothing Robinhood-specific about the enter/exit itself — hand off to the
+base `yield-xyz-agentkit` skill to build `actions_enter` / `actions_exit` and sign
+the returned transactions in `stepIndex` order.

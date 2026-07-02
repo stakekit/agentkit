@@ -1,22 +1,22 @@
 ---
 name: yield-xyz-agentkit-robinhood
-description: The Robinhood Chain connector for the Yield.xyz AgentKit — adds Robinhood Chain (testnet) configuration, wallet setup, supported capabilities, and testnet token minting. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; signing and broadcasting on Robinhood Chain are identical to any other EVM chain. Use when the user wants to set up Robinhood Chain or act on Yield.xyz yields there. Requires the yield-xyz-agentkit skill + Yield.xyz MCP.
+description: The Robinhood Chain connector for the Yield.xyz AgentKit — adds Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663) configuration, wallet setup, and supported capabilities across Morpho, Midas, and Spark yields. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; signing and broadcasting on Robinhood Chain are identical to any other EVM chain. Use when the user wants to set up Robinhood Chain or act on Yield.xyz yields there. Requires the yield-xyz-agentkit skill + Yield.xyz MCP.
 metadata:
   author: Yield.xyz
-  version: "1.0.0"
+  version: "1.1.0"
   mcp-server: yield-xyz-agentkit
 ---
 
 # Yield.xyz AgentKit × Robinhood Chain
 
-The **Robinhood Chain connector** for the Yield.xyz AgentKit: it adds the Robinhood Chain (testnet) configuration the rest of the kit needs, and points your existing EVM signer at the chain.
+The **Robinhood Chain connector** for the Yield.xyz AgentKit: it adds the Robinhood Chain (mainnet) configuration the rest of the kit needs, and points your existing EVM signer at the chain. Robinhood Chain is an Arbitrum Orbit L2 (chain ID `4663`) with ETH as its gas token.
 
-`yield-xyz-agentkit` (this skill's base) owns all yield logic — discovery, schemas, validator selection, balances, building `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`), output formatting, and the MCP tool reference. Use it for all of that; this skill only adds Robinhood Chain configuration and testnet token minting.
+`yield-xyz-agentkit` (this skill's base) owns all yield logic — discovery, schemas, validator selection, balances, building `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`), output formatting, and the MCP tool reference. Use it for all of that; this skill only adds Robinhood Chain configuration and funding guidance.
 
 **Robinhood Chain is an EVM network, so signing and broadcasting are identical to any other EVM chain** — this skill does not hold keys, sign, or broadcast. Bring your own EVM signer (a user's wallet, your agent's custody, or a connector like Privy).
 
 ```
-Robinhood Chain     → configure chain (RPC + chainId) + mint testnet tokens
+Robinhood Chain     → configure chain (RPC + chainId) + fund wallet (bridge ETH + USDG)
 yield-xyz-agentkit  → discover yield + build unsignedTransaction
 Your EVM signer     → sign + broadcast (same as any EVM chain)
 yield-xyz-agentkit  → submit_hash + poll get_transaction
@@ -32,16 +32,18 @@ yield-xyz-agentkit  → submit_hash + poll get_transaction
 - **Never call the Yield.xyz API directly** (curl/HTTP) — it requires an API key
   and returns `401`. All Yield.xyz access goes through the MCP (handled by the
   `yield-xyz-agentkit` skill).
-- **Testnet only.** Robinhood Chain here is a testnet. Each token is a unique mock
-  deployment — match yields and balances by the testnet token's contract address,
-  not by symbol. See `references/chain-config.md`.
+- **Mainnet — real gas, but treat yields as test data.** Robinhood Chain here is
+  mainnet (chain ID `4663`); you pay **real ETH** for gas, so only bridge what you
+  need. Per Yield.xyz, balances and yields on this network should be treated as
+  **test data, not production value**. Match yields and balances by the deposit
+  token's contract address, not by symbol. See `references/chain-config.md`.
 
 ---
 
 ## Prerequisites
 
 - **Yield.xyz AgentKit MCP** connected (owned by the `yield-xyz-agentkit` skill).
-- **An EVM signer** able to sign and broadcast on Robinhood Chain testnet.
+- **An EVM signer** able to sign and broadcast on Robinhood Chain mainnet.
 
 If the MCP is missing, stop and tell the user. See `references/setup.md` for
 connection instructions.
@@ -50,18 +52,19 @@ connection instructions.
 
 ## Full Flow
 
-### Step 1 — Configure Robinhood Chain testnet
+### Step 1 — Configure Robinhood Chain
 
-Point your signer at Robinhood Chain testnet using the RPC URL and chain ID in
+Point your signer at Robinhood Chain mainnet using the RPC URL and chain ID in
 `references/chain-config.md`, and confirm the network resolves on Yield.xyz. See
 `references/setup.md`.
 
 ### Step 2 — Fund the deposit token
 
-An enter needs the yield's deposit token in the wallet. Check the balance first; if
-it's short, fund it — request it from the faucet, or mint it if the faucet doesn't
-cover that token (testnet tokens are mock deployments with permissionless mints).
-See `references/chain-config.md`.
+An enter needs the yield's deposit token in the wallet (every Robinhood Chain yield
+is denominated in **USDG**), plus **ETH** for gas. There is no faucet or mock mint
+on mainnet — bridge real ETH and USDG onto the chain (canonical Arbitrum bridge,
+Robinhood Wallet, or a supported route). Check the balance first and only bridge
+what you need. See `references/chain-config.md`.
 
 ### Step 3 — Discover + build (via `yield-xyz-agentkit`)
 
@@ -91,8 +94,9 @@ and show the user their new position.
 | Situation | Action |
 |---|---|
 | Yield.xyz MCP not connected | Register it — see `references/setup.md` |
-| Robinhood Chain not resolving on Yield.xyz | Confirm the network slug in `references/chain-config.md` |
-| No testnet token balance | Fund it — faucet or mint, see `references/chain-config.md` |
+| Robinhood Chain not resolving on Yield.xyz | Confirm the network slug (`robinhood`) in `references/chain-config.md` |
+| No USDG (deposit token) or ETH (gas) balance | Bridge it onto the chain — see `references/chain-config.md` |
+| Expected Spark yield not listed | Spark is coming soon; only what `yields_get_all` returns is live |
 | Transaction FAILED | Do not retry automatically — report to user with txHash |
 
 (For Yield.xyz-side errors — wrong arguments, rate limits — see the
@@ -104,8 +108,8 @@ and show the user their new position.
 
 Read on demand:
 
-- **[`references/setup.md`](./references/setup.md)** — connecting the Yield.xyz MCP, configuring the Robinhood Chain testnet network, verification
-- **[`references/chain-config.md`](./references/chain-config.md)** — Robinhood Chain testnet chain config, supported capabilities, and funding testnet tokens
+- **[`references/setup.md`](./references/setup.md)** — connecting the Yield.xyz MCP, configuring the Robinhood Chain network, verification
+- **[`references/chain-config.md`](./references/chain-config.md)** — Robinhood Chain chain config, supported yield providers (Morpho, Midas, Spark), and funding the wallet
 
 For everything about discovering yields, building transactions, output formatting,
 and EVM signing patterns (unsignedTransaction format, multi-step approvals), use the
