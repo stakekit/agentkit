@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit-robinhood
-description: The Robinhood Chain connector for the Yield.xyz AgentKit — adds Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663) configuration, wallet setup, and supported capabilities across Morpho, Midas, and Spark yields. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; signing and broadcasting on Robinhood Chain are identical to any other EVM chain. Use when the user wants to set up Robinhood Chain or act on Yield.xyz yields there. Requires the yield-xyz-agentkit skill + Yield.xyz MCP.
+description: The Robinhood Chain connector for the Yield.xyz AgentKit — adds Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663) configuration, wallet setup, and supported capabilities. Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; signing and broadcasting on Robinhood Chain are identical to any other EVM chain. Use when the user wants to set up Robinhood Chain or act on Yield.xyz yields there. Requires the yield-xyz-agentkit skill + Yield.xyz MCP.
 metadata:
   author: Yield.xyz
   version: "1.1.0"
@@ -32,11 +32,9 @@ yield-xyz-agentkit  → submit_hash + poll get_transaction
 - **Never call the Yield.xyz API directly** (curl/HTTP) — it requires an API key
   and returns `401`. All Yield.xyz access goes through the MCP (handled by the
   `yield-xyz-agentkit` skill).
-- **Mainnet — real gas, but treat yields as test data.** Robinhood Chain here is
-  mainnet (chain ID `4663`); you pay **real ETH** for gas, so only bridge what you
-  need. Per Yield.xyz, balances and yields on this network should be treated as
-  **test data, not production value**. Match yields and balances by the deposit
-  token's contract address, not by symbol. See `references/chain-config.md`.
+- **Mainnet.** Robinhood Chain here is mainnet (chain ID `4663`); gas is paid in
+  **ETH**. Match yields and balances by the deposit token's contract address, not by
+  symbol. See `references/chain-config.md`.
 
 ---
 
@@ -61,10 +59,9 @@ Point your signer at Robinhood Chain mainnet using the RPC URL and chain ID in
 ### Step 2 — Fund the deposit token
 
 An enter needs the yield's deposit token in the wallet (every Robinhood Chain yield
-is denominated in **USDG**), plus **ETH** for gas. There is no faucet or mock mint
-on mainnet — bridge real ETH and USDG onto the chain (canonical Arbitrum bridge,
-Robinhood Wallet, or a supported route). Check the balance first and only bridge
-what you need. See `references/chain-config.md`.
+is denominated in **USDG**), plus **ETH** for gas. Bridge ETH and USDG onto the
+chain (canonical Arbitrum bridge, Robinhood Wallet, or a supported route). Check the
+balance first and only bridge what you need. See `references/chain-config.md`.
 
 ### Step 3 — Discover + build (via `yield-xyz-agentkit`)
 
@@ -96,7 +93,6 @@ and show the user their new position.
 | Yield.xyz MCP not connected | Register it — see `references/setup.md` |
 | Robinhood Chain not resolving on Yield.xyz | Confirm the network slug (`robinhood`) in `references/chain-config.md` |
 | No USDG (deposit token) or ETH (gas) balance | Bridge it onto the chain — see `references/chain-config.md` |
-| Expected Spark yield not listed | Spark is coming soon; only what `yields_get_all` returns is live |
 | Transaction FAILED | Do not retry automatically — report to user with txHash |
 
 (For Yield.xyz-side errors — wrong arguments, rate limits — see the
@@ -109,7 +105,7 @@ and show the user their new position.
 Read on demand:
 
 - **[`references/setup.md`](./references/setup.md)** — connecting the Yield.xyz MCP, configuring the Robinhood Chain network, verification
-- **[`references/chain-config.md`](./references/chain-config.md)** — Robinhood Chain chain config, supported yield providers (Morpho, Midas, Spark), and funding the wallet
+- **[`references/chain-config.md`](./references/chain-config.md)** — Robinhood Chain chain config, supported capabilities, and funding the wallet
 
 For everything about discovering yields, building transactions, output formatting,
 and EVM signing patterns (unsignedTransaction format, multi-step approvals), use the

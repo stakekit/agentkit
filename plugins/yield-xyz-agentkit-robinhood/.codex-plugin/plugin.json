@@ -1,7 +1,7 @@
 {
   "name": "yield-xyz-agentkit-robinhood",
   "version": "1.1.0",
-  "description": "The Robinhood Chain connector — configure Robinhood Chain (mainnet, chain ID 4663) and act on Yield.xyz yields there across Morpho, Midas, and Spark. Requires the yield-xyz-agentkit plugin — install it too.",
+  "description": "The Robinhood Chain connector — configure Robinhood Chain (mainnet, chain ID 4663) and act on Yield.xyz yields there. Requires the yield-xyz-agentkit plugin — install it too.",
   "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
@@ -11,7 +11,7 @@
   "interface": {
     "displayName": "Yield.xyz AgentKit + Robinhood Chain",
     "shortDescription": "The Robinhood Chain connector — configure the chain and act on Yield.xyz yields.",
-    "longDescription": "Connects the Yield.xyz AgentKit to Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663): chain configuration, wallet setup, and supported capabilities across Morpho, Midas, and Spark yields. Install alongside the Yield.xyz AgentKit plugin.",
+    "longDescription": "Connects the Yield.xyz AgentKit to Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663): chain configuration, wallet setup, and supported capabilities. Install alongside the Yield.xyz AgentKit plugin.",
     "category": "Finance",
     "capabilities": ["Interactive", "Read", "Write"],
     "websiteURL": "https://yield.xyz",

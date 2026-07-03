@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit × Robinhood Chain Skill
 
-> The Robinhood Chain connector for the Yield.xyz AgentKit. Adds Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663) configuration, wallet setup, and supported capabilities across Morpho, Midas, and Spark yields on top of the base skill's yield discovery and transaction building.
+> The Robinhood Chain connector for the Yield.xyz AgentKit. Adds Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663) configuration, wallet setup, and supported capabilities on top of the base skill's yield discovery and transaction building.
 
 ---
 
@@ -97,7 +97,7 @@ yield-xyz-agentkit-robinhood/
 ├── README.md                 # This file
 └── references/
     ├── setup.md              # Connecting the MCP, configuring the network
-    └── chain-config.md       # Chain config, supported yield providers, funding the wallet
+    └── chain-config.md       # Chain config, supported capabilities, funding the wallet
 ```
 
 ---
