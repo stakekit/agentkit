@@ -32,8 +32,7 @@ whatever Yield.xyz exposes on the network at the time.
 
 ## Funding the wallet
 
-Robinhood Chain is a mainnet, so there is **no faucet and no permissionless mock
-mint**. You fund a wallet with **assets bridged onto the chain**:
+You fund a wallet with **assets bridged onto the chain**:
 
 - **Gas — ETH.** Fees are paid in ETH (EIP-1559). Bridge ETH onto Robinhood Chain
   via the canonical Arbitrum bridge, Robinhood Wallet, or a supported cross-chain
