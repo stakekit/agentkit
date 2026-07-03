@@ -25,7 +25,7 @@ Five composable plugins in one marketplace. Each installs its skill; the base an
 | `yield-xyz-agentkit-builder` | `/plugin install yield-xyz-agentkit-builder@agentkit` | Generate Yield.xyz integration code |
 | `yield-xyz-agentkit-privy` | `/plugin install yield-xyz-agentkit-privy@agentkit` | Sign + broadcast via Privy agentic wallets |
 | `yield-xyz-agentkit-moonpay` | `/plugin install yield-xyz-agentkit-moonpay@agentkit` | Sign + broadcast via MoonPay |
-| `yield-xyz-agentkit-robinhood` | `/plugin install yield-xyz-agentkit-robinhood@agentkit` | Discover + act on yields on Robinhood Chain (testnet) — chain config + testnet token funding |
+| `yield-xyz-agentkit-robinhood` | `/plugin install yield-xyz-agentkit-robinhood@agentkit` | Discover + act on yields on Robinhood Chain (mainnet, chain ID 4663) — chain config + wallet funding |
 
 The Privy, MoonPay, and Robinhood Chain connectors **depend on** the base:
 

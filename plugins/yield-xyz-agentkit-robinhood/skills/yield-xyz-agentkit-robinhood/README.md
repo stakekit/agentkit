@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit × Robinhood Chain Skill
 
-> The Robinhood Chain connector for the Yield.xyz AgentKit. Adds Robinhood Chain (testnet) configuration, wallet setup, supported capabilities, and testnet token minting on top of the base skill's yield discovery and transaction building.
+> The Robinhood Chain connector for the Yield.xyz AgentKit. Adds Robinhood Chain (mainnet, chain ID 4663) configuration, wallet setup, and supported capabilities on top of the base skill's yield discovery and transaction building.
 
 ---
 
@@ -15,13 +15,13 @@ User prompt
 Yield.xyz AgentKit MCP              Robinhood Chain
 ──────────────────────              ───────────────
 yields_get_all             →    configure chain (RPC + chainId)
-yields_get                 →    mint testnet tokens
+yields_get                 →    fund wallet (bridge ETH + deposit token)
 actions_enter / exit       →    sign + broadcast via your EVM signer
 yields_get_balances             confirm position on-chain
 ```
 
 **Yield.xyz AgentKit MCP** handles: yield discovery, schema validation, transaction building
-**This connector** handles: Robinhood Chain configuration, wallet setup, supported capabilities, testnet token minting
+**This connector** handles: Robinhood Chain configuration, wallet setup, supported capabilities, funding guidance
 
 Robinhood Chain is an EVM network — signing and broadcasting are identical to any
 other EVM chain. Bring your own EVM signer.
@@ -34,7 +34,7 @@ other EVM chain. Bring your own EVM signer.
 |---|---|
 | Claude Code | [Install guide](https://code.claude.com/docs/en/quickstart) |
 | Yield.xyz AgentKit | The base plugin — auto-registers the Yield.xyz MCP |
-| EVM signer | Any wallet/custody able to sign on Robinhood Chain testnet |
+| EVM signer | Any wallet/custody able to sign on Robinhood Chain mainnet |
 
 ---
 
@@ -48,8 +48,8 @@ Set up the yield-xyz-agentkit-robinhood skill
 
 Claude will read `SKILL.md` and:
 - Register the Yield.xyz AgentKit MCP server (if not already connected)
-- Configure Robinhood Chain testnet
-- Walk you through minting testnet tokens
+- Configure Robinhood Chain mainnet
+- Walk you through funding the wallet (bridging ETH for gas + the yield's deposit token)
 
 ---
 
@@ -64,17 +64,17 @@ After setup, confirm the MCP is connected:
 `yield-xyz-agentkit` should appear under connected MCP servers. Then confirm it works:
 
 ```
-List the yields available on Robinhood Chain testnet
+List the yields available on Robinhood Chain
 ```
 
 ---
 
 ## Try it
 
-Once the MCP is connected and you hold testnet tokens:
+Once the MCP is connected and your wallet holds the deposit token (plus ETH for gas):
 
 ```
-Find a yield on Robinhood Chain testnet and enter a position
+Find a yield on Robinhood Chain and enter a position
 ```
 ```
 Show my balances on Robinhood Chain
@@ -89,15 +89,15 @@ transactions via your EVM signer.
 
 This skill is the **Robinhood Chain connector** — it **extends the `yield-xyz-agentkit`
 skill**, which owns all yield discovery, transaction-building, and output formatting.
-This skill adds only Robinhood Chain configuration and testnet token minting.
+This skill adds only Robinhood Chain configuration and funding guidance.
 
 ```
 yield-xyz-agentkit-robinhood/
 ├── SKILL.md                  # Robinhood Chain connector — extends yield-xyz-agentkit
 ├── README.md                 # This file
 └── references/
-    ├── setup.md              # Connecting the MCP, configuring the testnet network
-    └── chain-config.md       # Chain config, supported capabilities, funding testnet tokens
+    ├── setup.md              # Connecting the MCP, configuring the network
+    └── chain-config.md       # Chain config, supported capabilities, funding the wallet
 ```
 
 ---
