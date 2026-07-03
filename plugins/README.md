@@ -66,7 +66,7 @@ Requires: MoonPay MCP (guided CLI setup included).
 
 **The Robinhood Chain connector — configuration and capabilities for Robinhood Chain (mainnet).**
 
-Adds Robinhood Chain (mainnet, Arbitrum Orbit L2, chain ID 4663) configuration, wallet setup, and supported capabilities on top of the base plugin. Robinhood Chain is an EVM network — signing and broadcasting are identical to any other EVM chain, so bring your own EVM signer.
+Adds Robinhood Chain (mainnet, chain ID 4663) configuration, wallet setup, and supported capabilities on top of the base plugin. Robinhood Chain is an EVM network — signing and broadcasting are identical to any other EVM chain, so bring your own EVM signer.
 
 ```bash
 /plugin install yield-xyz-agentkit-robinhood@agentkit   # also installs yield-xyz-agentkit
