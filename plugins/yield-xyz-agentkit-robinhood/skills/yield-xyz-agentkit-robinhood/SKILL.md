@@ -16,7 +16,7 @@ The **Robinhood Chain connector** for the Yield.xyz AgentKit: it adds the Robinh
 **Robinhood Chain is an EVM network, so signing and broadcasting are identical to any other EVM chain** — this skill does not hold keys, sign, or broadcast. Bring your own EVM signer (a user's wallet, your agent's custody, or a connector like Privy).
 
 ```
-Robinhood Chain     → configure chain (RPC + chainId) + fund wallet (bridge ETH + USDG)
+Robinhood Chain     → configure chain (RPC + chainId) + fund wallet (bridge ETH + deposit token)
 yield-xyz-agentkit  → discover yield + build unsignedTransaction
 Your EVM signer     → sign + broadcast (same as any EVM chain)
 yield-xyz-agentkit  → submit_hash + poll get_transaction
@@ -58,10 +58,10 @@ Point your signer at Robinhood Chain mainnet using the RPC URL and chain ID in
 
 ### Step 2 — Fund the deposit token
 
-An enter needs the yield's deposit token in the wallet (every Robinhood Chain yield
-is denominated in **USDG**), plus **ETH** for gas. Bridge ETH and USDG onto the
-chain (canonical Arbitrum bridge, Robinhood Wallet, or a supported route). Check the
-balance first and only bridge what you need. See `references/chain-config.md`.
+An enter needs the yield's deposit token in the wallet, plus **ETH** for gas. Bridge
+the deposit token and ETH onto the chain (canonical Arbitrum bridge, Robinhood
+Wallet, or a supported route). Check the balance first and only bridge what you need.
+See `references/chain-config.md`.
 
 ### Step 3 — Discover + build (via `yield-xyz-agentkit`)
 
@@ -92,7 +92,7 @@ and show the user their new position.
 |---|---|
 | Yield.xyz MCP not connected | Register it — see `references/setup.md` |
 | Robinhood Chain not resolving on Yield.xyz | Confirm the network slug (`robinhood`) in `references/chain-config.md` |
-| No USDG (deposit token) or ETH (gas) balance | Bridge it onto the chain — see `references/chain-config.md` |
+| No deposit-token or ETH (gas) balance | Bridge it onto the chain — see `references/chain-config.md` |
 | Transaction FAILED | Do not retry automatically — report to user with txHash |
 
 (For Yield.xyz-side errors — wrong arguments, rate limits — see the

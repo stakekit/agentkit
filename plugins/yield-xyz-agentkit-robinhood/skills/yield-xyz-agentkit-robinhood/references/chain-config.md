@@ -37,16 +37,16 @@ You fund a wallet with **assets bridged onto the chain**:
 - **Gas — ETH.** Fees are paid in ETH (EIP-1559). Bridge ETH onto Robinhood Chain
   via the canonical Arbitrum bridge, Robinhood Wallet, or a supported cross-chain
   route.
-- **Deposit token — USDG.** Every supported yield takes **USDG**. Acquire/bridge
-  USDG onto Robinhood Chain before entering a position.
+- **Deposit token — the yield's input token.** Each yield specifies its own deposit
+  token; acquire/bridge that token onto Robinhood Chain before entering a position.
 
-An enter needs the yield's **deposit token (USDG)** in the wallet, not just gas.
-Before building an enter, check the wallet's **idle USDG** with a direct `balanceOf`
-read on the USDG contract — not `yields_get_balances`, which reports your **yield
-position** balances (active positions, pending actions, claimable rewards), not raw
-wallet holdings. If it's short, bridge more before proceeding. Confirm the token by
-its **contract address** returned by `yields_get` for the target yield, not by
-symbol alone.
+An enter needs the yield's **deposit token** in the wallet, not just gas. Before
+building an enter, check the wallet's **idle balance of that token** with a direct
+`balanceOf` read on the token's contract — not `yields_get_balances`, which reports
+your **yield position** balances (active positions, pending actions, claimable
+rewards), not raw wallet holdings. If it's short, bridge more before proceeding.
+Confirm the token by its **contract address** returned by `yields_get` for the
+target yield, not by symbol alone.
 
 There is nothing Robinhood-specific about the enter/exit itself — hand off to the
 base `yield-xyz-agentkit` skill to build `actions_enter` / `actions_exit` and sign

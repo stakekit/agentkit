@@ -15,7 +15,7 @@ User prompt
 Yield.xyz AgentKit MCP              Robinhood Chain
 ──────────────────────              ───────────────
 yields_get_all             →    configure chain (RPC + chainId)
-yields_get                 →    fund wallet (bridge ETH + USDG)
+yields_get                 →    fund wallet (bridge ETH + deposit token)
 actions_enter / exit       →    sign + broadcast via your EVM signer
 yields_get_balances             confirm position on-chain
 ```
@@ -49,7 +49,7 @@ Set up the yield-xyz-agentkit-robinhood skill
 Claude will read `SKILL.md` and:
 - Register the Yield.xyz AgentKit MCP server (if not already connected)
 - Configure Robinhood Chain mainnet
-- Walk you through funding the wallet (bridging ETH for gas + USDG to deposit)
+- Walk you through funding the wallet (bridging ETH for gas + the yield's deposit token)
 
 ---
 
@@ -71,7 +71,7 @@ List the yields available on Robinhood Chain
 
 ## Try it
 
-Once the MCP is connected and your wallet holds USDG (plus ETH for gas):
+Once the MCP is connected and your wallet holds the deposit token (plus ETH for gas):
 
 ```
 Find a yield on Robinhood Chain and enter a position
