@@ -8,7 +8,19 @@ This skill requires one MCP server: **Yield.xyz AgentKit**. Follow the steps bel
 
 Run `claude mcp list` and check if `yield-xyz-agentkit` is already registered.
 
-- **If yes** — setup is complete, skip to [Step 2](#step-2--verify-setup).
+- **If yes** — pause and ask the user whether they want to keep the current setup or switch modes:
+
+  > "yield-xyz-agentkit is already registered. Do you want to keep the current setup as-is, or switch modes (for example, add an API key to an anonymous install, or drop/replace an existing key)?"
+
+  - **Keep as-is** — skip to [Step 2](#step-2--verify-setup).
+  - **Switch modes** — remove the existing registration and re-run this step:
+
+    ```bash
+    claude mcp remove yield-xyz-agentkit
+    ```
+
+    Then continue with the mode-selection question below.
+
 - **If no** — continue with the question below to pick the right access mode.
 
 ### Ask the user which access mode to use
