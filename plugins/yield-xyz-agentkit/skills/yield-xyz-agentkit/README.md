@@ -121,10 +121,11 @@ yield-xyz-agentkit/
 ├── SKILL.md                 # Main skill instructions (auto-loaded by Claude)
 ├── README.md                # This file
 └── references/
-    ├── setup.md             # Agent-executed setup guide
+    ├── setup.md             # Agent-executed setup guide (anonymous + API-key modes)
     ├── key-rules.md         # Tool mapping, amounts, tx ordering, validator selection
     ├── output-formats.md    # Display rules for yields, tables, and summaries
     ├── policies.md          # API usage and efficiency guidelines
+    ├── x402-payments.md     # Free tier, BYO API key, and x402 pay-per-call surface
     ├── rwa-overview.md      # Real-world asset access models
     └── kyc-flows.md         # RWA eligibility gate and issuer onboarding
 ```
