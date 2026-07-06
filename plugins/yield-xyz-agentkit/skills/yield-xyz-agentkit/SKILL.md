@@ -81,6 +81,14 @@ Never dump raw JSON or plain comma-separated data. Always follow the formats def
 
 ---
 
+## Access Modes & Free Tier
+
+The MCP works in two modes: **anonymous** (free tier, 30 calls per wallet per tool per 24h on four metered tools) and **BYO API key** (unlimited). See **[`references/x402-payments.md`](./references/x402-payments.md)** for which tools are gated, how to react to a `Free-tier quota exceeded` error, and when to guide the user toward an API key or the pay-per-call x402 surface.
+
+**On any `Free-tier quota exceeded` error:** surface it to the user verbatim (the message includes the retry seconds and offending wallet) and offer the three options in `x402-payments.md`. Do NOT silently retry.
+
+---
+
 ## Available Tools
 
 ### 1. `yields_get_all`
@@ -334,9 +342,9 @@ Get detailed risk parameters for a yield — more granular than the `risk` field
 **Key parameters:**
 - `yieldId`
 
-**Returns:** `{ updatedAt, exponentialFi: { poolRating, poolScore, ratingDescription, url }, credora: { rating, score, ... } }`
+**Returns:** `{ updatedAt, stakingRewards: { rating, score, potentialRating, potentialScore, ratedAt, ratedSince, profileUrl }, credora: { rating, score, ... } }`
 
-**Important:** If the response contains only `updatedAt` with no `exponentialFi` or `credora` fields, detailed risk data is not available for this yield. This is expected for many yields — it is not an error. Fall back to the `risk` field in `yields_get` if present.
+**Important:** If the response contains only `updatedAt` with no `stakingRewards` or `credora` fields, detailed risk data is not available for this yield. This is expected for many yields — it is not an error. Fall back to the `risk` field in `yields_get` if present.
 
 **Use when:** User asks about protocol safety, risk rating, or audit status for a specific yield.
 
@@ -425,7 +433,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 
 ### Assess risk for a yield
 1. `yields_get_risk` — get detailed risk data
-2. If response has no `exponentialFi` or `credora` fields, fall back to `risk` field from `yields_get`
+2. If response has no `stakingRewards` or `credora` fields, fall back to `risk` field from `yields_get`
 3. Present ratings and scores clearly (see output-formats.md)
 
 ### Resolve an unknown network name

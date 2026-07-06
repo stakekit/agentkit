@@ -252,14 +252,15 @@ TVL History · Lido stETH · Last 30 days
 Risk Assessment · Lido stETH
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  Exponential.fi:  A  (Score: 1)  — "A"
-  Full report: https://exponential.fi/pools/…
+  Staking Rewards:  AA  (Score: 4.5 / 5)
+  Full profile: https://www.stakingrewards.com/…
+  Credora:  A-  (Score: 82)
 ```
 
-- If both `exponentialFi` and `credora` are present, show both
+- If both `stakingRewards` and `credora` are present, show both
 - If only one is present, show it and note the other is unavailable
 - If neither is present: *"Detailed risk data is not available for this yield."*
-- Always show the `exponentialFi.url` link when present
+- Always show the `stakingRewards.profileUrl` link when present
 
 ---
 
