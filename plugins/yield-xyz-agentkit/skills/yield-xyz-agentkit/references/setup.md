@@ -36,11 +36,11 @@ Pause and ask the user:
 
 Wait for the user's answer.
 
-- **If they say they have a key** — ask them to paste it, then run the [Mode B](#mode-b--with-an-api-key-unlimited-recommended-for-regular-use) command below, substituting `YOUR_YIELD_API_KEY` with what they provided.
+- **If they say they have a key** — do NOT ask them to paste it in chat (API keys are sensitive; keep them out of the transcript). Instead, show the user the [Mode B](#mode-b--with-an-api-key-unlimited-recommended-for-regular-use) command below verbatim and ask them to substitute `YOUR_YIELD_API_KEY` with their actual key and run it themselves in their terminal. Once they confirm they've run it, continue to [Step 2](#step-2--verify-setup).
 - **If they say they don't have a key** — offer both paths and let them pick:
   > "Two options: **(a)** I can point you at the sign-up form to request a key, then finish setup once you have it, or **(b)** we can set up the MCP anonymously right now and you can add a key later. Which do you want?"
 
-  - **(a) request a key first** — send them to [dashboard.yield.xyz/sign-up/register-interest](https://dashboard.yield.xyz/sign-up/register-interest), pause the setup, and resume with [Mode B](#mode-b--with-an-api-key-unlimited-recommended-for-regular-use) once they have the key.
+  - **(a) request a key first** — send them to [dashboard.yield.xyz/sign-up/register-interest](https://dashboard.yield.xyz/sign-up/register-interest), pause the setup, and resume with [Mode B](#mode-b--with-an-api-key-unlimited-recommended-for-regular-use) once they have the key. Same rule: the user runs the command themselves — do not ask them to paste the key.
   - **(b) proceed anonymously** — run the [Mode A](#mode-a--anonymous-default-free-tier) command below.
 
 For a quick summary of the two modes, see [`x402-payments.md`](./x402-payments.md).
