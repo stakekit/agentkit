@@ -13,7 +13,7 @@ The official tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone
 
 ### Yield.xyz AgentKit Claude Plugins
 
-Five composable plugins in one marketplace. Each installs its skill; the base and builder auto-register the Yield.xyz MCP, and the connectors inherit it from the base (MoonPay additionally needs the MoonPay MCP via guided setup). Start with the base plugin, then add a connector for your wallet/execution provider.
+Six composable plugins in one marketplace. Each installs its skill; the base and builder auto-register the Yield.xyz MCP, and the connectors inherit it from the base (MoonPay and Base additionally need their own MCP). Start with the base plugin, then add a connector for your wallet/execution provider.
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -26,8 +26,9 @@ Five composable plugins in one marketplace. Each installs its skill; the base an
 | `yield-xyz-agentkit-privy` | `/plugin install yield-xyz-agentkit-privy@agentkit` | Sign + broadcast via Privy agentic wallets |
 | `yield-xyz-agentkit-moonpay` | `/plugin install yield-xyz-agentkit-moonpay@agentkit` | Sign + broadcast via MoonPay |
 | `yield-xyz-agentkit-robinhood` | `/plugin install yield-xyz-agentkit-robinhood@agentkit` | Discover + act on yields on Robinhood Chain (mainnet, chain ID 4663) — chain config + wallet funding |
+| `yield-xyz-agentkit-coinbase` | `/plugin install yield-xyz-agentkit-coinbase@agentkit` | Sign + broadcast via a Base Account (Base MCP) |
 
-The Privy, MoonPay, and Robinhood Chain connectors **depend on** the base:
+The Privy, MoonPay, Robinhood Chain, and Base connectors **depend on** the base:
 
 ```bash
 /plugin install yield-xyz-agentkit-privy@agentkit   # also installs yield-xyz-agentkit

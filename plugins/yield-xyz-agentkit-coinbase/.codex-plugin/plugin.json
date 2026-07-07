@@ -1,0 +1,23 @@
+{
+  "name": "yield-xyz-agentkit-coinbase",
+  "version": "1.0.0",
+  "description": "The Base connector — sign and broadcast Yield.xyz transactions via a Base Account (Base MCP). Requires the yield-xyz-agentkit plugin — install it too.",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "keywords": ["defi", "yield", "base", "coinbase", "connector", "wallet", "signing", "web3"],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "Yield.xyz AgentKit + Base",
+    "shortDescription": "The Base connector — sign and broadcast yields via a Base Account.",
+    "longDescription": "Connects the Yield.xyz AgentKit to a Base Account via Base MCP: wallet session, signing, and broadcasting. Install alongside the Yield.xyz AgentKit plugin.",
+    "category": "Finance",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://yield.xyz",
+    "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
+    "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
+    "defaultPrompt": ["Show my Base Account wallet.", "Enter a USDC yield on Base via my Base Account.", "Check my balances and claim rewards."],
+    "brandColor": "#0052FF"
+  }
+}

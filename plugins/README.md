@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit — Plugins
 
-Five composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Robinhood Chain) **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP via guided setup).
+Six composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Robinhood Chain, Base) **depend on** the base and inherit its MCP (MoonPay and Base also need their own MCP).
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -73,6 +73,20 @@ Adds Robinhood Chain (mainnet, chain ID 4663) configuration, wallet setup, and s
 ```
 
 Requires: an EVM signer for Robinhood Chain mainnet.
+
+---
+
+### [`yield-xyz-agentkit-coinbase`](./yield-xyz-agentkit-coinbase/) — connector, depends on the base
+
+**The Base connector — signing and broadcasting via a Base Account.**
+
+Connects the kit to Coinbase's Base Account via Base MCP: wallet session, signing, and broadcasting on top of the base plugin, across the chains Base MCP supports.
+
+```bash
+/plugin install yield-xyz-agentkit-coinbase@agentkit   # also installs yield-xyz-agentkit
+```
+
+Requires: Base MCP (`https://mcp.base.org`) and an authorized Base Account session.
 
 ---
 
