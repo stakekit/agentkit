@@ -8,10 +8,42 @@ This skill requires one MCP server: **Yield.xyz AgentKit**. Follow the steps bel
 
 Run `claude mcp list` and check if `yield-xyz-agentkit` is already registered.
 
-- **If yes** — setup is complete.
-- **If no** — pick one of the two modes below.
+- **If yes** — pause and ask the user whether they want to keep the current setup or switch modes:
 
-For a quick summary of the difference, see [`x402-payments.md`](./x402-payments.md).
+  > "yield-xyz-agentkit is already registered. Do you want to keep the current setup as-is, or switch modes (for example, add an API key to an anonymous install, or drop/replace an existing key)?"
+
+  - **Keep as-is** — skip to [Step 2](#step-2--verify-setup).
+  - **Switch modes** — remove the existing registration and re-run this step:
+
+    ```bash
+    claude mcp remove yield-xyz-agentkit
+    ```
+
+    Then continue with the mode-selection question below.
+
+- **If no** — continue with the question below to pick the right access mode.
+
+### Ask the user which access mode to use
+
+Pause and ask the user:
+
+> "Do you have a Yield.xyz API key you'd like to use?
+>
+> - **With an API key** — no rate limits, unmetered access to every tool.
+> - **Without an API key** — you can still use the MCP for free, but there's a rolling limit of **30 calls per wallet per tool per 24 hours** on four tools (`yields_get_balances`, `actions_enter`, `actions_exit`, `actions_manage`). Everything else is always free.
+>
+> Do you have a key, or should I set it up without one for now?"
+
+Wait for the user's answer.
+
+- **If they say they have a key** — do NOT ask them to paste it in chat (API keys are sensitive; keep them out of the transcript). Instead, show the user the [Mode B](#mode-b--with-an-api-key-unlimited-recommended-for-regular-use) command below verbatim and ask them to substitute `YOUR_YIELD_API_KEY` with their actual key and run it themselves in their terminal. Once they confirm they've run it, continue to [Step 2](#step-2--verify-setup).
+- **If they say they don't have a key** — offer both paths and let them pick:
+  > "Two options: **(a)** I can point you at the sign-up form to request a key, then finish setup once you have it, or **(b)** we can set up the MCP anonymously right now and you can add a key later. Which do you want?"
+
+  - **(a) request a key first** — send them to [dashboard.yield.xyz/sign-up/register-interest](https://dashboard.yield.xyz/sign-up/register-interest), pause the setup, and resume with [Mode B](#mode-b--with-an-api-key-unlimited-recommended-for-regular-use) once they have the key. Same rule: the user runs the command themselves — do not ask them to paste the key.
+  - **(b) proceed anonymously** — run the [Mode A](#mode-a--anonymous-default-free-tier) command below.
+
+For a quick summary of the two modes, see [`x402-payments.md`](./x402-payments.md).
 
 ### Mode A — Anonymous (default, free tier)
 
