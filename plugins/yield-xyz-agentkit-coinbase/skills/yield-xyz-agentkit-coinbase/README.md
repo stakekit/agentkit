@@ -1,19 +1,19 @@
-# Yield.xyz AgentKit × Base Skill
+# Yield.xyz AgentKit × Coinbase Skill
 
-> The Base connector for the Yield.xyz AgentKit. Adds a Base Account (via Base MCP) for signing and broadcasting on top of the base skill's yield discovery and transaction building. "Base" here means Coinbase's Base Account / Base MCP — not the base plugin, which is `yield-xyz-agentkit`.
+> A self-contained skill that discovers on-chain yields via the Yield.xyz MCP and signs + broadcasts them through a Base Account (via Base MCP). "Base" here means Coinbase's Base Account / Base MCP.
 
 ---
 
 ## How it works
 
-Two MCP servers:
+Two MCP servers, one skill:
 
 ```
 User prompt
     │
     ▼
-Yield.xyz AgentKit MCP          Base MCP
-──────────────────────          ────────
+Yield.xyz MCP                   Base MCP
+─────────────                   ────────
 yields_get_all          →    get_wallets (get address)
 yields_get              →    get_portfolio (check balance)
 actions_enter           →    send_calls (sign + broadcast) → approve in Base Account
@@ -21,7 +21,7 @@ actions_enter           →    send_calls (sign + broadcast) → approve in Base
 yields_get_balances          confirm position
 ```
 
-**Yield.xyz AgentKit** handles: yield discovery, schema validation, transaction building — plus its own setup, key rules, and terminal-state handling
+**Yield.xyz MCP** handles: yield discovery, schema validation, transaction building
 **Base** handles: Base Account session, signing, broadcasting
 
 ---
@@ -31,9 +31,9 @@ yields_get_balances          confirm position
 | Requirement | Details |
 |---|---|
 | Claude Code | [Install guide](https://code.claude.com/docs/en/quickstart) |
-| Yield.xyz AgentKit | The base plugin — auto-registers the Yield.xyz MCP |
+| Yield.xyz MCP | `https://mcp.yield.xyz/p/coinbase/mcp` (HTTP) |
 | Base MCP | `https://mcp.base.org` (HTTP) |
-| Base Account | Authorized session with a wallet where `inSession: true` |
+| Base Account | Authorized session (a wallet returned by `get_wallets`) |
 
 ---
 
@@ -45,11 +45,9 @@ Open Claude Code and say:
 Set up the yield-xyz-agentkit-coinbase skill
 ```
 
-Claude will read `SKILL.md` and:
-- Register the Base MCP server (if not already connected)
-- Confirm the Base Account session (`get_wallets`), guiding authorization if needed
-
-The Yield.xyz AgentKit MCP is registered by the base plugin this skill depends on.
+Claude will read `SKILL.md` and register both MCPs (if not already connected), then
+confirm the Base Account session via `get_wallets`, guiding authorization if needed.
+Installing the plugin auto-registers the Yield.xyz MCP via its `.mcp.json`.
 
 ---
 
@@ -92,14 +90,19 @@ Yield.xyz after broadcasting.
 
 ## Folder structure
 
-This skill is the **Base connector** — it **extends the `yield-xyz-agentkit` skill**,
-which owns all yield discovery, transaction-building, setup, key rules, and output
-formatting. This skill adds only the Base MCP connection and signing/broadcasting.
+A self-contained skill — it discovers yields via the Yield.xyz MCP and signs +
+broadcasts through a Base Account, with its own reference material.
 
 ```
 yield-xyz-agentkit-coinbase/
-├── SKILL.md                  # Base connector — extends yield-xyz-agentkit
-└── README.md                 # This file
+├── SKILL.md                  # discover via Yield.xyz MCP, sign/broadcast via Base Account
+├── README.md                 # This file
+└── references/
+    ├── key-rules.md          # yield rules, amounts, validator selection, tool → API mapping
+    ├── output-formats.md     # display rules, tables, action summaries
+    ├── policies.md           # API usage and efficiency
+    ├── rwa-overview.md       # real-world-asset yields + eligibility gate
+    └── kyc-flows.md          # KYC/eligibility flows for permissioned RWA yields
 ```
 
 ---
@@ -107,5 +110,4 @@ yield-xyz-agentkit-coinbase/
 ## Related
 
 - [Base MCP](https://mcp.base.org) — Base Account signing + broadcasting
-- [Yield.xyz AgentKit MCP](https://mcp.yield.xyz/mcp) — yield tools
 - [Yield.xyz AgentKit docs](https://docs.yield.xyz/docs/agents-overview) — agentkit reference

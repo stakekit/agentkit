@@ -76,17 +76,17 @@ Requires: an EVM signer for Robinhood Chain mainnet.
 
 ---
 
-### [`yield-xyz-agentkit-coinbase`](./yield-xyz-agentkit-coinbase/) — connector, depends on the base
+### [`yield-xyz-agentkit-coinbase`](./yield-xyz-agentkit-coinbase/) — self-contained connector
 
-**The Base connector — signing and broadcasting via a Base Account.**
+**The Coinbase connector — discover yields and sign + broadcast via a Base Account.**
 
-Connects the kit to Coinbase's Base Account via Base MCP: wallet session, signing, and broadcasting on top of the base plugin, across the chains Base MCP supports.
+A self-contained skill: it discovers yields via the Yield.xyz MCP and signs + broadcasts through Coinbase's Base Account (Base MCP), across the chains Base MCP supports. Unlike the other connectors, it bundles its own yield logic and MCP config, so it does not depend on the base plugin.
 
 ```bash
-/plugin install yield-xyz-agentkit-coinbase@agentkit   # also installs yield-xyz-agentkit
+/plugin install yield-xyz-agentkit-coinbase@agentkit
 ```
 
-Requires: Base MCP (`https://mcp.base.org`) and an authorized Base Account session.
+Requires: the Yield.xyz MCP (auto-registered by the plugin) + Base MCP (`https://mcp.base.org`) and an authorized Base Account session.
 
 ---
 

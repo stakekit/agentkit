@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit-coinbase
-description: The Base connector for the Yield.xyz AgentKit — signs and broadcasts via a Base Account (Base MCP). Extends the yield-xyz-agentkit skill — that skill discovers yields and builds the unsigned transactions; this one adds Base Account wallet session, signing, and broadcasting on the chains Base MCP supports. Use when the user wants to enter, exit, or manage yield positions end-to-end via a Base Account / Base MCP. Requires the yield-xyz-agentkit skill + Yield.xyz MCP and the Base MCP.
+description: The Coinbase connector for the Yield.xyz AgentKit — a self-contained skill that discovers yields via the Yield.xyz MCP and signs + broadcasts them through a Base Account (Base MCP). Use when the user wants to find, enter, exit, or manage DeFi yield positions end-to-end via a Base Account. Requires the Yield.xyz MCP and the Base MCP.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -9,15 +9,15 @@ metadata:
 
 # Yield.xyz AgentKit × Coinbase
 
-The **Base connector** for the Yield.xyz AgentKit: a Base Account (via Base MCP) signs and broadcasts the transactions that `yield-xyz-agentkit` builds. "Base" here means Coinbase's Base Account and Base MCP — not the base plugin, which is `yield-xyz-agentkit`.
+A self-contained skill that discovers on-chain yields via the **Yield.xyz MCP** and signs + broadcasts them through a **Base Account** (via Base MCP). "Base" here means Coinbase's Base Account and Base MCP.
 
-`yield-xyz-agentkit` (this skill's base) owns **all yield logic** — discovery, schemas, validator selection, balances, building `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`), `submit_hash`, `get_transaction` polling and terminal-state semantics, RWA eligibility gating, output formatting, key rules, and the Yield.xyz MCP setup. Use it for all of that. This skill adds **only** the Base MCP connection and signing/broadcasting — nothing that the base skill already covers.
+The Yield.xyz MCP owns the yield side — discovery, schemas, validator selection, balances, and building the `unsignedTransaction`s. The Base Account owns execution — session, signing, broadcasting. This skill orchestrates the two.
 
 ```
-Base Account        → confirm session + wallet (provides the address)
-yield-xyz-agentkit  → discover yield + build unsignedTransaction
-Base Account        → approve send_calls (signs + broadcasts)
-yield-xyz-agentkit  → submit_hash + poll get_transaction
+Base Account   → confirm session + wallet (provides the address)
+Yield.xyz MCP  → discover yield + build unsignedTransaction
+Base Account   → approve send_calls (signs + broadcasts)
+Yield.xyz MCP  → submit_hash + poll get_transaction
 ```
 
 ---
@@ -25,44 +25,62 @@ yield-xyz-agentkit  → submit_hash + poll get_transaction
 ## CRITICAL
 
 - **Never modify `unsignedTransaction`** before signing — not addresses, amounts,
-  fees, or encoding. If anything looks wrong, have `yield-xyz-agentkit` build a NEW
-  action. Modifying it **will result in permanent loss of funds**.
+  fees, or encoding. If anything looks wrong, build a NEW action (call the action tool
+  again). Modifying it **will result in permanent loss of funds**.
+- **Never call the Yield.xyz API directly** (curl/HTTP) — always go through the MCP.
 - **Match the yield's network to a chain Base MCP supports.** Don't assume the set —
   read `supportedChains` from `get_wallets` and confirm the yield's network is in it
   before building the action.
 
 ---
 
-## Add the Base MCP
+## Add the MCPs
 
-This skill needs **both** the Yield.xyz AgentKit MCP (registered by the base plugin)
-and the Base MCP connected.
-
-Check whether `base-mcp` is already registered (`claude mcp list`). If not, register it:
+This skill needs **both** the Yield.xyz AgentKit MCP and the Base MCP connected. Check
+what's registered with `claude mcp list`, then register whichever is missing:
 
 ```bash
+claude mcp add yield-xyz-agentkit --transport http https://mcp.yield.xyz/p/coinbase/mcp
 claude mcp add base-mcp --transport http https://mcp.base.org
 ```
 
-Not using Claude? Register it in your agent/IDE's MCP settings with name `base-mcp`,
-URL `https://mcp.base.org`, transport `http`.
+Not using Claude? Register each in your agent/IDE's MCP settings with the same names and
+URLs over `http` transport.
 
 Then confirm the session: call `get_wallets`. Use the returned `baseAccount.address`
 (an agent wallet also works, but only when its `inSession` is `true`) as the `address`
-the base skill uses in all its calls. If no wallet is available, Base MCP returns an
-authorization link — share it with the user, have them approve the session in their
-Base Account, then re-run `get_wallets`.
+in all Yield.xyz calls. If no wallet is available, Base MCP returns an authorization
+link — share it with the user, have them approve the session in their Base Account,
+then re-run `get_wallets`.
 
-(For registering the Yield.xyz AgentKit MCP itself, see the `yield-xyz-agentkit` skill.)
+---
+
+## Yield.xyz Tools
+
+Discover yields and build transactions by calling the Yield.xyz MCP tools directly —
+they're self-describing, so read each tool's schema for its parameters. The rules that
+aren't in the schemas live in `references/`.
+
+- **yields_get_all** — list/filter yields by network, token, type, or provider. Scope discovery to the wallet's holdings with `inputTokens`.
+- **yields_get** — full detail for one yield (mechanics, fees, limits, validator requirement).
+- **yields_get_validators** — validators for a yield that requires selection. Display + selection rules: `references/key-rules.md`.
+- **yields_get_balances** — a wallet's positions and `pendingActions[]` (drives manage/exit).
+- **yields_get_kyc_status** — KYC/eligibility for a permissioned RWA yield. See `references/rwa-overview.md` + `references/kyc-flows.md`.
+- **actions_enter** / **actions_exit** / **actions_manage** — build the `unsignedTransaction`s, returned as `transactions[]` ordered by `stepIndex`. Amounts are human-readable (`"1"` = 1 ETH), never wei.
+- **submit_hash** — record the on-chain hash after broadcasting. **Mandatory**, once per `transactionId`.
+- **get_transaction** — poll a transaction to a terminal status: `CONFIRMED`, `FAILED`, or `SKIPPED`.
+- **yields_get_risk** / **yields_get_reward_rate_history** / **yields_get_tvl_history**, **networks_get_all**, **providers_get_all** — risk, history, and lookup helpers.
+
+Format every result per `references/output-formats.md`, and follow `references/policies.md` for API usage.
 
 ---
 
 ## Base MCP Tools
 
 Call these directly once the MCP is connected. `send_calls`, `sign`, `get_request_status`,
-and `get_wallets` drive the yield flow; the rest are supporting tools.
+and `get_wallets` drive the flow; the rest are supporting tools.
 
-- **get_wallets** — list the Base Account and agent wallets, their session status, and `supportedChains`. Call first; the Base Account address is the `address` the base skill uses.
+- **get_wallets** — list the Base Account and agent wallets, their session status, and `supportedChains`. Call first; the Base Account address is the `address` used in all Yield.xyz calls.
 - **get_portfolio** — total value and per-asset balances for a Base Account address. Use to check funds before entering and to confirm a position after.
 - **get_transaction_history** — paginated transaction history for an address on one chain.
 - **send_calls** — submit a batch of contract calls for the Base Account to sign and broadcast in one approval. The main tool for executing Yield.xyz transactions (see below).
@@ -73,12 +91,12 @@ and `get_wallets` drive the yield flow; the rest are supporting tools.
 - **search_tokens** — look up a token's contract address and decimals by symbol or name, for use with `send` / `swap`.
 - **chain_rpc_request** — make a read-only JSON-RPC call to inspect on-chain state.
 - **web_request** — HTTP GET/POST to a whitelisted partner API (e.g. to fetch calldata for `send_calls`, or the Base skill doc).
-- **initiate_x402_request** / **complete_x402_request** — pay for an HTTPS x402 endpoint from the Base Account (Base / Base-Sepolia only). Used to settle the Yield.xyz MCP's x402 pay-per-call — see below.
+- **initiate_x402_request** / **complete_x402_request** — pay for an HTTPS x402 endpoint from the Base Account (Base / Base-Sepolia only).
 - **help** — Base MCP usage guidance; points to the Base skill doc for protocol tasks the MCP doesn't cover directly.
 
 Base MCP's supported chains aren't fixed — read `supportedChains` from `get_wallets`
-and match the yield's network to one of them (use the base skill's `networks_get_all`
-to resolve a slug if unsure).
+and match the yield's network to one of them (use `networks_get_all` to resolve a slug
+if unsure).
 
 ---
 
@@ -110,10 +128,9 @@ approval and a single on-chain hash. If any value looks wrong, stop and flag it 
 not sign.
 
 **Only batch transactions that are available together.** If the action is async and
-multi-step (`hasNextStep`, or the base says a follow-up step is fetched only after the
-current one confirms), execute what's available now, let it confirm, then fetch and
-sign the next step. Never batch across that boundary — the later transaction doesn't
-exist yet.
+multi-step (`hasNextStep`, or a follow-up step is fetched only after the current one
+confirms), execute what's available now, let it confirm, then fetch and sign the next
+step. Never batch across that boundary — the later transaction doesn't exist yet.
 
 For a **message** (`isMessage: true` or an EIP-712 typed-data payload), use `sign`, not
 `send_calls` — `type: personal_sign` with `data: { message }`, or `type: typed_data`
@@ -126,37 +143,14 @@ with the EIP-712 payload. A message can't be batched with calls; sign it on its 
    (capture the on-chain transaction hash), or `failed` (rejected/expired — do not
    retry with modified values; report to the user).
 3. The batch produces **one** on-chain hash covering **all** the transactions in it.
-   The base skill still tracks each `transactionId` separately, so hand that same hash
-   back to `yield-xyz-agentkit` and call `submit_hash` **once per `transactionId`** in
-   the batch (**mandatory**), then let it poll `get_transaction` for each to a terminal
-   status. Same rule when the batch spans several actions (e.g. exiting two vaults at
-   once): `submit_hash` the shared hash for every action's `transactionId`.
+   Yield.xyz tracks each `transactionId` separately, so call `submit_hash` with that
+   same hash **once per `transactionId`** in the batch (**mandatory**), then poll
+   `get_transaction` for each to a terminal status. Same rule when the batch spans
+   several actions (e.g. exiting two vaults at once): `submit_hash` the shared hash for
+   every action's `transactionId`.
 
 Use `get_portfolio` to check funds before entering and to confirm the position after —
-and to scope discovery (feed non-zero holdings into the base skill's `inputTokens`).
-
-Everything else — the enter/exit/manage flow, amounts, validators, terminal states,
-key rules, output formatting — is owned by the `yield-xyz-agentkit` skill.
-
----
-
-## Paying for x402 requests
-
-The Yield.xyz MCP's four metered tools (`yields_get_balances`, `actions_enter`,
-`actions_exit`, `actions_manage`) can be paid per call over **x402** once a wallet's
-free-tier quota is exhausted. The base skill's `references/x402-payments.md` owns the
-policy — when it applies, the quota-exceeded error, and the price. Base MCP is the
-x402 wallet client that settles it:
-
-1. `initiate_x402_request` with `url: https://mcp.yield.xyz/x402/<tool>`, `method: POST`,
-   `body`: the tool's arguments, and `maxPayment` as your USDC ceiling. It returns an
-   `approvalUrl` + `requestId`.
-2. Share the `approvalUrl`; the user approves the payment in their Base Account.
-3. `complete_x402_request(requestId)` settles the payment and returns the tool's result.
-
-Base MCP settles x402 on Base / Base-Sepolia, which matches the endpoint's Base
-pricing. This is an advanced path — anonymous free tier or a BYO API key covers most
-usage (see the base skill).
+and to scope discovery (feed non-zero holdings into `yields_get_all`'s `inputTokens`).
 
 ---
 
@@ -167,6 +161,16 @@ usage (see the base skill).
 | No wallet in session | Re-run `get_wallets`, share the authorization link, wait for the user to approve |
 | `send_calls` / `sign` rejected or expired (`get_request_status` → `failed`) | Do not retry with modified values — report to the user |
 | Transaction FAILED | Do not retry automatically — report to user with txHash |
+| Yield.xyz tool error (wrong arguments, rate limits) | Read the error, fix the arguments, and retry the specific tool — never silently loop |
 
-(For Yield.xyz-side errors — wrong arguments, rate limits, terminal states — see the
-`yield-xyz-agentkit` skill.)
+---
+
+## References
+
+Read on demand:
+
+- **[`references/key-rules.md`](./references/key-rules.md)** — yield rules, amounts, validator selection, tool → API mapping
+- **[`references/output-formats.md`](./references/output-formats.md)** — display rules, number formatting, tables, action summaries
+- **[`references/policies.md`](./references/policies.md)** — API usage, data-fetching, and efficiency guidelines
+- **[`references/rwa-overview.md`](./references/rwa-overview.md)** — real-world-asset yields, permissioning, eligibility gate
+- **[`references/kyc-flows.md`](./references/kyc-flows.md)** — KYC/eligibility flows for permissioned RWA yields
