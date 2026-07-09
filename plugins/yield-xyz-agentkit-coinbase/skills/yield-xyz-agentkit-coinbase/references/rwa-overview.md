@@ -88,6 +88,10 @@ first thing the agent does before any `actions_enter`.
 - The agent **cannot** complete KYC or allowlisting for the user — these are
   off-chain, identity-bound steps. The agent's job is to detect the gate, explain
   it, and guide the user through onboarding (`references/kyc-flows.md`).
+- **Smart-account wallets:** some issuers allowlist only externally-owned (personal)
+  wallets and won't allowlist a smart contract wallet such as a Base Account, so an
+  enter can revert even after KYC. Confirm the issuer accepts the execution wallet's
+  address before depositing.
 
 ### 2. Open-access  (e.g. Midas — mTBILL)
 

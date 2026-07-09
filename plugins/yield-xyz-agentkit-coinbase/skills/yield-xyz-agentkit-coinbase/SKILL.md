@@ -31,6 +31,10 @@ Yield.xyz MCP  → submit_hash + poll get_transaction
 - **Match the yield's network to a chain Base MCP supports.** Don't assume the set —
   read `supportedChains` from `get_wallets` and confirm the yield's network is in it
   before building the action.
+- **Gate real-world-asset yields.** Before building an `actions_enter` for a
+  `real_world_asset` yield, run the eligibility gate in `references/rwa-overview.md`
+  (call `yields_get_kyc_status`; proceed only if eligible). Never broadcast an RWA enter
+  for an ineligible wallet — it reverts on-chain.
 
 ---
 
@@ -102,19 +106,26 @@ if unsure).
 
 ## Signing & broadcasting via Base MCP
 
-A Base Account is a **smart contract wallet**: `send_calls` takes an *array* of calls
-and executes them **atomically in one on-chain transaction with a single approval**.
-Lean into this — batch the action's steps rather than signing them one at a time.
-
 Base MCP uses an approval model: `send_calls` returns an `approvalUrl` and a
 `requestId`, the user approves in their Base Account, and you poll
 `get_request_status(requestId)` for the result.
 
-### Batch the action's transactions
+A Base Account is a **smart contract wallet**, so `send_calls` can take an *array* of
+calls and execute them **atomically in one transaction with a single approval**. Two
+modes, in order of preference:
 
-Map **every** `unsignedTransaction` in the action's `transactions[]` (in `stepIndex`
-order) into the `calls` array of **one** `send_calls` — a field copy only, never
-changing any value:
+- **Batch (preferred)** — when the Account supports batch calls, put all of the
+  action's transactions into one `send_calls`.
+- **Individual (fallback)** — when it doesn't, or a batch is rejected as unsupported,
+  sign each transaction on its own in `stepIndex` order.
+
+Either way: execute in `stepIndex` order, never reorder, and never change a value in an
+`unsignedTransaction` (if one looks wrong, stop and flag it — do not sign).
+
+### Batch (preferred)
+
+Map **every** `unsignedTransaction` in the action's `transactions[]` into the `calls`
+array of **one** `send_calls`, **in `stepIndex` order** — a field copy only:
 
 - `chain` — the yield's network (canonical Base MCP chain name)
 - `calls` — one entry per transaction, in `stepIndex` order:
@@ -123,31 +134,39 @@ changing any value:
   - `value` → the transaction's `value` as **hex wei** (`0x0` if absent or zero)
 - Omit `gas`, `nonce`, and `from` — the Base Account fills those and signs.
 
-So an approval + deposit (or several exits at once) settle together in a single
-approval and a single on-chain hash. If any value looks wrong, stop and flag it — do
-not sign.
+The calls execute atomically in that order, so an approval + deposit (or several exits
+at once) settle together in one approval and one on-chain hash.
 
 **Only batch transactions that are available together.** If the action is async and
 multi-step (`hasNextStep`, or a follow-up step is fetched only after the current one
-confirms), execute what's available now, let it confirm, then fetch and sign the next
+confirms), batch what's available now, let it confirm, then fetch and sign the next
 step. Never batch across that boundary — the later transaction doesn't exist yet.
+
+### Individual (fallback)
+
+If the Account doesn't support batch calls (or a batch is rejected), sign each
+`unsignedTransaction` as its **own** `send_calls` (a single-element `calls` array), one
+at a time in `stepIndex` order — following the sequential rule in
+`references/key-rules.md` (Rule 5).
+
+### Messages
 
 For a **message** (`isMessage: true` or an EIP-712 typed-data payload), use `sign`, not
 `send_calls` — `type: personal_sign` with `data: { message }`, or `type: typed_data`
 with the EIP-712 payload. A message can't be batched with calls; sign it on its own.
 
-### Approve, then record every transactionId
+### Record every transactionId
 
 1. Share the returned `approvalUrl`; the user approves in their Base Account.
 2. Poll `get_request_status(requestId)` — `pending` (retry shortly), `completed`
    (capture the on-chain transaction hash), or `failed` (rejected/expired — do not
    retry with modified values; report to the user).
-3. The batch produces **one** on-chain hash covering **all** the transactions in it.
-   Yield.xyz tracks each `transactionId` separately, so call `submit_hash` with that
-   same hash **once per `transactionId`** in the batch (**mandatory**), then poll
-   `get_transaction` for each to a terminal status. Same rule when the batch spans
-   several actions (e.g. exiting two vaults at once): `submit_hash` the shared hash for
-   every action's `transactionId`.
+3. Call `submit_hash` **once per `transactionId`** (**mandatory**), then poll
+   `get_transaction` for each to a terminal status. A **batch** produces one on-chain
+   hash covering all its transactions — submit that same hash for every `transactionId`
+   in the batch (including across several actions, e.g. exiting two vaults at once). An
+   **individual** signing produces one hash per transaction. Skip any transaction
+   already at a terminal status — calling `submit_hash` on it returns HTTP 412.
 
 Use `get_portfolio` to check funds before entering and to confirm the position after —
 and to scope discovery (feed non-zero holdings into `yields_get_all`'s `inputTokens`).
