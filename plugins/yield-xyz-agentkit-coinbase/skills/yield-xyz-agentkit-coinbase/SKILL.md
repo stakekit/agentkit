@@ -32,9 +32,8 @@ Yield.xyz MCP  → submit_hash + poll get_transaction
   read `supportedChains` from `get_wallets` and confirm the yield's network is in it
   before building the action.
 - **Gate real-world-asset yields.** Before building an `actions_enter` for a
-  `real_world_asset` yield, run the eligibility gate in `references/rwa-overview.md`
-  (call `yields_get_kyc_status`; proceed only if eligible). Never broadcast an RWA enter
-  for an ineligible wallet — it reverts on-chain.
+  `real_world_asset` yield, apply the RWA access gate — see `references/rwa-overview.md`.
+  Never broadcast an enter for a wallet that isn't eligible/allowlisted — it reverts on-chain.
 
 ---
 
