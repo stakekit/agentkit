@@ -90,20 +90,27 @@ Yield.xyz after broadcasting.
 
 ## Folder structure
 
-A self-contained skill — it discovers yields via the Yield.xyz MCP and signs +
-broadcasts through a Base Account, with its own reference material.
+The Coinbase `SKILL.md` and its Base-specific setup are its own; the reference files
+are **symlinks into the core `yield-xyz-agentkit` skill** (single source of truth), so
+shared yield guidance never drifts.
 
 ```
 yield-xyz-agentkit-coinbase/
 ├── SKILL.md                  # discover via Yield.xyz MCP, sign/broadcast via Base Account
 ├── README.md                 # This file
-└── references/
+└── references/               # → symlinks into ../../yield-xyz-agentkit/skills/yield-xyz-agentkit/references/
     ├── key-rules.md          # yield rules, amounts, validator selection, tool → API mapping
     ├── output-formats.md     # display rules, tables, action summaries
     ├── policies.md           # API usage and efficiency
     ├── rwa-overview.md       # real-world-asset yields + eligibility gate
     └── kyc-flows.md          # KYC/eligibility flows for permissioned RWA yields
 ```
+
+> **Dev note:** on a **marketplace** install these symlinks are dereferenced and the
+> content is copied into the plugin cache. **Local `--plugin-dir` / checkout installs do
+> not follow cross-plugin symlinks**, so for local development install via the
+> marketplace (or ensure the core skill is present). Verify a real marketplace install
+> before relying on the links.
 
 ---
 

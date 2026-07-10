@@ -104,7 +104,7 @@ on their own platform, even though holding and secondary-market acquisition are 
 cooldown and any fees live; settlement varies by product (instant vs several business
 days). When the yield's exit offers an instant-redemption option alongside standard
 NAV redemption, ask the user which they want (instant fee vs free-but-wait) and pass
-their choice — never default it silently. See the `actions_exit` parameters in `SKILL.md`.
+their choice — never default it silently. See the `actions_exit` tool schema (via the MCP) for the exact parameters.
 
 **6. What the agent automates vs. cannot.**
 
