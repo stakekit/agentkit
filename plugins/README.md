@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit — Plugins
 
-Six composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Robinhood Chain, Base) **depend on** the base and inherit its MCP (MoonPay and Base also need their own MCP).
+Six composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP. The Privy, MoonPay, and Robinhood Chain connectors **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP); the Coinbase connector is **self-contained** with its own MCP.
 
 ```bash
 /plugin marketplace add stakekit/agentkit

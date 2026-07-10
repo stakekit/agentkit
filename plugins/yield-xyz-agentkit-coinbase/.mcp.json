@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "yield-xyz-agentkit": {
+    "yield-xyz-agentkit-coinbase": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp.yield.xyz/p/coinbase/mcp"]
     }

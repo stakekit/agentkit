@@ -59,7 +59,7 @@ After setup, confirm both MCPs are connected:
 /context
 ```
 
-`yield-xyz-agentkit` and `base-mcp` should appear under connected MCP servers. Then
+`yield-xyz-agentkit-coinbase` and `base-mcp` should appear under connected MCP servers. Then
 confirm they work:
 
 ```

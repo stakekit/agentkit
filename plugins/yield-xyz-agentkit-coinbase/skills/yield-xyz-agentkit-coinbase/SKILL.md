@@ -4,7 +4,7 @@ description: The Coinbase connector for the Yield.xyz AgentKit — a self-contai
 metadata:
   author: Yield.xyz
   version: "1.0.0"
-  mcp-server: yield-xyz-agentkit
+  mcp-server: yield-xyz-agentkit-coinbase
 ---
 
 # Yield.xyz AgentKit × Coinbase
@@ -43,12 +43,17 @@ This skill needs **both** the Yield.xyz AgentKit MCP and the Base MCP connected.
 what's registered with `claude mcp list`, then register whichever is missing:
 
 ```bash
-claude mcp add yield-xyz-agentkit --transport http https://mcp.yield.xyz/p/coinbase/mcp
+claude mcp add yield-xyz-agentkit-coinbase --transport http https://mcp.yield.xyz/p/coinbase/mcp
 claude mcp add base-mcp --transport http https://mcp.base.org
 ```
 
 Not using Claude? Register each in your agent/IDE's MCP settings with the same names and
 URLs over `http` transport.
+
+The Yield.xyz MCP is registered as **`yield-xyz-agentkit-coinbase`** — a distinct server
+from the base plugin's `yield-xyz-agentkit`. If both are connected, use
+`yield-xyz-agentkit-coinbase` for all Yield.xyz calls; it routes through the Coinbase
+partner endpoint.
 
 Then confirm the session: call `get_wallets`. Use the returned `baseAccount.address`
 (an agent wallet also works, but only when its `inSession` is `true`) as the `address`
