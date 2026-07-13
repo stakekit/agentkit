@@ -102,13 +102,13 @@ npx skills add https://github.com/stakekit/agentkit
 
 ## Which plugin should I use?
 
-| | `yield-xyz-agentkit` | `+ privy` | `+ moonpay` |
-|---|---|---|---|
-| Find yields | Yes | Yes | Yes |
-| Build transactions | Yes | Yes | Yes |
-| Sign + broadcast | No — bring your own signer | Yes — via Privy wallet | Yes — via MoonPay wallet |
-| Check balances | Yes | Yes | Yes |
-| Policy guarded | No | Yes | No |
+| | `yield-xyz-agentkit` | `+ privy` | `+ moonpay` | `coinbase` (standalone) |
+|---|---|---|---|---|
+| Find yields | Yes | Yes | Yes | Yes |
+| Build transactions | Yes | Yes | Yes | Yes |
+| Sign + broadcast | No — bring your own signer | Yes — via Privy wallet | Yes — via MoonPay wallet | Yes — via Coinbase Base Account |
+| Check balances | Yes | Yes | Yes | Yes |
+| Policy guarded | No | Yes | No | No |
 
 `yield-xyz-agentkit-builder` is separate — it generates integration code rather than running yields.
 
@@ -117,3 +117,4 @@ npx skills add https://github.com/stakekit/agentkit
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — yield.xyz reference docs
 - [Privy Agentic Wallet Docs](https://docs.privy.io/recipes/agent-integrations/agentic-wallets) — privy reference docs
 - [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools) — moonpay reference docs
+- [Base MCP](https://mcp.base.org) — Base Account signing + broadcasting
