@@ -88,6 +88,10 @@ first thing the agent does before any `actions_enter`.
 - The agent **cannot** complete KYC or allowlisting for the user — these are
   off-chain, identity-bound steps. The agent's job is to detect the gate, explain
   it, and guide the user through onboarding (`references/kyc-flows.md`).
+- **Smart-account wallets:** some issuers allowlist only externally-owned (personal)
+  wallets and won't allowlist a smart contract wallet such as a Base Account, so an
+  enter can revert even after KYC. Confirm the issuer accepts the execution wallet's
+  address before depositing.
 
 ### 2. Open-access  (e.g. Midas — mTBILL)
 
@@ -163,5 +167,5 @@ onboarding (`references/kyc-flows.md`).
 | File | Read when |
 |---|---|
 | `references/kyc-flows.md` | Detecting the gate and running issuer onboarding (the primary RWA reference) |
-| `SKILL.md` (Available Tools) | Exact parameters for `yields_get_all` (the `real_world_asset` type) and the action tools |
+| `actions_enter` / `yields_get_all` tool schemas (via the MCP) | Exact parameters for the `real_world_asset` type and the action tools |
 | `references/output-formats.md` | Displaying RWA yields with KYC / allowlist / minimum badges |

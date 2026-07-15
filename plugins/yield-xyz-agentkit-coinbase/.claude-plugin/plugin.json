@@ -1,0 +1,10 @@
+{
+  "name": "yield-xyz-agentkit-coinbase",
+  "description": "The Coinbase connector — a self-contained skill that discovers yields and signs + broadcasts them via a Base Account (Base MCP).",
+  "version": "1.0.0",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "keywords": ["defi", "yield", "base", "coinbase", "connector", "wallet", "signing", "web3"],
+  "components": { "skills": ["./skills"] }
+}

@@ -42,9 +42,9 @@
    automatically.
 
 
-5. **Execute transactions in exact order.** Multiple transactions are ordered by `stepIndex`.
-   Wait for `CONFIRMED` status before proceeding to the next. Never skip or reorder. Skip any
-   transaction already at a terminal status (`SKIPPED` / `CONFIRMED` / `FAILED`) — don't re-sign
+5. **Execute transactions in exact `stepIndex` order — never skip or reorder.** When signing
+   transactions individually, wait for a terminal status (`CONFIRMED` / `SKIPPED`) before the
+   next and stop on `FAILED`. Skip any transaction already at a terminal status — don't re-sign
    or re-`submit_hash` it (calling `submit_hash` on an already-terminal transaction returns HTTP 412).
 
 6. **MCP tool → API mapping.** The MCP tools map directly to API endpoints:
