@@ -112,6 +112,8 @@ npx skills add https://github.com/stakekit/agentkit
 
 `yield-xyz-agentkit-builder` is separate — it generates integration code rather than running yields.
 
+`yield-xyz-agentkit-robinhood` adds Robinhood Chain — discover and act on Robinhood Chain yields, bring your own signer.
+
 ## Related
 
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — yield.xyz reference docs

@@ -178,6 +178,13 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 | Warmup | `mechanics.warmupPeriod` | Takes X days to start earning after deposit. |
 | Fees | `mechanics.fee` | Summarise any non-zero fees (deposit / withdrawal / performance). |
 
+**Capacity fields are advisory, not a gate.** Some vaults do not implement the
+ERC-4626 max-view functions faithfully, so a capacity or `maxDeposit`-derived
+value can read zero remaining while deposits succeed on-chain (Morpho V2 vaults
+behave this way). If a capacity field shows the vault as full, surface it as a
+warning and let the user decide — never refuse to build an enter on that signal
+alone.
+
 ---
 
 ## actions_get_all — Displaying Action History

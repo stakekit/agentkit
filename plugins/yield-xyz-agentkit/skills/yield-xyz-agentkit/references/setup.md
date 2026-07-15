@@ -58,6 +58,11 @@ claude mcp remove yield-xyz-agentkit
 
 Run `claude mcp list` and confirm `yield-xyz-agentkit` appears in the output.
 
+**If the MCP was registered by a plugin install** (`/plugin install …` rather than
+`claude mcp add`): the server does not attach to an already-running session.
+Restart Claude Code (or start a new session) after installing, then confirm the
+`yield-xyz-agentkit` tools are visible before proceeding.
+
 Then run a quick smoke-test:
 
 ```text

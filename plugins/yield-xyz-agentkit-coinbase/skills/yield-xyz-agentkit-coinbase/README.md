@@ -98,7 +98,7 @@ shared yield guidance never drifts.
 yield-xyz-agentkit-coinbase/
 ├── SKILL.md                  # discover via Yield.xyz MCP, sign/broadcast via Base Account
 ├── README.md                 # This file
-└── references/               # → symlinks into ../../yield-xyz-agentkit/skills/yield-xyz-agentkit/references/
+└── references/               # → symlinks into the core yield-xyz-agentkit skill's references/
     ├── key-rules.md          # yield rules, amounts, validator selection, tool → API mapping
     ├── output-formats.md     # display rules, tables, action summaries
     ├── policies.md           # API usage and efficiency
