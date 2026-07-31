@@ -1,0 +1,11 @@
+{
+  "name": "yield-xyz-agentkit-pulse-verify",
+  "description": "The Pulse Network verification connector — deterministic pre-execution checks (token safety, holder concentration, exit depth, independent APY reads) before Yield.xyz actions. Pay-per-call via x402, no API key. Builds on the yield-xyz-agentkit base plugin.",
+  "version": "1.0.0",
+  "author": { "name": "Pulse Network (The Aslan Group LLC)", "url": "https://pulse.theaslangroupllc.com" },
+  "homepage": "https://pulse.theaslangroupllc.com",
+  "repository": "https://github.com/stakekit/agentkit",
+  "keywords": ["defi", "yield", "verification", "token-safety", "x402", "connector", "web3"],
+  "dependencies": ["yield-xyz-agentkit"],
+  "components": { "skills": ["./skills"] }
+}
