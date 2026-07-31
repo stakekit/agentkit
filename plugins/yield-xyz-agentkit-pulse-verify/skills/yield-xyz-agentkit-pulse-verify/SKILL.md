@@ -59,10 +59,22 @@ response shapes.
 
 ### Step 1 — Resolve what to verify
 
-From the `yields_get` response, collect:
-- the **deposit token** (what the user hands over),
-- the **reward/receipt token** (what the position pays or mints),
-- the **network** and, for Base USDC lending/vaults, the **protocol name**.
+Scans take **contract addresses, not symbols**. Map the Yield object from
+`yields_get` to scan inputs like this:
+
+- **Deposit side** — `token` and `inputTokens[]`: each entry's `address` field
+  is a scan candidate. Entries without an `address` are native assets — skip
+  them (natives aren't scannable and don't need to be).
+- **Receipt/reward side** — `outputToken` (and reward tokens where the yield
+  exposes them): the token the position mints or pays. Its `address` is usually
+  the more important scan for long-tail yields.
+- **Network** — the yield's network id: selects the scanner and its parameter
+  (`address` on EVM chains, `mint` on Solana, `asset` id on Algorand).
+- **Protocol** — `providerId`: used in Step 3 to match against the Base USDC
+  panel entries.
+
+Note: `yields_get_all` list items carry only `tokenSymbol` — call `yields_get`
+on the specific yield first to get the full token objects with `address` fields.
 
 ### Step 2 — Scan the tokens (recommended default)
 
@@ -78,7 +90,10 @@ Each returns a deterministic `verdict` (`CLEAR` / `CAUTION` / `AVOID`), a
 `risk_score`, `red_flags[]`, and `green_flags[]`. Report the verdict and flags to
 the user as-is.
 
-### Step 3 — Cross-check the APY (Base USDC lending/vaults)
+### Step 3 — Cross-check the APY (Base USDC lending/vaults ONLY)
+
+Applies only when the yield is a USDC lending market or ERC-4626 vault **on
+Base** — skip this step for every other network or asset.
 
 `GET /api/vault-apy` ($0.02) reads live USDC supply APYs on Base **directly from
 chain state** (Aave v3, Compound v3, Moonwell, Euler v2, and the largest Morpho
@@ -105,10 +120,11 @@ and narrative-vs-chain consistency, with a receipt suitable for audit trails.
 
 | Situation | Checks |
 |---|---|
-| Bluechip yield (Aave/Lido-class, canonical assets) | Step 3 only |
-| Any yield paying or minting a non-bluechip token | Steps 2 + 3 |
-| Long-tail / newly listed token | Steps 2 + 3 + 4 |
-| Large position or treasury entry | Steps 2–5 |
+| Bluechip **Base USDC** lending/vault (Aave-class) | Step 3 |
+| Bluechip yield elsewhere (canonical assets, major protocols) | usually none — scans add little |
+| Any yield paying or minting a non-bluechip token | Step 2 (+ Step 3 if it's a Base USDC product) |
+| Long-tail / newly listed token | Steps 2 + 4 |
+| Large position or treasury entry | Steps 2, 4, 5 (+ Step 3 if Base USDC) |
 
 Keep it proportional: each check is a paid call the user funds. State the price
 before running a batch, and skip checks the user declines.
