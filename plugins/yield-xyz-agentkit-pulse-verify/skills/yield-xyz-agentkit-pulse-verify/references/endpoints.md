@@ -59,6 +59,6 @@ CLI / Agent Wallets (Gateway nanopayments), MoonPay Paybox.
 
 ## Full catalog
 
-Machine-readable index of all 75 Pulse Network services (916 endpoints):
+Machine-readable index of all 77 Pulse Network services (969 endpoints):
 `https://pulse.theaslangroupllc.com/.well-known/pulse-catalog.json` — every entry
 lists origin, endpoints, and prices; each origin also serves `/openapi.json`.

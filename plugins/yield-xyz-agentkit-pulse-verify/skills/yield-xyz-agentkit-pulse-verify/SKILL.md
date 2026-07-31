@@ -147,7 +147,7 @@ before running a batch, and skip checks the user declines.
 
 ## Discovery
 
-The full Pulse Network catalog (75 intelligence APIs, 916 pay-per-call endpoints —
+The full Pulse Network catalog (77 intelligence APIs, 969 pay-per-call endpoints —
 finance, travel, sports, health, legal, climate, and more, all x402) is
 machine-readable at `https://pulse.theaslangroupllc.com/.well-known/pulse-catalog.json`.
 Each service also publishes `/openapi.json` and `/.well-known/x402` on its own origin.
