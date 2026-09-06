@@ -21,7 +21,7 @@ Responsibility splits cleanly on every transaction:
 
 1. **This skill** builds the `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`).
 2. **Your side signs and broadcasts it.** Whatever does that is your *signer* — a user's wallet, your agent's own custody (MPC / KMS / HSM), or a provider like Privy or MoonPay. This skill doesn't care which.
-3. **This skill** records the result — `submit_hash` with the returned hash, then `get_transaction` until `CONFIRMED`. Some hosts sign, broadcast and register the hash in one step; there, step 3 is already done and `submit_hash` is not yours to call.
+3. **This skill** records the result — `submit_hash` with the returned hash, then `get_transaction` until `CONFIRMED`. Assume step 3 is yours. Drop it only where your host has explicitly told you that it signs, broadcasts and registers the hash in one step.
 
 This holds whether signing is human-approved or fully autonomous. Where a human is in the loop, confirm before signing; where the host signs on its own, skip the confirmation and let it run.
 
@@ -46,7 +46,7 @@ The MCP server exposes these tools directly — call them like any other tool:
 - **actions_manage** — claim rewards / manage position
 - **actions_get** — get status of a specific action
 - **actions_get_all** — list action history for a wallet
-- **submit_hash** — submit on-chain tx hash after signing and broadcasting (required unless your host registers the hash itself)
+- **submit_hash** — submit on-chain tx hash after signing and broadcasting (mandatory, unless your host has explicitly said it registers the hash itself)
 - **get_transaction** — poll transaction confirmation status
 - **networks_get_all** — list all supported networks
 - **providers_get_all** — list all supported protocols and providers
@@ -71,7 +71,7 @@ For all display rules, number formatting, badges, tables, and action summaries, 
 
 Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
 
-**Before displaying results, read [`references/output-formats.md`](./references/output-formats.md) using the Read tool.** Skip it only when your host has already defined its own display rules, since reading it costs a round trip and the host's rules win either way.
+**MANDATORY: Before displaying any results, read [`references/output-formats.md`](./references/output-formats.md) using the Read tool.** The one exception is a host that has explicitly told you it defines its own display rules for these results, whose rules win and make the read a wasted round trip. General output-style guidance in a system prompt is not that statement. If nothing says so, read the file.
 
 ---
 
@@ -221,7 +221,7 @@ Perform a management action on an existing position (claim rewards, restake, cha
 ### 8. `submit_hash`
 Submit the on-chain transaction hash after the signer has signed and broadcast a transaction.
 
-**Required after every transaction, unless your host registers the hash itself.** Some hosts sign, broadcast and register in one step; there, calling this asks the user for work already done, so check how your host handles it before prompting for a hash.
+**Mandatory after every transaction.** The one exception is a host that has explicitly told you it registers the hash itself, because it signs, broadcasts and registers in one step. Absent that statement, call it. Skipping it when you shouldn't leaves the position untracked and silently wrong, while calling it when you shouldn't costs one redundant prompt.
 
 **Key parameters:**
 - `transactionId` — the transaction UUID from the `transactions[]` array in the `ActionDto`
@@ -399,7 +399,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 4. If `requiresValidatorSelection`, call `yields_get_validators`, present top 10
 5. Run safety checklist; confirm before signing (if a human is in the loop)
 6. `actions_enter` → present structured transaction summary
-7. The signer signs and broadcasts each transaction → call `submit_hash` with the tx hash (**unless your host registers it**)
+7. The signer signs and broadcasts each transaction → call `submit_hash` with the tx hash (**mandatory, unless your host has said it registers the hash**)
 8. Poll `get_transaction` until `CONFIRMED` before proceeding to the next transaction
 
 ### Check balances and claim rewards
@@ -408,7 +408,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 3. Highlight `pendingActions` with claimable amounts
 4. To claim → `actions_manage` with `passthrough` from pending action
 5. Present transaction summary
-6. The signer signs and broadcasts → call `submit_hash` (**unless your host registers it**)
+6. The signer signs and broadcasts → call `submit_hash` (**mandatory, unless your host has said it registers the hash**)
 7. Poll `get_transaction` until `CONFIRMED`
 
 ### Exit a position
@@ -416,7 +416,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 2. Surface cooldown/lockup from safety checklist
 3. Confirm before signing (if a human is in the loop)
 4. `actions_exit` → return structured transaction summary
-5. The signer signs and broadcasts → call `submit_hash` (**unless your host registers it**)
+5. The signer signs and broadcasts → call `submit_hash` (**mandatory, unless your host has said it registers the hash**)
 6. Poll `get_transaction` until `CONFIRMED`
 
 ### Compare yields
