@@ -21,7 +21,7 @@ Responsibility splits cleanly on every transaction:
 
 1. **This skill** builds the `unsignedTransaction` (`actions_enter` / `actions_exit` / `actions_manage`).
 2. **Your side signs and broadcasts it.** Whatever does that is your *signer* — a user's wallet, your agent's own custody (MPC / KMS / HSM), or a provider like Privy or MoonPay. This skill doesn't care which.
-3. **This skill** records the result — `submit_hash` with the returned hash, then `get_transaction` until `CONFIRMED`.
+3. **This skill** records the result — `submit_hash` with the returned hash, then `get_transaction` until `CONFIRMED`. Some hosts sign, broadcast and register the hash in one step; there, step 3 is already done and `submit_hash` is not yours to call.
 
 This holds whether signing is human-approved or fully autonomous. Where a human is in the loop, confirm before signing; where the host signs on its own, skip the confirmation and let it run.
 
@@ -46,7 +46,7 @@ The MCP server exposes these tools directly — call them like any other tool:
 - **actions_manage** — claim rewards / manage position
 - **actions_get** — get status of a specific action
 - **actions_get_all** — list action history for a wallet
-- **submit_hash** — submit on-chain tx hash after signing and broadcasting (mandatory)
+- **submit_hash** — submit on-chain tx hash after signing and broadcasting (required unless your host registers the hash itself)
 - **get_transaction** — poll transaction confirmation status
 - **networks_get_all** — list all supported networks
 - **providers_get_all** — list all supported protocols and providers
@@ -71,7 +71,7 @@ For all display rules, number formatting, badges, tables, and action summaries, 
 
 Never dump raw JSON or plain comma-separated data. Always follow the formats defined there.
 
-**MANDATORY: Before displaying any results, read `references/output-formats.md` using the Read tool. Do not skip this step.**  
+**Before displaying results, read [`references/output-formats.md`](./references/output-formats.md) using the Read tool.** Skip it only when your host has already defined its own display rules, since reading it costs a round trip and the host's rules win either way.
 
 ---
 
@@ -95,7 +95,7 @@ The MCP works in two modes: **anonymous** (free tier, 30 calls per wallet per to
 List and filter yield opportunities across networks and tokens.
 
 **Key parameters:**
-- `networks` — array of network slugs e.g. `["base"]`, `["ethereum", "arbitrum"]`. For unified search pass all in one array. For fair cross-network comparison ("ethereum vs arbitrum", "which network is better") run one call per network in parallel — see Intelligence Notes. Use `networks_get_all` to resolve a network name if unsure.
+- `networks` — array of network slugs e.g. `["base"]`, `["ethereum", "arbitrum"]`. Pass every network you need in one call; that is what the array is for, and each extra call is a full round trip. Results sort globally, so when comparing networks of unequal depth raise `limit` and check that every network you were asked about actually appears. Only where you still need guaranteed per-network representation is one call per network worth the cost — see Intelligence Notes. Use `networks_get_all` to resolve a network name if unsure.
 - `token` — token symbol e.g. `"USDC"`, `"ETH"`, `"WBTC"` or a contract address.
 - `types` — array of yield types. Valid values: `staking`, `restaking`, `lending`, `vault`, `fixed_yield`, `real_world_asset`, `concentrated_liquidity_pool`, `liquidity_pool`. These are the **only valid types**. Map user requests to nearest match (e.g. "liquid staking" → `staking`, "earn" → `vault`, "LP" → `liquidity_pool`) or confirm before calling.
 - `sort` — server-side sort order. **Always pass `rewardRateDesc` by default** — do not re-sort client-side. Switch to `rewardRateAsc`, `statusEnterDesc`, `statusEnterAsc`, `statusExitDesc`, or `statusExitAsc` per user request.
@@ -221,7 +221,7 @@ Perform a management action on an existing position (claim rewards, restake, cha
 ### 8. `submit_hash`
 Submit the on-chain transaction hash after the signer has signed and broadcast a transaction.
 
-**This is mandatory after every transaction.** Never skip this step.
+**Required after every transaction, unless your host registers the hash itself.** Some hosts sign, broadcast and register in one step; there, calling this asks the user for work already done, so check how your host handles it before prompting for a hash.
 
 **Key parameters:**
 - `transactionId` — the transaction UUID from the `transactions[]` array in the `ActionDto`
@@ -399,7 +399,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 4. If `requiresValidatorSelection`, call `yields_get_validators`, present top 10
 5. Run safety checklist; confirm before signing (if a human is in the loop)
 6. `actions_enter` → present structured transaction summary
-7. The signer signs and broadcasts each transaction → call `submit_hash` with the tx hash (**mandatory**)
+7. The signer signs and broadcasts each transaction → call `submit_hash` with the tx hash (**unless your host registers it**)
 8. Poll `get_transaction` until `CONFIRMED` before proceeding to the next transaction
 
 ### Check balances and claim rewards
@@ -408,7 +408,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 3. Highlight `pendingActions` with claimable amounts
 4. To claim → `actions_manage` with `passthrough` from pending action
 5. Present transaction summary
-6. The signer signs and broadcasts → call `submit_hash` (**mandatory**)
+6. The signer signs and broadcasts → call `submit_hash` (**unless your host registers it**)
 7. Poll `get_transaction` until `CONFIRMED`
 
 ### Exit a position
@@ -416,7 +416,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 2. Surface cooldown/lockup from safety checklist
 3. Confirm before signing (if a human is in the loop)
 4. `actions_exit` → return structured transaction summary
-5. The signer signs and broadcasts → call `submit_hash` (**mandatory**)
+5. The signer signs and broadcasts → call `submit_hash` (**unless your host registers it**)
 6. Poll `get_transaction` until `CONFIRMED`
 
 ### Compare yields
@@ -447,7 +447,7 @@ Check a wallet's KYC/eligibility status for a permissioned (RWA) yield.
 - **High APY (>20%):** Check `rewardRate.components` — if driven by incentives, flag as potentially short-lived.
 - **Low TVL (<$100k):** Flag as low liquidity — may indicate higher risk or new/unaudited protocol.
 - **Risk ratings:** If `risk` data is present, always show it — never hide from users.
-- **Multi-network intent detection:** Detect whether the user wants a *unified search* or a *fair comparison*. Keywords like "compare", "vs", "which network is better", "ethereum vs arbitrum" → parallel calls (one per network, `limit: 20` each) so every network gets fair representation. Keywords like "show me yields on ethereum and arbitrum", "find yields across chains" → single call (`networks: [...]`, `limit: 50`). The API sorts globally — without parallel calls for comparisons, a high-APY network will crowd out all others from the results.
+- **Multi-network requests:** Default to one call carrying every network (`networks: [...]`, `limit: 50`). Results sort globally, so a deeper network can fill the page: after the call, check that each network the user named is actually represented. Only if it is not, fall back to one call per network in parallel (`limit: 20` each) and say that you did. Splitting by default turns one round trip into several for no gain on most comparisons.
 - **Async execution pattern:** Remind user upfront that a second step may be needed later.
 - **Amount near limits:** If user's amount is close to `entryLimits.minimum` or `maximum`, note it proactively.
 - **Network resolution:** If a user mentions a chain name that doesn't match a known slug (e.g. "Binance Smart Chain", "BNB Chain"), call `networks_get_all` with a search term before calling any other tool.
