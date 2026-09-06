@@ -32,11 +32,11 @@ All display rules for Yield.xyz Agent tool outputs. Always follow these formats 
 
 **Single network:** call with `limit: 20`, `sort: "rewardRateDesc"` — results arrive pre-sorted, show top 10.
 
-**Multiple networks — two intents, two strategies:**
+**Multiple networks — one call, then check:**
 
-- **Unified search** ("show me top yields on ethereum and arbitrum", "find me ETH yields across chains") → single call with `networks: [...]`, `limit: 50`, `sort: "rewardRateDesc"`. Group results by network in the table. Acceptable that one network may dominate if its APYs are genuinely higher.
+- **Default, including comparisons** ("show me top yields on ethereum and arbitrum", "compare ethereum vs arbitrum", "which network has better USDC yields") → single call with `networks: [...]`, `limit: 50`, `sort: "rewardRateDesc"`. Group results by network in the table. Results sort globally, so before answering check that each network the user named actually appears.
 
-- **Fair comparison** ("compare yields between ethereum and arbitrum", "which network has better USDC yields", "ethereum vs arbitrum") → run one call per network **in parallel** (same params, each with `limit: 20`). Show a table per network side by side. This guarantees every network gets fair representation regardless of APY distribution.
+- **Only if one is missing** → fall back to one call per network **in parallel** (same params, each with `limit: 20`), show a table per network side by side, and say that you split the call. This guarantees representation, but costs a round trip per network, so it is the exception and not the starting point.
 
 Always display as a table, never as individual cards.
 
@@ -53,7 +53,7 @@ Top ETH Yields on Ethereum
 
 Showing top 5 of 24 — ask for more or filter.
 
-**Multi-network comparison example (parallel calls, one per network):**
+**Multi-network comparison example (grouped by network):**
 
 ETH Yields · Ethereum vs Arbitrum
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
