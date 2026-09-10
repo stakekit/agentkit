@@ -1,0 +1,11 @@
+{
+  "name": "yield-xyz-agentkit-privy",
+  "version": "1.0.0",
+  "description": "The Privy connector — sign and broadcast Yield.xyz transactions via Privy agentic wallets. Requires the yield-xyz-agentkit plugin — install it too.",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "keywords": ["yield.xyz", "privy", "agentic wallet", "signing", "defi", "yield", "web3"],
+  "logo": "assets/logo.png"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "yield-xyz-agentkit",
+  "version": "1.0.0",
+  "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API — find yields, build transactions, and check balances across 80+ networks. The base plugin.",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "keywords": ["yield.xyz", "yield", "defi", "staking", "lending", "apy", "web3", "ethereum", "solana"],
+  "logo": "assets/logo.png"
+}

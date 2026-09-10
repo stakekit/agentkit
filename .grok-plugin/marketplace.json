@@ -1,0 +1,65 @@
+{
+  "name": "agentkit",
+  "description": "Open source Yield.xyz AgentKit plugins and skills for Web3 developers",
+  "owner": {
+    "name": "Yield.xyz",
+    "url": "https://yield.xyz"
+  },
+  "plugins": [
+    {
+      "name": "yield-xyz-agentkit",
+      "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API — find yields, build transactions, and check balances across 80+ networks. The base plugin.",
+      "category": "finance",
+      "version": "1.0.0",
+      "source": { "type": "local", "path": "./plugins/yield-xyz-agentkit" },
+      "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+      "homepage": "https://docs.yield.xyz",
+      "keywords": ["yield.xyz", "yield", "defi", "staking", "lending", "apy", "web3", "ethereum", "solana"],
+      "domains": ["yield.xyz", "docs.yield.xyz", "mcp.yield.xyz", "dashboard.yield.xyz"]
+    },
+    {
+      "name": "yield-xyz-agentkit-builder",
+      "description": "Build applications that integrate the Yield.xyz API — generate integration code for DeFi yield across 80+ networks.",
+      "category": "finance",
+      "version": "1.0.0",
+      "source": { "type": "local", "path": "./plugins/yield-xyz-agentkit-builder" },
+      "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+      "homepage": "https://docs.yield.xyz",
+      "keywords": ["yield.xyz", "yield api", "defi", "sdk", "developer", "integration", "web3"],
+      "domains": ["yield.xyz", "docs.yield.xyz", "api.yield.xyz", "dashboard.yield.xyz"]
+    },
+    {
+      "name": "yield-xyz-agentkit-privy",
+      "description": "The Privy connector — sign and broadcast Yield.xyz transactions via Privy agentic wallets. Builds on the yield-xyz-agentkit base plugin.",
+      "category": "finance",
+      "version": "1.0.0",
+      "source": { "type": "local", "path": "./plugins/yield-xyz-agentkit-privy" },
+      "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+      "homepage": "https://docs.yield.xyz",
+      "keywords": ["yield.xyz", "privy", "agentic wallet", "signing", "defi", "yield", "web3"],
+      "domains": ["privy.io", "docs.privy.io", "yield.xyz"]
+    },
+    {
+      "name": "yield-xyz-agentkit-moonpay",
+      "description": "The MoonPay connector — sign and broadcast Yield.xyz transactions via MoonPay. Builds on the yield-xyz-agentkit base plugin.",
+      "category": "finance",
+      "version": "1.0.0",
+      "source": { "type": "local", "path": "./plugins/yield-xyz-agentkit-moonpay" },
+      "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+      "homepage": "https://docs.yield.xyz",
+      "keywords": ["yield.xyz", "moonpay", "wallet", "signing", "defi", "yield", "web3"],
+      "domains": ["moonpay.com", "yield.xyz"]
+    },
+    {
+      "name": "yield-xyz-agentkit-robinhood",
+      "description": "The Robinhood Chain connector — configure Robinhood Chain (mainnet, chain ID 4663) and act on Yield.xyz yields there. Builds on the yield-xyz-agentkit base plugin.",
+      "category": "finance",
+      "version": "1.1.0",
+      "source": { "type": "local", "path": "./plugins/yield-xyz-agentkit-robinhood" },
+      "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+      "homepage": "https://docs.yield.xyz",
+      "keywords": ["yield.xyz", "robinhood chain", "robinhood", "evm", "mainnet", "defi", "yield", "web3"],
+      "domains": ["robinhood.com", "yield.xyz"]
+    }
+  ]
+}
