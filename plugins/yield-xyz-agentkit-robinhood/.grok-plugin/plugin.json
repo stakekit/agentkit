@@ -6,6 +6,5 @@
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
   "license": "MIT",
-  "keywords": ["yield.xyz", "robinhood chain", "robinhood", "evm", "mainnet", "defi", "yield", "web3"],
-  "logo": "assets/logo.png"
+  "keywords": ["yield.xyz", "robinhood chain", "robinhood", "evm", "mainnet", "defi", "yield", "web3"]
 }
