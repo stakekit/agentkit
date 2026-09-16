@@ -1,8 +1,8 @@
 {
   "name": "agentkit",
   "owner": {
-    "name": "Yield.xyz Agent",
-    "email": ""
+    "name": "Yield.xyz",
+    "url": "https://yield.xyz"
   },
   "metadata": {
     "description": "Open source Claude Code skills for Yield.xyz & Web3 developers",
