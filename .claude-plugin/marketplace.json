@@ -2,7 +2,7 @@
   "name": "agentkit",
   "owner": {
     "name": "Yield.xyz Agent",
-    "email": ""
+    "email": "support@yield.xyz"
   },
   "metadata": {
     "description": "Open source Claude Code skills for Yield.xyz & Web3 developers",
@@ -58,6 +58,16 @@
       "homepage": "https://docs.yield.xyz",
       "repository": "https://github.com/stakekit/agentkit",
       "keywords": ["defi", "yield", "robinhood", "connector", "mainnet", "evm", "web3"]
+    },
+    {
+      "name": "yield-xyz-agentkit-coinbase",
+      "description": "The Coinbase connector — a self-contained skill that discovers yields and signs + broadcasts them via a Base Account (Base MCP).",
+      "version": "1.0.0",
+      "source": "./plugins/yield-xyz-agentkit-coinbase",
+      "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+      "homepage": "https://docs.yield.xyz",
+      "repository": "https://github.com/stakekit/agentkit",
+      "keywords": ["defi", "yield", "base", "coinbase", "connector", "wallet", "signing", "web3"]
     }
   ]
 }

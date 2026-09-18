@@ -141,7 +141,7 @@ Aave USDC Lending  ·  ethereum
 
 ## yields_get_validators — Displaying Validators
 
-Default: preferred validators first, then by APR descending within each group; show top 10. (Matches the selection rule in SKILL.md.)
+Default: preferred validators first, then by APR descending within each group; show top 10.
 
 Always display as a table, never as individual cards:
 
@@ -177,6 +177,13 @@ Before calling any action tool, check and surface **all that apply**. Never skip
 | Cooldown on exit | `mechanics.cooldownPeriod` | Funds take X days to become available after exit. |
 | Warmup | `mechanics.warmupPeriod` | Takes X days to start earning after deposit. |
 | Fees | `mechanics.fee` | Summarise any non-zero fees (deposit / withdrawal / performance). |
+
+**Capacity fields are advisory, not a gate.** Some vaults do not implement the
+ERC-4626 max-view functions faithfully, so a capacity or `maxDeposit`-derived
+value can read zero remaining while deposits succeed on-chain (Morpho V2 vaults
+behave this way). If a capacity field shows the vault as full, surface it as a
+warning and let the user decide — never refuse to build an enter on that signal
+alone.
 
 ---
 

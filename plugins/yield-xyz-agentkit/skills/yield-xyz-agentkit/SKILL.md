@@ -194,6 +194,7 @@ Initiate exiting (withdrawing from) a yield position.
 **Key parameters:**
 - `yieldId`, `address`, `amount`
 - `validatorAddress`, `receiverAddress`, `useMaxAmount`, `useAutoClaim` — optional
+- **Full exit:** set `useMaxAmount: true` *and* still pass `amount` (the tool schema requires it — use the position balance from `yields_get_balances`). `useMaxAmount` takes precedence server-side, so the built transaction exits the entire position regardless of the `amount` value.
 - `useInstantExecution` — optional; only when the yield offers it (e.g. some RWA redemptions). `true` → instant settlement, usually for a fee; `false` → standard NAV redemption, funds settle in ~1–7 business days. Ask the user which they want; never default it silently.
 - Does **not** take `passthrough` (that's `actions_manage` only).
 

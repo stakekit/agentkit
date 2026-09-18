@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit — Plugins
 
-Five composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Robinhood Chain) **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP via guided setup).
+Six composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP. The Privy, MoonPay, and Robinhood Chain connectors **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP); the Coinbase connector is **self-contained** with its own MCP.
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -76,6 +76,20 @@ Requires: an EVM signer for Robinhood Chain mainnet.
 
 ---
 
+### [`yield-xyz-agentkit-coinbase`](./yield-xyz-agentkit-coinbase/) — self-contained connector
+
+**The Coinbase connector — discover yields and sign + broadcast via a Base Account.**
+
+A self-contained skill: it discovers yields via the Yield.xyz MCP and signs + broadcasts through Coinbase's Base Account (Base MCP), across the chains Base MCP supports. Unlike the other connectors, it bundles its own yield logic and MCP config, so it does not depend on the base plugin.
+
+```bash
+/plugin install yield-xyz-agentkit-coinbase@agentkit
+```
+
+Requires: the Yield.xyz MCP (auto-registered by the plugin) + Base MCP (`https://mcp.base.org`) and an authorized Base Account session.
+
+---
+
 ## Skills without the plugin
 
 The same skills can be installed standalone (per-skill), without the plugin/MCP wiring — Claude will set up the MCP on request:
@@ -88,18 +102,21 @@ npx skills add https://github.com/stakekit/agentkit
 
 ## Which plugin should I use?
 
-| | `yield-xyz-agentkit` | `+ privy` | `+ moonpay` |
-|---|---|---|---|
-| Find yields | Yes | Yes | Yes |
-| Build transactions | Yes | Yes | Yes |
-| Sign + broadcast | No — bring your own signer | Yes — via Privy wallet | Yes — via MoonPay wallet |
-| Check balances | Yes | Yes | Yes |
-| Policy guarded | No | Yes | No |
+| | `yield-xyz-agentkit` | `+ privy` | `+ moonpay` | `coinbase` (standalone) |
+|---|---|---|---|---|
+| Find yields | Yes | Yes | Yes | Yes |
+| Build transactions | Yes | Yes | Yes | Yes |
+| Sign + broadcast | No — bring your own signer | Yes — via Privy wallet | Yes — via MoonPay wallet | Yes — via Coinbase Base Account |
+| Check balances | Yes | Yes | Yes | Yes |
+| Policy guarded | No | Yes | No | No |
 
 `yield-xyz-agentkit-builder` is separate — it generates integration code rather than running yields.
+
+`yield-xyz-agentkit-robinhood` adds Robinhood Chain — discover and act on Robinhood Chain yields, bring your own signer.
 
 ## Related
 
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — yield.xyz reference docs
 - [Privy Agentic Wallet Docs](https://docs.privy.io/recipes/agent-integrations/agentic-wallets) — privy reference docs
 - [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools) — moonpay reference docs
+- [Base MCP](https://mcp.base.org) — Base Account signing + broadcasting

@@ -1,0 +1,1 @@
+../../../../yield-xyz-agentkit/skills/yield-xyz-agentkit/references/output-formats.md
