@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "yield-xyz-agentkit": {
+      "type": "http",
+      "url": "https://mcp.yield.xyz/mcp"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "yield-xyz-agentkit",
+  "displayName": "Yield.xyz AgentKit",
+  "version": "1.0.0",
+  "minClientVersions": {
+    "cursor": "3.13.0"
+  },
+  "description": "Find, compare, enter, exit, and manage DeFi yield positions across 80+ networks. Discover 2,900+ staking, lending, vault, restaking, and RWA opportunities, check APY, TVL, and risk, track balances and rewards, and build unsigned transactions your own wallet signs.",
+  "author": {
+    "name": "Yield.xyz"
+  },
+  "homepage": "https://docs.yield.xyz/docs/agents-overview",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "keywords": [
+    "yield",
+    "defi",
+    "staking",
+    "lending",
+    "vaults",
+    "restaking",
+    "rwa",
+    "apy",
+    "web3",
+    "ethereum",
+    "solana",
+    "base",
+    "mcp"
+  ],
+  "category": "integrations",
+  "tags": [
+    "finance",
+    "crypto",
+    "defi",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}
