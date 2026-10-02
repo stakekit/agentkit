@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit — Plugins
 
-Five composable plugins for Claude Code and Grok Build. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Robinhood Chain) **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP via guided setup).
+Six composable plugins for Claude Code (five of them also for Grok Build). Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Circle, Robinhood Chain) **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP via guided setup; Circle needs the Circle CLI via guided setup).
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -68,6 +68,25 @@ Requires: MoonPay MCP (guided CLI setup included).
 
 ---
 
+### [`yield-xyz-agentkit-circle`](./yield-xyz-agentkit-circle/) — connector, depends on the base
+
+**The Circle connector — signing and execution via Circle agent wallets.**
+
+Connects the kit to Circle: agent wallet setup, spending policy, an ABI-decoding
+layer (Circle's signer needs a decoded function call, not raw calldata — see the
+skill's `references/calldata-decoder.md`), signing, and broadcasting on top of the
+base plugin.
+
+```bash
+/plugin install yield-xyz-agentkit-circle@agentkit   # also installs yield-xyz-agentkit
+```
+
+Requires: Circle CLI (`@circle-fin/cli`), guided setup included. The decoder covers
+ERC-20, ERC-4626 vaults, and common lending-protocol entry points (verified against
+Aave and Fluid) — transactions it can't verify are refused, not guessed at.
+
+---
+
 ### [`yield-xyz-agentkit-robinhood`](./yield-xyz-agentkit-robinhood/) — connector, depends on the base
 
 **The Robinhood Chain connector — configuration and capabilities for Robinhood Chain (mainnet).**
@@ -94,13 +113,13 @@ npx skills add https://github.com/stakekit/agentkit
 
 ## Which plugin should I use?
 
-| | `yield-xyz-agentkit` | `+ privy` | `+ moonpay` |
-|---|---|---|---|
-| Find yields | Yes | Yes | Yes |
-| Build transactions | Yes | Yes | Yes |
-| Sign + broadcast | No — bring your own signer | Yes — via Privy wallet | Yes — via MoonPay wallet |
-| Check balances | Yes | Yes | Yes |
-| Policy guarded | No | Yes | No |
+| | `yield-xyz-agentkit` | `+ privy` | `+ moonpay` | `+ circle` |
+|---|---|---|---|---|
+| Find yields | Yes | Yes | Yes | Yes |
+| Build transactions | Yes | Yes | Yes | Yes |
+| Sign + broadcast | No — bring your own signer | Yes — via Privy wallet | Yes — via MoonPay wallet | Yes — via Circle agent wallet |
+| Check balances | Yes | Yes | Yes | Yes |
+| Policy guarded | No | Yes | No | Yes |
 
 `yield-xyz-agentkit-builder` is separate — it generates integration code rather than running yields.
 
@@ -109,3 +128,4 @@ npx skills add https://github.com/stakekit/agentkit
 - [Yield.xyz AgentKit Docs](https://docs.yield.xyz/docs/agents-overview) — yield.xyz reference docs
 - [Privy Agentic Wallet Docs](https://docs.privy.io/recipes/agent-integrations/agentic-wallets) — privy reference docs
 - [MoonPay CLI Docs](https://support.moonpay.com/en/collections/1373008-ai-agents-and-cli-tools) — moonpay reference docs
+- [Circle Agent Wallets Docs](https://developers.circle.com/agent-stack/agent-wallets) — circle reference docs

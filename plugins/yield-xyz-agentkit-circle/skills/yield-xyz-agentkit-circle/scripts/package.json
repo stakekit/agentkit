@@ -1,0 +1,12 @@
+{
+  "name": "yield-xyz-agentkit-circle-decoder",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Calldata-to-ABI decoder used by the yield-xyz-agentkit-circle skill before handing a transaction to `circle wallet execute`.",
+  "type": "commonjs",
+  "main": "decode-calldata.js",
+  "dependencies": {
+    "ethers": "^6.17.0",
+    "@shazow/whatsabi": "^0.29.0"
+  }
+}

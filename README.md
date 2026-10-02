@@ -13,7 +13,7 @@ The official tooling for Yield.xyz AgentKit — plugins for Claude Code and Grok
 
 ### Yield.xyz AgentKit Claude Plugins
 
-Five composable plugins in one marketplace. Each installs its skill; the base and builder auto-register the Yield.xyz MCP, and the connectors inherit it from the base (MoonPay additionally needs the MoonPay MCP via guided setup). Start with the base plugin, then add a connector for your wallet/execution provider.
+Six composable plugins in one marketplace. Each installs its skill; the base and builder auto-register the Yield.xyz MCP, and the connectors inherit it from the base (MoonPay additionally needs the MoonPay MCP via guided setup; Circle needs the Circle CLI via guided setup). Start with the base plugin, then add a connector for your wallet/execution provider.
 
 ```bash
 /plugin marketplace add stakekit/agentkit
@@ -25,9 +25,10 @@ Five composable plugins in one marketplace. Each installs its skill; the base an
 | `yield-xyz-agentkit-builder` | `/plugin install yield-xyz-agentkit-builder@agentkit` | Generate Yield.xyz integration code |
 | `yield-xyz-agentkit-privy` | `/plugin install yield-xyz-agentkit-privy@agentkit` | Sign + broadcast via Privy agentic wallets |
 | `yield-xyz-agentkit-moonpay` | `/plugin install yield-xyz-agentkit-moonpay@agentkit` | Sign + broadcast via MoonPay |
+| `yield-xyz-agentkit-circle` | `/plugin install yield-xyz-agentkit-circle@agentkit` | Sign + broadcast via Circle agent wallets (decodes calldata into ABI calls) |
 | `yield-xyz-agentkit-robinhood` | `/plugin install yield-xyz-agentkit-robinhood@agentkit` | Discover + act on yields on Robinhood Chain (mainnet, chain ID 4663) — chain config + wallet funding |
 
-The Privy, MoonPay, and Robinhood Chain connectors **depend on** the base:
+The Privy, MoonPay, Circle, and Robinhood Chain connectors **depend on** the base:
 
 ```bash
 /plugin install yield-xyz-agentkit-privy@agentkit   # also installs yield-xyz-agentkit
@@ -46,7 +47,7 @@ See **[`plugins/README.md`](./plugins/README.md)** for the per-plugin breakdown,
 
 ### Yield.xyz AgentKit Grok Build Plugins
 
-The same five plugins install into [Grok Build](https://docs.x.ai/build). Register this repo as a marketplace source in `~/.grok/config.toml`:
+Five of these six plugins install into [Grok Build](https://docs.x.ai/build). Register this repo as a marketplace source in `~/.grok/config.toml`:
 
 ```toml
 [[marketplace.sources]]

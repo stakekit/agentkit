@@ -1,0 +1,23 @@
+{
+  "name": "yield-xyz-agentkit-circle",
+  "version": "1.0.0",
+  "description": "The Circle connector — sign and broadcast Yield.xyz transactions via Circle agent wallets. Requires the yield-xyz-agentkit plugin — install it too.",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "keywords": ["defi", "yield", "circle", "connector", "agentic-wallet", "signing", "web3", "usdc"],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "Yield.xyz AgentKit + Circle",
+    "shortDescription": "The Circle connector — sign and broadcast yields via Circle agent wallets.",
+    "longDescription": "Connects the Yield.xyz AgentKit to Circle agent wallets: wallet creation, spending policy, calldata-to-ABI decoding, signing, and broadcasting via the Circle CLI. Install alongside the Yield.xyz AgentKit plugin.",
+    "category": "Finance",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://yield.xyz",
+    "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
+    "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
+    "defaultPrompt": ["Set up a Circle agent wallet for autonomous yield.", "Deposit 200 USDC into Aave V3 via my Circle wallet.", "Set a daily spending limit on my Circle agent wallet."],
+    "brandColor": "#0066FF"
+  }
+}
