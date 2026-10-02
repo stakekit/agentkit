@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "yield-xyz-agentkit": {
-      "type": "http",
-      "url": "https://mcp.yield.xyz/mcp"
+    "moonpay": {
+      "command": "npx",
+      "args": ["-y", "-p", "@moonpay/cli", "mp", "mcp"]
     }
   }
 }
