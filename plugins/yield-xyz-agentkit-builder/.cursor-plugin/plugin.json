@@ -1,0 +1,37 @@
+{
+  "name": "yield-xyz-agentkit-builder",
+  "displayName": "Yield.xyz AgentKit Builder",
+  "version": "1.0.0",
+  "minClientVersions": {
+    "cursor": "3.13.0"
+  },
+  "description": "Build apps on the Yield.xyz API. Scaffold integrations and generate code for yield discovery, the enter/exit/manage transaction lifecycle, multi-chain signing (EVM, Solana, Cosmos, and more), wallet connection, and fee monetization.",
+  "author": {
+    "name": "Yield.xyz"
+  },
+  "homepage": "https://docs.yield.xyz/docs/agents-overview",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "keywords": [
+    "yield",
+    "defi",
+    "sdk",
+    "api",
+    "integration",
+    "codegen",
+    "scaffold",
+    "signing",
+    "web3",
+    "mcp"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "finance",
+    "crypto",
+    "sdk",
+    "developer-tools"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}

@@ -1,0 +1,35 @@
+{
+  "name": "yield-xyz-agentkit-privy",
+  "displayName": "Yield.xyz AgentKit + Privy",
+  "version": "1.0.0",
+  "minClientVersions": {
+    "cursor": "3.13.0"
+  },
+  "description": "The Privy connector for Yield.xyz AgentKit. Create Privy agentic wallets, enforce spending policies, and sign and broadcast yield transactions autonomously or with enterprise approval. Install alongside Yield.xyz AgentKit; requires Privy API credentials.",
+  "author": {
+    "name": "Yield.xyz"
+  },
+  "homepage": "https://docs.yield.xyz/docs/agents-overview",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "keywords": [
+    "yield",
+    "defi",
+    "privy",
+    "agentic-wallet",
+    "policies",
+    "signing",
+    "autonomous",
+    "web3"
+  ],
+  "category": "integrations",
+  "tags": [
+    "finance",
+    "crypto",
+    "wallets",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}

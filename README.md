@@ -33,6 +33,10 @@ The Privy, MoonPay, and Robinhood Chain connectors **depend on** the base:
 /plugin install yield-xyz-agentkit-privy@agentkit   # also installs yield-xyz-agentkit
 ```
 
+### Yield.xyz AgentKit Cursor Plugins
+
+Four of these plugins ship as Cursor plugins (`.cursor-plugin/` manifests): the base, Builder, Privy, and MoonPay. In Cursor, open **Settings → Plugins**, search for **Yield.xyz**, and install **Yield.xyz AgentKit** first. Then add a connector. Cursor has no plugin dependencies, so each connector bundles the Yield.xyz MCP itself.
+
 ### Yield.xyz AgentKit Claude Skills
 
 Prefer per-skill installation without the plugin/MCP wiring? Install any skill standalone and pick interactively:
