@@ -1,9 +1,15 @@
 # Yield.xyz AgentKit — Plugins
 
-Five composable Claude Code plugins. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Robinhood Chain) **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP via guided setup).
+Five composable plugins for Claude Code and Grok Build. Each ships one skill; the base and builder auto-register the Yield.xyz MCP, while the connectors (Privy, MoonPay, Robinhood Chain) **depend on** the base and inherit its MCP (MoonPay also needs the MoonPay MCP via guided setup).
 
 ```bash
 /plugin marketplace add stakekit/agentkit
+```
+
+The `/plugin` commands below are Claude Code. In Grok Build, install the same plugin with:
+
+```bash
+grok plugin install stakekit/agentkit#plugins/<plugin-name> --trust
 ```
 
 ---
