@@ -1,11 +1,11 @@
 ![Yield.xyz AgentKit Banner](./assets/yield-xyz-agentkit-banner.png)
 
-# Yield.xyz AgentKit — Claude Plugin & Skills
+# Yield.xyz AgentKit — Claude & Grok Plugins & Skills
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
-The official tooling for Yield.xyz AgentKit — a Claude Code plugin, standalone skills, and connection guides for the Yield.xyz AgentKit MCP Server.
+The official tooling for Yield.xyz AgentKit — plugins for Claude Code and Grok Build, standalone skills, and connection guides for the Yield.xyz AgentKit MCP Server.
 
 ---
 
@@ -43,11 +43,30 @@ npx skills add https://github.com/stakekit/agentkit
 
 See **[`plugins/README.md`](./plugins/README.md)** for the per-plugin breakdown, individual skill descriptions, and a feature comparison.
 
+
+### Yield.xyz AgentKit Grok Build Plugins
+
+The same five plugins install into [Grok Build](https://docs.x.ai/build). Register this repo as a marketplace source in `~/.grok/config.toml`:
+
+```toml
+[[marketplace.sources]]
+name = "agentkit"
+git = "https://github.com/stakekit/agentkit.git"
+```
+
+Then browse and install with `/marketplace` in the Grok TUI (press `i` on an entry), or install the base plugin straight from the repo:
+
+```bash
+grok plugin install stakekit/agentkit#plugins/yield-xyz-agentkit --trust
+```
+
+The other four plugins install the same way — swap the plugin name at the end of the path. `--trust` is required for Grok to activate a plugin's skills and MCP servers. The base and builder plugins register the Yield.xyz MCP automatically; the connectors expect the base plugin alongside them.
+
 ---
 
 ### Yield.xyz AgentKit MCP Server
 
-The Yield.xyz AgentKit MCP Server exposes a suite of tools that give Claude live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
+The Yield.xyz AgentKit MCP Server exposes a suite of tools that give your agent live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
 
 **Endpoint:** `https://mcp.yield.xyz/mcp`
 
@@ -71,6 +90,23 @@ Add to `claude_desktop_config.json` (**Settings → Developer → Edit Config**)
   }
 }
 ```
+
+### Option 3: Connect via Grok Build
+
+Installing the `yield-xyz-agentkit` plugin with `--trust` registers the MCP for you. To wire it up without the plugin, drop a `.mcp.json` in your project:
+
+```json
+{
+  "mcpServers": {
+    "yield-xyz-agentkit": {
+      "type": "http",
+      "url": "https://mcp.yield.xyz/mcp"
+    }
+  }
+}
+```
+
+Or add it interactively with `grok mcp add` (see `grok mcp add --help`) and manage it from `/mcps` in the TUI.
 
 → [Full connection guide and all methods](https://docs.yield.xyz/docs/mcp-server)
 

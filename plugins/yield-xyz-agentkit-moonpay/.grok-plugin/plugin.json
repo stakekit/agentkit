@@ -1,0 +1,10 @@
+{
+  "name": "yield-xyz-agentkit-moonpay",
+  "version": "1.0.0",
+  "description": "The MoonPay connector — sign and broadcast Yield.xyz transactions via MoonPay. Requires the yield-xyz-agentkit plugin — install it too.",
+  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "homepage": "https://docs.yield.xyz",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "keywords": ["yield.xyz", "moonpay", "wallet", "signing", "defi", "yield", "web3"]
+}
