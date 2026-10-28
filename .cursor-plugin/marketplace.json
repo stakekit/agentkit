@@ -1,0 +1,33 @@
+{
+  "name": "yield-xyz",
+  "owner": {
+    "name": "Yield.xyz",
+    "email": "support@yield.xyz"
+  },
+  "metadata": {
+    "description": "Yield.xyz AgentKit: discover, compare, enter, and manage 3300+ DeFi yield across 80+ networks from your agent.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "yield-xyz-agentkit",
+      "source": "./plugins/yield-xyz-agentkit",
+      "description": "Find, compare, enter, exit, and manage DeFi yield positions across 80+ networks."
+    },
+    {
+      "name": "yield-xyz-agentkit-builder",
+      "source": "./plugins/yield-xyz-agentkit-builder",
+      "description": "Generate code that integrates the Yield.xyz API into your app."
+    },
+    {
+      "name": "yield-xyz-agentkit-privy",
+      "source": "./plugins/yield-xyz-agentkit-privy",
+      "description": "Sign and broadcast Yield.xyz transactions via Privy agentic wallets."
+    },
+    {
+      "name": "yield-xyz-agentkit-moonpay",
+      "source": "./plugins/yield-xyz-agentkit-moonpay",
+      "description": "Sign and broadcast Yield.xyz transactions via a MoonPay wallet."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "yield-xyz-agentkit-moonpay",
+  "displayName": "Yield.xyz AgentKit + MoonPay",
+  "version": "1.0.0",
+  "minClientVersions": {
+    "cursor": "3.13.0"
+  },
+  "description": "The MoonPay connector for Yield.xyz AgentKit. Authenticate a MoonPay wallet, then sign and broadcast yield transactions end to end. Install alongside Yield.xyz AgentKit; guided setup adds the MoonPay MCP.",
+  "author": {
+    "name": "Yield.xyz"
+  },
+  "homepage": "https://docs.yield.xyz/docs/agents-overview",
+  "repository": "https://github.com/stakekit/agentkit",
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "keywords": [
+    "yield",
+    "defi",
+    "moonpay",
+    "wallet",
+    "signing",
+    "web3"
+  ],
+  "category": "integrations",
+  "tags": [
+    "finance",
+    "crypto",
+    "wallets",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}
