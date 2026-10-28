@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit-builder
-description: Build applications that integrate with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks. Generates code covering REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield, generate code, or set up a project using Yield.xyz.
+description: Build applications that integrate with the Yield.xyz APIs — staking, lending, vaults, and RWA across 85+ networks. Generates code covering REST API integration, transaction signing, wallet connection, and fee monetization. Use when user wants to build an app, integrate yield, generate code, or set up a project using Yield.xyz.
 metadata:
   author: Yield.xyz
   version: "1.0.0"
@@ -14,7 +14,7 @@ It generates integration code, guides architecture decisions, and helps ensure c
 API usage across all supported chains and protocols.
 
 **Scope: this skill builds Yield integrations** — staking, lending, vaults, and RWA
-across 80+ networks.
+across 85+ networks.
 
 **What ships vs. what's build-time:** the integration you ship always calls
 `https://api.yield.xyz` directly — via the `@yieldxyz/sdk` or REST/curl. **Nothing the
@@ -167,7 +167,7 @@ inline implementation). Applies to every manifest — `package.json`, `requireme
 
 ### 8. Always Include Pagination When Listing Yields
 
-Yield.xyz exposes **2,900+ yields across 80+ networks**, so pagination is a default, not
+Yield.xyz exposes **4,000+ yields across 85+ networks**, so pagination is a default, not
 a feature request. Every list view you generate — yields, balances, validators,
 transactions — must ship paginated from the start; **never render an unbounded list.**
 

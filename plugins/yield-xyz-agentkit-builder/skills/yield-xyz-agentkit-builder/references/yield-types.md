@@ -1,6 +1,6 @@
 # `GET /v1/yields` — Endpoint & Yield Types Guide
 
-This is the single most important endpoint in the Yield.xyz API. It's the discovery surface for every yield opportunity across 80+ networks, and almost every app you build starts with a call to it. This guide covers both:
+This is the single most important endpoint in the Yield.xyz API. It's the discovery surface for every yield opportunity across 85+ networks, and almost every app you build starts with a call to it. This guide covers both:
 
 1. **How to query it** — all the filter, search, sort, and pagination params, with the optimizations the server does for you.
 2. **What the yield types mean** — the `type` dimension at a high level, with the yield DTO as the source of truth for any specific yield.

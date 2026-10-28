@@ -1,6 +1,6 @@
 ---
 name: yield-xyz-agentkit
-description: Discover and act on 2,900+ DeFi yield opportunities via Yield.xyz AgentKit Skills, find yields, check APY enter/exit positions, and manage rewards across 80+ networks.
+description: Discover and act on 4,000+ DeFi yield opportunities via Yield.xyz AgentKit Skills, find yields, check APY enter/exit positions, and manage rewards across 85+ networks.
 metadata:
   author: Yield.xyz
   version: "1.0.0"

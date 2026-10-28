@@ -1,6 +1,6 @@
 # Yield.xyz AgentKit — Base plugin
 
-Discover and manage on-chain yield opportunities across 80+ networks. Find and compare yields, check balances and rewards, and build transactions for staking, lending, vaults, restaking, and liquidity pools.
+Discover and manage on-chain yield opportunities across 85+ networks. Find and compare yields, check balances and rewards, and build transactions for staking, lending, vaults, restaking, and liquidity pools.
 
 ## What it ships
 

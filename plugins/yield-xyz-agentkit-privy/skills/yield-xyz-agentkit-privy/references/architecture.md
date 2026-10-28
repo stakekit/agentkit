@@ -48,7 +48,7 @@ claude mcp add --transport http yield-xyz-agentkit https://mcp.yield.xyz/mcp
 ```
 
 **What it does:**
-- Discovers 2,900+ yield opportunities across 80+ protocols and networks
+- Discovers 4,000+ yield opportunities across 85+ protocols and networks
 - Returns the full `YieldDto` for any yield, including the exact argument
   schema required to enter or exit a position
 - Constructs and returns `unsignedTransaction` objects — the raw

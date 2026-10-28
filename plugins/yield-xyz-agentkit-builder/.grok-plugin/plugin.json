@@ -1,7 +1,7 @@
 {
   "name": "yield-xyz-agentkit-builder",
   "version": "1.0.0",
-  "description": "Build applications that integrate the Yield.xyz API — generate integration code for DeFi yield across 80+ networks.",
+  "description": "Build applications that integrate the Yield.xyz API — generate integration code for DeFi yield across 85+ networks.",
   "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
