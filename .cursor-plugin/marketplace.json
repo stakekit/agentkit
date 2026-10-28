@@ -5,14 +5,14 @@
     "email": "support@yield.xyz"
   },
   "metadata": {
-    "description": "Yield.xyz AgentKit: discover, compare, enter, and manage 3300+ DeFi yield across 80+ networks from your agent.",
+    "description": "Discover and execute on-chain yield across 4,000+ opportunities on 85+ networks, including staking, lending and RWAs. Fetch yields, balances and risk, and build, sign and submit transactions through the Yield.xyz API.",
     "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "yield-xyz-agentkit",
       "source": "./plugins/yield-xyz-agentkit",
-      "description": "Find, compare, enter, exit, and manage DeFi yield positions across 80+ networks."
+      "description": "Find, compare, enter, exit, and manage DeFi yield positions across 85+ networks."
     },
     {
       "name": "yield-xyz-agentkit-builder",

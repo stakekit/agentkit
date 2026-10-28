@@ -2,7 +2,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
-> Teaches Claude how to discover yields, build transactions, manage positions, and navigate the Yield.xyz API across 80+ networks — without hallucinating endpoints or guessing arguments.
+> Teaches Claude how to discover yields, build transactions, manage positions, and navigate the Yield.xyz API across 85+ networks — without hallucinating endpoints or guessing arguments.
 
 The skill works alongside the [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp), which provides the live tools. The skill provides the expertise: routing logic, rules, validator selection, transaction ordering, and safety checks.
 

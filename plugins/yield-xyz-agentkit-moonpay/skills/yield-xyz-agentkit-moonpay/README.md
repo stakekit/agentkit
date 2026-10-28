@@ -145,7 +145,7 @@ broadcasting.
 MoonPay supports signing on: **Ethereum, Base, Polygon, Arbitrum, Optimism,
 BNB, Avalanche, TRON, Solana, Bitcoin**
 
-Yield.xyz supports **80+ networks** — the overlap covers all major EVM chains
+Yield.xyz supports **85+ networks** — the overlap covers all major EVM chains
 where most yield opportunities exist.
 
 ---

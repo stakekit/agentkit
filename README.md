@@ -70,7 +70,7 @@ The other four plugins install the same way — swap the plugin name at the end 
 
 ### Yield.xyz AgentKit MCP Server
 
-The Yield.xyz AgentKit MCP Server exposes a suite of tools that give your agent live access to on-chain yield data, transaction building, and portfolio management across 80+ networks.
+The Yield.xyz AgentKit MCP Server exposes a suite of tools that give your agent live access to on-chain yield data, transaction building, and portfolio management across 85+ networks.
 
 **Endpoint:** `https://mcp.yield.xyz/mcp`
 

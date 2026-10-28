@@ -3,7 +3,7 @@
 [![AI Agent Skill](https://img.shields.io/badge/AI%20Agent-Skill-orange)](https://yield.xyz)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/stakekit/agentkit)
 
-> **Build on Yield.xyz with AI agents.** This skill teaches any MCP-compatible AI agent how to generate code that integrates with the Yield.xyz APIs — staking, lending, vaults, and RWA across 80+ networks.
+> **Build on Yield.xyz with AI agents.** This skill teaches any MCP-compatible AI agent how to generate code that integrates with the Yield.xyz APIs — staking, lending, vaults, and RWA across 85+ networks.
 
 What you ship integrates with Yield.xyz through the [`@yieldxyz/sdk`](https://www.npmjs.com/package/@yieldxyz/sdk) or REST calls against `https://api.yield.xyz`. The [Yield.xyz AgentKit MCP server](https://mcp.yield.xyz/mcp) is an optional build-time reference: its doc tools give the agent live access to the OpenAPI spec and public reference repos for grounding field names and schemas while generating code. Nothing in the shipped integration calls the MCP — it is not a runtime dependency.
 

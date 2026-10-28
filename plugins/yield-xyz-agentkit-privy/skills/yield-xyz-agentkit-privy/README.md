@@ -146,7 +146,7 @@ with you before signing, and submits the transactions.
 Privy supports signing on: **Ethereum, Base, Polygon, Arbitrum, Optimism,
 BNB Chain, Avalanche, Solana, and more**
 
-Yield.xyz supports **80+ networks** — the overlap covers all major EVM chains
+Yield.xyz supports **85+ networks** — the overlap covers all major EVM chains
 and Solana where most yield opportunities exist.
 
 ---

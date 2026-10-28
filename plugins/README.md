@@ -20,7 +20,7 @@ grok plugin install stakekit/agentkit#plugins/<plugin-name> --trust
 
 **Yield discovery and transaction building via the Yield.xyz AgentKit MCP.**
 
-The base plugin. Finds yields, inspects schemas, builds enter/exit/manage transactions, checks balances, and guides the full position lifecycle across 80+ networks. Bring your own signer, or add one of the connectors below.
+The base plugin. Finds yields, inspects schemas, builds enter/exit/manage transactions, checks balances, and guides the full position lifecycle across 85+ networks. Bring your own signer, or add one of the connectors below.
 
 ```bash
 /plugin install yield-xyz-agentkit@agentkit
@@ -32,7 +32,7 @@ The base plugin. Finds yields, inspects schemas, builds enter/exit/manage transa
 
 **Build applications that integrate the Yield.xyz APIs.**
 
-Helps developers scaffold and build Yield.xyz integrations — generating code for DeFi yield (staking, lending, vaults, and real-world assets) across 80+ networks, and guiding architecture across REST integration, transaction signing, wallet connection, and fee monetization.
+Helps developers scaffold and build Yield.xyz integrations — generating code for DeFi yield (staking, lending, vaults, and real-world assets) across 85+ networks, and guiding architecture across REST integration, transaction signing, wallet connection, and fee monetization.
 
 ```bash
 /plugin install yield-xyz-agentkit-builder@agentkit

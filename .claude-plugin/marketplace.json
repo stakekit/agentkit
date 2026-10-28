@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "yield-xyz-agentkit",
-      "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API — find yields, build transactions, and check balances across 80+ networks. The base plugin.",
+      "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API — find yields, build transactions, and check balances across 85+ networks. The base plugin.",
       "version": "1.0.0",
       "source": "./plugins/yield-xyz-agentkit",
       "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
@@ -21,7 +21,7 @@
     },
     {
       "name": "yield-xyz-agentkit-builder",
-      "description": "Build applications that integrate the Yield.xyz API — generate integration code for DeFi yield across 80+ networks.",
+      "description": "Build applications that integrate the Yield.xyz API — generate integration code for DeFi yield across 85+ networks.",
       "version": "1.0.0",
       "source": "./plugins/yield-xyz-agentkit-builder",
       "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
