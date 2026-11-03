@@ -2,22 +2,45 @@
   "name": "yield-xyz-agentkit-robinhood",
   "version": "1.1.0",
   "description": "The Robinhood Chain connector — configure Robinhood Chain (mainnet, chain ID 4663) and act on Yield.xyz yields there. Requires the yield-xyz-agentkit plugin — install it too.",
-  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "author": {
+    "name": "Yield.xyz",
+    "url": "https://yield.xyz"
+  },
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
   "license": "MIT",
-  "keywords": ["defi", "yield", "robinhood", "connector", "mainnet", "evm", "web3"],
+  "keywords": [
+    "defi",
+    "yield",
+    "robinhood",
+    "connector",
+    "mainnet",
+    "evm",
+    "web3"
+  ],
   "skills": "./skills",
   "interface": {
-    "displayName": "Yield.xyz AgentKit + Robinhood Chain",
-    "shortDescription": "The Robinhood Chain connector — configure the chain and act on Yield.xyz yields.",
+    "displayName": "Yield.xyz + Robinhood Chain",
+    "shortDescription": "Earn yield on Robinhood Chain",
     "longDescription": "Connects the Yield.xyz AgentKit to Robinhood Chain (mainnet, chain ID 4663): chain configuration, wallet setup, and supported capabilities. Install alongside the Yield.xyz AgentKit plugin.",
     "category": "Finance",
-    "capabilities": ["Interactive", "Read", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
     "websiteURL": "https://yield.xyz",
     "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
     "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
-    "defaultPrompt": ["Configure Robinhood Chain.", "Show my balances on Robinhood Chain.", "Find and enter a yield on Robinhood Chain."],
-    "brandColor": "#00C805"
+    "defaultPrompt": [
+      "Configure Robinhood Chain.",
+      "Show my balances on Robinhood Chain.",
+      "Find and enter a yield on Robinhood Chain."
+    ],
+    "brandColor": "#00C805",
+    "developerName": "Yield.xyz",
+    "supportURL": "https://docs.yield.xyz/documentation/faqs#support",
+    "logo": "./assets/logo.png",
+    "composerIcon": "./assets/logo.png"
   }
 }
