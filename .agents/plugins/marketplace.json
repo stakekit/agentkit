@@ -1,0 +1,56 @@
+{
+  "name": "yield-xyz",
+  "interface": {
+    "displayName": "Yield.xyz AgentKit"
+  },
+  "plugins": [
+    {
+      "name": "yield-xyz-agentkit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/yield-xyz-agentkit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Finance"
+    },
+    {
+      "name": "yield-xyz-agentkit-builder",
+      "source": {
+        "source": "local",
+        "path": "./plugins/yield-xyz-agentkit-builder"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Finance"
+    },
+    {
+      "name": "yield-xyz-agentkit-moonpay",
+      "source": {
+        "source": "local",
+        "path": "./plugins/yield-xyz-agentkit-moonpay"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Finance"
+    },
+    {
+      "name": "yield-xyz-agentkit-privy",
+      "source": {
+        "source": "local",
+        "path": "./plugins/yield-xyz-agentkit-privy"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Finance"
+    }
+  ]
+}

@@ -2,23 +2,102 @@
   "name": "yield-xyz-agentkit",
   "version": "1.0.0",
   "description": "Discover and manage on-chain yield opportunities using the Yield.xyz API.",
-  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "author": {
+    "name": "Yield.xyz",
+    "url": "https://yield.xyz"
+  },
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
   "license": "MIT",
-  "keywords": ["defi", "yield", "staking", "lending", "web3", "ethereum", "solana"],
+  "keywords": [
+    "defi",
+    "yield",
+    "staking",
+    "lending",
+    "web3",
+    "ethereum",
+    "solana"
+  ],
   "skills": "./skills",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Yield.xyz AgentKit",
-    "shortDescription": "Find, compare, enter, exit, and manage DeFi yield positions.",
+    "shortDescription": "Find and manage DeFi yields",
     "longDescription": "Connects to the Yield.xyz MCP server for discovering yield opportunities, checking balances, and preparing unsigned transactions for staking, lending, vaults, restaking, and liquidity pools across supported networks.",
     "category": "Finance",
-    "capabilities": ["Interactive", "Read", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
     "websiteURL": "https://yield.xyz",
     "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
     "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
-    "defaultPrompt": ["Show me top USDC yields on Base.", "Compare ETH staking yields on Ethereum.", "Check my yield balances for this wallet."],
-    "brandColor": "#FFC21B"
+    "defaultPrompt": [
+      "Show me top USDC yields on Base.",
+      "Compare ETH staking yields on Ethereum.",
+      "Check my yield balances for this wallet."
+    ],
+    "brandColor": "#E0A800",
+    "brandColorDark": "#FFC21B",
+    "developerName": "Yield.xyz",
+    "supportURL": "https://docs.yield.xyz/documentation/faqs#support",
+    "logo": "./assets/logo.png",
+    "composerIcon": "./assets/logo.png"
+  },
+  "extensions": {
+    "com.openai": {
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Discover USDC yields on Base",
+              "prompt": "Show me top USDC yields on Base.",
+              "tools_triggered": "yields_get_all",
+              "expected_behavior": "Lists USDC yield opportunities on Base with APY and provider."
+            },
+            {
+              "description": "Compare ETH staking yields",
+              "prompt": "Compare ETH staking yields on Ethereum.",
+              "tools_triggered": "yields_get_all",
+              "expected_behavior": "Returns ETH staking options on Ethereum ranked by APY."
+            },
+            {
+              "description": "Inspect one yield's details and risk",
+              "prompt": "Show details and risk for the Aave V3 USDC yield on Base.",
+              "tools_triggered": "yields_get, yields_get_risk",
+              "expected_behavior": "Shows the yield's metadata, entry requirements and risk data."
+            },
+            {
+              "description": "Check balances for a wallet",
+              "prompt": "Check my yield balances for 0x000000000000000000000000000000000000dEaD on Ethereum.",
+              "tools_triggered": "yields_get_balances",
+              "expected_behavior": "Returns any yield positions held by the address."
+            },
+            {
+              "description": "Prepare an unsigned deposit",
+              "prompt": "Prepare a 10 USDC deposit into Aave V3 on Base for 0x000000000000000000000000000000000000dEaD.",
+              "tools_triggered": "yields_get, actions_enter",
+              "expected_behavior": "Returns unsigned transactions for the user to review and sign; nothing is broadcast."
+            }
+          ],
+          "negative": [
+            {
+              "description": "General crypto price question unrelated to yield",
+              "prompt": "What is the current price of Bitcoin?"
+            },
+            {
+              "description": "Request for personalized investment advice",
+              "prompt": "Should I put my retirement savings into DeFi?"
+            },
+            {
+              "description": "Off-topic request",
+              "prompt": "Write a haiku about autumn."
+            }
+          ]
+        },
+        "demo_recording_url": "https://drive.google.com/file/d/1MXUrLqeBd3GSrIzRzBAgvUd35K7M_11d/view?usp=sharing"
+      }
+    }
   }
 }

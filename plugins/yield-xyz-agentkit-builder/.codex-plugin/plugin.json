@@ -2,23 +2,100 @@
   "name": "yield-xyz-agentkit-builder",
   "version": "1.0.0",
   "description": "Build applications that integrate the Yield.xyz API.",
-  "author": { "name": "Yield.xyz", "url": "https://yield.xyz" },
+  "author": {
+    "name": "Yield.xyz",
+    "url": "https://yield.xyz"
+  },
   "homepage": "https://docs.yield.xyz",
   "repository": "https://github.com/stakekit/agentkit",
   "license": "MIT",
-  "keywords": ["defi", "yield", "sdk", "developer", "web3", "integration"],
+  "keywords": [
+    "defi",
+    "yield",
+    "sdk",
+    "developer",
+    "web3",
+    "integration"
+  ],
   "skills": "./skills",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Yield.xyz AgentKit Builder",
-    "shortDescription": "Generate code to integrate the Yield.xyz API.",
+    "shortDescription": "Build Yield.xyz integrations",
     "longDescription": "Scaffolds and writes code that integrates the Yield.xyz API for DeFi yield across 85+ networks — REST integration, transaction signing, and wallet connection.",
     "category": "Finance",
-    "capabilities": ["Interactive", "Read", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
     "websiteURL": "https://yield.xyz",
     "privacyPolicyURL": "https://docs.yield.xyz/docs/privacy-policy",
     "termsOfServiceURL": "https://docs.yield.xyz/docs/terms-of-use",
-    "defaultPrompt": ["Scaffold a Yield.xyz integration in Next.js.", "Generate code to enter an Aave position.", "Show me how to sign and broadcast a Yield.xyz transaction."],
-    "brandColor": "#FFC21B"
+    "defaultPrompt": [
+      "Scaffold a Yield.xyz integration in Next.js.",
+      "Generate code to enter an Aave position.",
+      "Show me how to sign and broadcast a Yield.xyz transaction."
+    ],
+    "brandColor": "#E0A800",
+    "brandColorDark": "#FFC21B",
+    "developerName": "Yield.xyz",
+    "supportURL": "https://docs.yield.xyz/documentation/faqs#support",
+    "logo": "./assets/logo.png",
+    "composerIcon": "./assets/logo.png"
+  },
+  "extensions": {
+    "com.openai": {
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Look up integration docs",
+              "prompt": "How do I enter a yield with the Yield.xyz API?",
+              "tools_triggered": "yield_lookup_docs",
+              "expected_behavior": "Explains the enter-action flow with doc references."
+            },
+            {
+              "description": "Fetch the API spec",
+              "prompt": "Show me the request schema for the actions enter endpoint.",
+              "tools_triggered": "yield_get_api_spec",
+              "expected_behavior": "Returns the OpenAPI schema for the enter action."
+            },
+            {
+              "description": "Troubleshoot an API error",
+              "prompt": "I get a 400 'invalid arguments' from actions/enter. What's wrong?",
+              "tools_triggered": "yield_troubleshoot_error",
+              "expected_behavior": "Diagnoses the error and suggests a fix."
+            },
+            {
+              "description": "Read a specific doc page",
+              "prompt": "Fetch the Yield.xyz docs page on transaction signing.",
+              "tools_triggered": "yield_lookup_docs, yield_fetch_doc",
+              "expected_behavior": "Returns the relevant doc content."
+            },
+            {
+              "description": "Find example repositories",
+              "prompt": "List Yield.xyz example repos I can start from.",
+              "tools_triggered": "yield_list_repos",
+              "expected_behavior": "Lists public Yield.xyz repositories with descriptions."
+            }
+          ],
+          "negative": [
+            {
+              "description": "General crypto price question unrelated to yield",
+              "prompt": "What is the current price of Bitcoin?"
+            },
+            {
+              "description": "Request for personalized investment advice",
+              "prompt": "Should I put my retirement savings into DeFi?"
+            },
+            {
+              "description": "Off-topic request",
+              "prompt": "Write a haiku about autumn."
+            }
+          ]
+        }
+      }
+    }
   }
 }
